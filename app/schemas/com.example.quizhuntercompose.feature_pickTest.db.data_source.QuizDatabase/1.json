@@ -1,0 +1,132 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "40a0bc87617c0638e0b8f734af064b43",
+    "entities": [
+      {
+        "tableName": "question_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`question` TEXT NOT NULL, `answer_1` TEXT NOT NULL, `answer_2` TEXT NOT NULL, `answer_3` TEXT, `answer_4` TEXT, `correct_answer` INTEGER NOT NULL, `question_id` INTEGER NOT NULL, `topic_id` INTEGER NOT NULL, `correct_answers` INTEGER NOT NULL, `wrong_answers` INTEGER NOT NULL, `non_answers` INTEGER NOT NULL, `average_time_sec` INTEGER NOT NULL, `last_time_sec` INTEGER NOT NULL, PRIMARY KEY(`question_id`))",
+        "fields": [
+          {
+            "fieldPath": "question",
+            "columnName": "question",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answer1",
+            "columnName": "answer_1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answer2",
+            "columnName": "answer_2",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answer3",
+            "columnName": "answer_3",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "answer4",
+            "columnName": "answer_4",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "correctAnswer",
+            "columnName": "correct_answer",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionID",
+            "columnName": "question_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topic",
+            "columnName": "topic_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correctAnswers",
+            "columnName": "correct_answers",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wrongAnswers",
+            "columnName": "wrong_answers",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nonAnswers",
+            "columnName": "non_answers",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "averageAnswerTime",
+            "columnName": "average_time_sec",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastAnswerTime",
+            "columnName": "last_time_sec",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "question_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "topic_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`topic_id` INTEGER NOT NULL, `topic` TEXT NOT NULL, PRIMARY KEY(`topic_id`))",
+        "fields": [
+          {
+            "fieldPath": "topicId",
+            "columnName": "topic_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topic",
+            "columnName": "topic",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "topic_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '40a0bc87617c0638e0b8f734af064b43')"
+    ]
+  }
+}

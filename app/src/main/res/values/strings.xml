@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">QuizHunterCompose</string>
+
+
+    <string name="back">Back</string>
+    <string name="previous">Previous</string>
+
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+
+<!--    Wanted to add for last element Finish button.-->
+<!--    <string name="finish">Finish</string> -->
+    <string name="done">Done</string>
+    <string name="choose">Choose</string>
+
+</resources>
