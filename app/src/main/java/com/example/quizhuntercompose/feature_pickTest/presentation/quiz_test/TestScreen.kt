@@ -20,12 +20,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.util.supportWideScreen
 import com.example.quizhuntercompose.ui.theme.slightlyDeemphasizedAlpha
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 private const val CONTENT_ANIMATION_DURATION = 500
@@ -54,87 +52,53 @@ fun TestRoute(
     modifier: Modifier = Modifier,
     navigateToFinish: (String) -> Unit
 ){
-//    val uiState1: TestState by remember {
-//        testViewModel.getState1()
-//    })
-//    val testViewModel: TestViewModel = remember(key1 = Question) {
-//        hiltViewModel()
-//    }
-    val uiState by testViewModel.uiState.collectAsState() // better then just .collectAsState()  https://medium.com/androiddevelopers/consuming-flows-safely-in-jetpack-compose-cde014d0d5a3
 
+
+    val selectedAnswer1 by testViewModel.currentlySelectAnswer
+    val uiState by testViewModel.uiState // Did not work with .collectAsStateWithLifecycle() or //better then just .collectAsState()  https://medium.com/androiddevelopers/consuming-flows-safely-in-jetpack-compose-cde014d0d5a3
     val isLoading by testViewModel.isLoading.collectAsState()
 
     if (!isLoading ) {
         Log.i("TestScreen_: ", "isLoading DONE, \n uiState (questionStateID: " + uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString()
          + " \n uiState - questionStateList (chosen answer): " + uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer.toString()
         + " \n uiState - answer -(chosenAnswer):     " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-        + " \n uiState - answer - (questionId):     " + uiState.answers[uiState.currentQuestionIndex].questionId.toString()
         )
-        Log.i("TestScreen_: ", "isLoading done, \n uiState (questionStateID: " + uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString())
-
         Column() {
-            QuestionScreen( //Question (+ answers)
-                //targetState is not changed in this composition!!!
-                answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
-                onAnswer = {
-                    uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer = it
-                    uiState.answers[uiState.currentQuestionIndex].chosenAnswer =
-                        it  //TODO make sure designe change. 2. When view results. Show green/red and disabled buttons..
-                    uiState.answers[uiState.currentQuestionIndex].chosenAnswer = it
-                    Log.i(
-                        "TestScreen_1: ",
-                        uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-                    )
-//                            uiState.questionStateList[targetQuestionState] //In show done place  use not null from answer.
-                    Log.i(
-                        "TestScreen_questStaID: ",
-                        uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString()
-                    )
-                    Log.i(
-                        "TestScreen_5Ans: ",
-                        uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer.toString()
-                    )
-//                Log.i("TestScreen ChosenAns: ", uiState.answers[targetQuestionIndex].chosenAnswer.toString())
-                    Log.i(
-                        "TestScreen ChosenAns3: ",
-                        uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-                    )
-                    testViewModel.onAnswerSelected(uiState.answers)
 
-//                                    testViewModel.onAnswerSelected(uiState.answers)
-                    Log.i(
-                        "TestScreen ChosenAn33: ",
-                        uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-                    )
-
-                },
-                question = uiState.questionStateList[uiState.currentQuestionIndex].question,                        //Can put together and pass simple targetState(question) \/
-                chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
-
-                //Bottom Navigation.
-                onDonePressed = {
-                    Log.i(
-                        "TestScreen_99: ",
-                        "targetState_1 chosenAnswer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-                    )
-                    testViewModel.onEvent(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
-                },
-                onPreviousPressed = { testViewModel.onEvent(TestEvent.Previous) },
-                onNextPressed = { testViewModel.onEvent(TestEvent.Next) }
-
-            )
-
-            //Start bottom
-            Log.i(
-                "TestScreen_2: ",
-                uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-            )
-            Log.i(
-                "TestScreen_88: ",
-                "Chosen answer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
-            )
+//            QuestionScreen( //Question (+ answers)
+//                selectedAnswer = selectedAnswer1,
+//                answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
+//                onAnswer = {
+//                    testViewModel.onEvent(TestEvent.AnswerSelected(it))
+//                },
+//                question = uiState.questionStateList[uiState.currentQuestionIndex].question,
+//                chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
+//                //Bottom Navigation.
+//                onDonePressed = {
+//                    Log.i(
+//                        "TestScreen_99: ",
+//                        "targetState_1 chosenAnswer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
+//                    )
+//                    testViewModel.onEvent(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
+//                },
+//                onPreviousPressed = { testViewModel.onEvent(TestEvent.Previous) },
+//                onNextPressed = { testViewModel.onEvent(TestEvent.Next) }
+//
+//            )
 
         }//Column
+
+            TestScreen(
+        selectedAnswer1 = selectedAnswer1,
+        uiState = uiState,
+//        isLoading = isLoading,
+        onSelectAnswer = testViewModel::onEvent,
+        onNextPressed = testViewModel::onEvent,
+        onPreviousPressed = testViewModel::onEvent,
+        onDonePressed = testViewModel::onEvent,
+        testViewModel = testViewModel
+        )
+
     } else {
         Text(
             text = ("Is loading is true"),
@@ -160,86 +124,29 @@ fun TestRoute(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TestScreen(
+        selectedAnswer1: Int?,
         uiState: TestState,
-        isLoading: Boolean,
+//        isLoading: Boolean,
 //        answerState: Answer,
-        onSelectAnswer: (List<Answer>) -> Unit,
+        onSelectAnswer: (TestEvent) -> Unit,
         onNextPressed: (TestEvent) -> Unit,
         onDonePressed: (TestEvent) -> Unit,
         onPreviousPressed: (TestEvent) -> Unit,
-//        testViewModel: TestViewModel = hiltViewModel(),
+        testViewModel: TestViewModel,
 
     ) {
     var targetAnswerState = Answer(questionId = 1, chosenAnswer = null, timeSpent = 1, isFirstQuestion = false, isLastQuestion = true)
 //    var targetAnswerState by rememberSaveable(Answer( 1,  null,  1, false, true) ) {  mutableStateOf(Answer(questionId = 1, chosenAnswer = null, timeSpent = 1, isFirstQuestion = false, isLastQuestion = true))  }
 
-    var targetQuestionState =   QuestionState(question1, chosenAnswer = 1, questionStateId = 1)
-    var targetQuestionIndex by rememberSaveable { mutableStateOf( 1)   } //TODO 1 or 0
-//    val uiState : State
-//    val targetQuestionIndexFromViewModel = testViewModel.uiState.collectAsState().value.currentQuestionIndex
+//    if (!isLoading ) {
+//        Log.i("TestScreen_: ", "isLoading done, \n uiState (questionStateID: " + uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString())
+////        Log.i("TestScreen_: ", "isLoading done, \n testViewModel (chosendAnswer: " + testViewModel.questionStateList[uiState.currentQuestionIndex].chosenAnswer.toString())
 
-//    CoroutineScope(Dispatchers.IO).launch {
-//    }
-//    val uiState by testViewModel.uiState.collectAsState()
-//    val isLoading by testViewModel.isLoading.collectAsState()
-
-
-    if (!isLoading ) {
-        Log.i("TestScreen_: ", "isLoading done, \n uiState (questionStateID: " + uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString())
-//        Log.i("TestScreen_: ", "isLoading done, \n testViewModel (chosendAnswer: " + testViewModel.questionStateList[uiState.currentQuestionIndex].chosenAnswer.toString())
-
-
-
-        targetQuestionIndex = uiState.currentQuestionIndex
-        targetAnswerState = uiState.answers[uiState.currentQuestionIndex]
-        targetQuestionState = uiState.questionStateList[uiState.currentQuestionIndex]
-
-        //TODO Nbr1
         Surface(modifier = Modifier.supportWideScreen()) {
             Scaffold(
 
                 topBar = {}, //TODO
                 content = {//InnerPadding ->  // was // someConfusingStuff ->
-
-                    Column() {
-                        QuestionScreen( //Question (+ answers)
-                            //targetState is not changed in this composition!!!
-                            answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
-                            onAnswer = {
-                                uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer = it
-                                uiState.answers[uiState.currentQuestionIndex].chosenAnswer = it  //TODO make sure designe change. 2. When view results. Show green/red and disabled buttons..
-                                targetAnswerState.chosenAnswer = it
-                                Log.i("TestScreen_1: ", targetAnswerState.chosenAnswer.toString())
-//                            uiState.questionStateList[targetQuestionState] //In show done place  use not null from answer.
-                                Log.i("TestScreen_questStaID: ", uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString())
-                                Log.i("TestScreen_5Ans: ", uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer.toString())
-                                Log.i("TestScreen ChosenAns: ", uiState.answers[targetQuestionIndex].chosenAnswer.toString())
-                                Log.i("TestScreen ChosenAns3: ", uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-                                onSelectAnswer(uiState.answers)
-
-//                                    testViewModel.onAnswerSelected(uiState.answers)
-                                Log.i("TestScreen ChosenAn33: ", uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-
-                            },
-                            question = uiState.questionStateList[uiState.currentQuestionIndex].question,                        //Can put together and pass simple targetState(question) \/
-                            chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
-
-                            //Bottom Navigation.
-                            onDonePressed = {
-                                Log.i("TestScreen_99: ", "targetState_1 chosenAnswer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-                                onDonePressed(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
-                            },
-                            onPreviousPressed = { onPreviousPressed(TestEvent.Previous) },
-                            onNextPressed = { onNextPressed(TestEvent.Next) }
-
-                        )
-
-                        //Start bottom
-                        Log.i("TestScreen_2: ", uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-                        Log.i("TestScreen_88: ", "Chosen answer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-
-                    }//Column
-
                     AnimatedContent(
                         targetState = uiState,
                         transitionSpec = {
@@ -270,72 +177,79 @@ fun TestScreen(
 
                     ) {targetState ->
 
+                        QuestionScreen( //Question (+ answers)
+//                            selectedAnswer = selectedAnswer1,
+                            answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
+                            onAnswer = {
 
+                                testViewModel.onEvent(TestEvent.AnswerSelected(it))
+                            },
+                            question = uiState.questionStateList[uiState.currentQuestionIndex].question,
+                            chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
+                            //Bottom Navigation.
+//                            onDonePressed = {
+//                                Log.i(
+//                                    "TestScreen_99: ",
+//                                    "targetState_1 chosenAnswer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString()
+//                                )
+//
+//                                testViewModel.onEvent(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
+//                            },
+//                            onPreviousPressed = { testViewModel.onEvent(TestEvent.Previous) },
+//                            onNextPressed = { testViewModel.onEvent(TestEvent.Next) }
+
+                        )
 
 
 
                     }//TargetState
                 },
-//                bottomBar = {
-//                    AnimatedContent(targetState = uiState) {
-//                        targetState1->
-//                        SurveyBottomBar(
-//
-//
-////                    questionState = targetQuestionState,
-//                            answerState = uiState.answers[uiState.currentQuestionIndex],
-//                            onPreviousPressed = {
-//                                onPreviousPressed(TestEvent.Previous)
-//                            },
-////                                testViewModel.onEvent(TestEvent.Previous) }, //Where I need to change
-//                            onNextPressed = {
-//                                onNextPressed(TestEvent.Next)
-////                                testViewModel.onEvent(TestEvent.Next)
-//                            }, //SKIP
-//                            onDonePressed = { //Submit
-//                                Log.i("TestScreen_99: ", "targetState_1 chosenAnswer: " + targetState1.answers[targetState1.currentQuestionIndex].chosenAnswer.toString())
-//
-//                                onDonePressed(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
-////                                    testViewModel.submitAnswer(uiState.answers[targetQuestionIndex].chosenAnswer!!)
-////                                testViewModel.onEvent(event = TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
-//
-////                        uiState.questionStateList[1].a(chosenAnswer = uiState.answers[1].chosenAnswer)
-//
-//
-//                                uiState.questionStateList[1].chosenAnswer = uiState.answers[1].chosenAnswer //TODO what is that, do I need it before viewModel, or inside viewModel?
-//                            }
-//                        )
-//
-//
-//                        //TODO bottomTab
-//
-//                    }
-//
-//                } //BottomBar
+                bottomBar = {
+                    AnimatedContent(targetState = uiState) {
+                        targetState1->
+                        SurveyBottomBar(
+
+                            answerState = uiState.answers[uiState.currentQuestionIndex],
+                            onPreviousPressed = {
+                                onPreviousPressed(TestEvent.Previous)
+                            },
+//                                testViewModel.onEvent(TestEvent.Previous) }, //Where I need to change
+                            onNextPressed = {
+                                onNextPressed(TestEvent.Next)
+//                                testViewModel.onEvent(TestEvent.Next)
+                            }, //SKIP
+                            onDonePressed = { //Submit
+                                Log.i("TestScreen_99: ", "targetState_1 chosenAnswer: " + targetState1.answers[targetState1.currentQuestionIndex].chosenAnswer.toString())
+
+                                onDonePressed(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
+//                                    testViewModel.submitAnswer(uiState.answers[targetQuestionIndex].chosenAnswer!!)
+//                                testViewModel.onEvent(event = TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
+
+//                        uiState.questionStateList[1].a(chosenAnswer = uiState.answers[1].chosenAnswer)
+
+
+                                uiState.questionStateList[1].chosenAnswer = uiState.answers[1].chosenAnswer //TODO what is that, do I need it before viewModel, or inside viewModel?
+                            }
+                        )
+
+
+                        //TODO bottomTab
+
+                    }
+
+                } //BottomBar
             )
 
         }
         //End of TestScreen
 
-    } else {
-        LoadingUi() //TODO make circle loading, or dismiss
-
-
-    }
+//    } else {
+//        LoadingUi() //TODO make circle loading, or dismiss
+//
+//
+//    }
 
 }
-
-@Composable
-private fun LoadingUi(){
-    var text2 = 1
-    Button(
-        onClick = {}
-    ) {
-        Text(text = text2.toString(),
-        )
-    }
-}
-
 
 @Composable
 private fun SurveyBottomBar(
@@ -459,13 +373,10 @@ fun QuestionScreen(
     question: Question,
     chosenAnswerState: Boolean,
 
-    onPreviousPressed: () -> Unit,
-    onNextPressed: () -> Unit,
-    onDonePressed: () -> Unit
-
 //    onPreviousPressed: () -> Unit,
-//    onDonePressed: () -> Unit,
-//    onNextPressed: () -> Unit
+//    onNextPressed: () -> Unit,
+//    onDonePressed: () -> Unit
+
 ){
     Column() {
         // QuestionList
@@ -493,101 +404,101 @@ fun QuestionScreen(
 
          //START OF BOTTOM NAVIGATION
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = 7.dp,
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 20.dp)
-            ) {
-                if (answer.isFirstQuestion) {
-                    OutlinedButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        onClick = onPreviousPressed
-                    ) {
-                        Text(text = stringResource(id = R.string.previous))
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                } else {
-                    Button(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        onClick = onPreviousPressed
-                    ) {
-                        Text(text = stringResource(id = R.string.previous),
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
-                if (answer.chosenAnswer == null) {
-                    OutlinedButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        onClick = { /* Disabled, -> TODO prompt? choose an answer */
-                            Log.i("TestScreen", "ChosenAnswer is null, choose an answer. Answer State questionId: " + answer.questionId.toString() + "\n Answer state chosen answer:9 " + answer.chosenAnswer )},
-                    ) {
-                        Text(text = stringResource(id = R.string.choose))
-//                    if (questionState.isLastQuestionInTest) {
-//                    } else {
+//        Surface(
+//            modifier = Modifier.fillMaxWidth(),
+//            elevation = 7.dp,
+//        ) {
+//
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp, vertical = 20.dp)
+//            ) {
+//                if (answer.isFirstQuestion) {
+//                    OutlinedButton(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .height(48.dp),
+//                        onClick = onPreviousPressed
+//                    ) {
+//                        Text(text = stringResource(id = R.string.previous))
+//                    }
+//                    Spacer(modifier = Modifier.width(16.dp))
+//                } else {
+//                    Button(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .height(48.dp),
+//                        onClick = onPreviousPressed
+//                    ) {
+//                        Text(text = stringResource(id = R.string.previous),
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(16.dp))
+//                }
+//                if (selectedAnswer == null) {
+//                    OutlinedButton(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .height(48.dp),
+//                        onClick = { /* Disabled, -> TODO prompt? choose an answer */
+//                            Log.i("TestScreen", "ChosenAnswer is null, choose an answer. Answer State questionId: " + answer.questionId.toString() + "\n Answer state chosen answer:9 " + answer.chosenAnswer )},
+//                    ) {
+//                        Text(text = stringResource(id = R.string.choose))
+////                    if (questionState.isLastQuestionInTest) {
+////                    } else {
+////                        Text(text = stringResource(id = R.string.done))
+////                    }
+//                    }
+//                    Spacer(modifier = Modifier.width(16.dp))
+//                } else {
+//                    Log.i("TestScreen", "ChosenAnswer is NOT NULL !!!!!  " +
+//                            "Answer State questionId: " + answer.questionId.toString() +
+//                            "\n Answer state chosen answer:9 " + answer.chosenAnswer )
+//
+//                    Button(
+//                        modifier = Modifier
+//                            .weight(2f)
+//                            .height(48.dp),
+//                        onClick = onDonePressed,
+////                    enabled = questionState.enableNext
+//                    ) {
 //                        Text(text = stringResource(id = R.string.done))
 //                    }
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                } else {
-                    Log.i("TestScreen", "ChosenAnswer is NOT NULL !!!!!  " +
-                            "Answer State questionId: " + answer.questionId.toString() +
-                            "\n Answer state chosen answer:9 " + answer.chosenAnswer )
-
-                    Button(
-                        modifier = Modifier
-                            .weight(2f)
-                            .height(48.dp),
-                        onClick = onDonePressed,
-//                    enabled = questionState.enableNext
-                    ) {
-                        Text(text = stringResource(id = R.string.done))
-                    }
-                }
-                if ( !answer.isLastQuestion ) {
-                    OutlinedButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        onClick = onNextPressed,
-//                    enabled = questionState.enableNext
-                    ) {
-                        if (answer.chosenAnswer != null) {
-                            Text(text = stringResource(id = R.string.next))
-                        } else {
-                            Text(text = stringResource(id = R.string.skip))
-                        }
-                    }
-                } else {
-                    Button(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        onClick = { /* Disabled, -> no more question */ }, //TODO Or to jump to unanswered. /ViewModel - if(checkIfAllAnswered(uiState.value.questionStateList))
-//                    enabled = false //When last question., button disabled
-                        enabled = true
-                    ) {
-                        Text(text = "TODO text")
-//                    if (questionState.chosenAnswer != null) {
-//                        Text(text = stringResource(id = R.string.next))
-//                    } else {
-//                        Text(text = stringResource(id = R.string.skip))
+//                }
+//                if ( !answer.isLastQuestion ) {
+//                    OutlinedButton(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .height(48.dp),
+//                        onClick = onNextPressed,
+////                    enabled = questionState.enableNext
+//                    ) {
+//                        if (answer.chosenAnswer != null) {
+//                            Text(text = stringResource(id = R.string.next))
+//                        } else {
+//                            Text(text = stringResource(id = R.string.skip))
+//                        }
 //                    }
-                    }
-                }
-            }
-        }
+//                } else {
+//                    Button(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .height(48.dp),
+//                        onClick = { /* Disabled, -> no more question */ }, //TODO Or to jump to unanswered. /ViewModel - if(checkIfAllAnswered(uiState.value.questionStateList))
+////                    enabled = false //When last question., button disabled
+//                        enabled = true
+//                    ) {
+//                        Text(text = "TODO text")
+////                    if (questionState.chosenAnswer != null) {
+////                        Text(text = stringResource(id = R.string.next))
+////                    } else {
+////                        Text(text = stringResource(id = R.string.skip))
+////                    }
+//                    }
+//                }
+//            }
+//        } //Bottom navigation
 
 
     }//Lazy Column

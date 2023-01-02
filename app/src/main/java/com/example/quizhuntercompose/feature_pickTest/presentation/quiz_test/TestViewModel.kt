@@ -1,12 +1,11 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test
 
-//import androidx.compose.foundation.layout.fillMaxWidth
 import android.util.Log
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
 import com.example.quizhuntercompose.feature_pickTest.db.repository.QuestionRepositoryImpl
-//import androidx.lifecycle.ViewModel
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
@@ -17,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,24 +28,26 @@ class TestViewModel @Inject constructor(
 //    savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
 //    private val quizUseCaseObj: @JvmSuppressWildcards String = "Start Test"
 ): ViewModel() {
+
+    private val _uiState = mutableStateOf<TestState>( TestState() )        //
+    val uiState: State<TestState> = _uiState
+
+    private val _currentlySelectAnswer = mutableStateOf<Int?>(null)
+    val currentlySelectAnswer: State<Int?> = _currentlySelectAnswer
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _uiState = MutableStateFlow(TestState())        //
-    val uiState: StateFlow<TestState> = _uiState.asStateFlow()
-//    get() = _uiState //.asStateFlow() //read-only public
-//        get() = _uiState
+//    private val _uiState = MutableStateFlow(TestState())
+//    val uiState: StateFlow<TestState> = _uiState.asStateFlow()
 
-    fun getState1(): StateFlow<TestState> = _uiState
 
-    private lateinit var surveyInitialState: TestState
     private var start: Long = 0
     private var currentQuestionIndex = _uiState.value.currentQuestionIndex
 
-
-    var questionStateList: List<QuestionState>
-    var answerStateList: List<Answer>
-    var questionCount: Int
+    private var questionStateList: List<QuestionState>
+    private var answerStateList: List<Answer>
+    private var questionCount: Int
 
     init {
         _isLoading.value = true
@@ -81,7 +81,8 @@ class TestViewModel @Inject constructor(
                     questionStateList,// stucked here
                     answerStateList,
                     answerTime = false,
-                    showPreview = false
+                    showPreview = false,
+                    currentQuestionIndex = 0
                 )
 
                 _isLoading.value = false
@@ -95,19 +96,26 @@ class TestViewModel @Inject constructor(
 
     }
 
-    fun onAnswerSelected(answer1: List<Answer>){
+    fun onAnswerSelected(selectedAnswer: Int){
+//        JatpackComposeState instead of flow.
         _isLoading.value = true
+
+
         Log.i("TestViewModel ChosAns: ", "_uiState BEFORE UPDATE " + _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer.toString())
 
         Log.i("TestViewModel ChosAns: ", "uiState answer" + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
-        Log.i("TestViewModel ChosAns: ", "answer1:___ " + answer1[uiState.value.currentQuestionIndex].chosenAnswer.toString())
+//        Log.i("TestViewModel ChosAns: ", "answer1:___ " + answer1[uiState.value.currentQuestionIndex].chosenAnswer.toString())
 //        viewModelScope.launch {
 //        viewModelScope.launch {
 
-            _uiState.update { currentState ->
-                currentState.copy(answers = answer1)
-//                (uiState.value.copy(answers = answer1)  )
-            }
+//        answerStateList = uiState.value.answers[1].copy(chosenAnswer = selectedAnswer)
+
+//            _uiState.update {
+//                it.copy(answers = answerStateList)
+////                currentState.answers[currentState.currentQuestionIndex].copy(chosenAnswer = selectedAnswer)
+////                currentState.answers[_uiState.value.currentQuestionIndex].copy(chosenAnswer = selectedAnswer)
+////                (uiState.value.copy(answers = answer1)  )
+//            }
 //            _uiState.update { it.copy(
 //                answers = answer1
 //            )}
@@ -125,42 +133,17 @@ class TestViewModel @Inject constructor(
     fun submitAnswer(answer: Int){
         val endTime =  (System.currentTimeMillis() - start ).toInt()
         updateAnswer(answer, _uiState.value.currentQuestionIndex, endTime)
-//                _uiState.value.currentQuestionIndex.inc()                 //already done
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(answers = uiState.value.answers)
-            }
-        }
-
-
-        //Submit answer (int)
-//                if (answer == event.value) {
-//                }
         if (checkIfAllAnswered(uiState.value.questionStateList)) {
             updateQuestion()
         }
     }
 
     fun onEvent(event: TestEvent, ) {
+        //TODO check start time if answer already has been viewer using Skip. Don`t update time if answer has been answered(like using Previous)
         val latestState = _uiState.value  //Not needed
         val _currentQuestionIndex = _uiState.value.currentQuestionIndex
-        val _listQuestionState =latestState.questionStateList
-        val _listAnswerState = latestState.answers
-        val lastQuestionState = _listQuestionState[_currentQuestionIndex]
 
         val endTime =  (System.currentTimeMillis() - start ).toInt()
-
-
-//        if (latestState != null ) {
-//            val question =
-//                latestState.questions.first { questionState ->
-////                    questionState.questionID == questionId
-//                }
-//                answer = question.correctAnswer
-//            if (answer != null && answer.result is SurveyActionResult.Date) {
-//                return answer.result.dateMillis
-//            }
-//        } else return
 
         when (event) {
 
@@ -168,7 +151,7 @@ class TestViewModel @Inject constructor(
 
 
                 updateTime(_currentQuestionIndex, endTime) //call update
-                _uiState.value.currentQuestionIndex.dec()
+                _uiState.value = _uiState.value.copy(currentQuestionIndex = _currentQuestionIndex.dec() )
 //                _uiState.update {
 //                    it
 //                }
@@ -178,16 +161,13 @@ class TestViewModel @Inject constructor(
             is TestEvent.Submit -> {
 
                 updateAnswer(event.value, _currentQuestionIndex, endTime)
-//                _uiState.value.currentQuestionIndex.inc()                 //already done
-                _uiState.update {
-                    it.copy(answers = uiState.value.answers)
-                }
-                //Submit answer (int)
-//                if (answer == event.value) {
-//                }
-                event.value //
+
                 if (checkIfAllAnswered(uiState.value.questionStateList)) {
-                    updateQuestion()
+                    updateQuestion() //update In Database // TODO check how to save answers when app is onDestroy(), at least answers what are answered in the test.
+                } else {
+                    _uiState.value = uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex +1 ) //Show next question! //TODO, check if next question in answered or any other in the row, otherwise open/check previous question from list.
+                    _currentlySelectAnswer.value = null // From MC STAR - how can make event.id
+                    println("PRINTING 2 ${uiState.value.answers} AND ${uiState.value.currentQuestionIndex}")
                 }
             }
 
@@ -197,6 +177,16 @@ class TestViewModel @Inject constructor(
                 _uiState.value.currentQuestionIndex.inc()
                 updateTime(_currentQuestionIndex, endTime)
                 Log.i("TestViewModel ChosAns: ", "Next has executed:___ " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
+            }
+
+            is TestEvent.AnswerSelected -> {
+                _isLoading.value = true
+
+                _currentlySelectAnswer.value = event.value // From MC STAR - how can make event.id
+                _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer = event.value
+
+                _isLoading.value = false
+
             }
         }
     }
@@ -253,6 +243,7 @@ class TestViewModel @Inject constructor(
             )
             _questionStatePosition++
         }
+        _uiState.value.copy(showPreview = true)
 
     }
 
@@ -271,112 +262,39 @@ class TestViewModel @Inject constructor(
 
 
     private fun updateTime(currentQuestIndex: Int,timeOnQuestion: Int){
-        _uiState.update {
-            val answerList: List<Answer> = _uiState.value.answers
-            answerList[currentQuestIndex].apply {
-                timeSpent = timeSpent?.plus(timeOnQuestion)
-            }
-            it.copy(answers = answerList)
+        val answerList: List<Answer> = _uiState.value.answers
+        answerList[currentQuestIndex].apply {
+            timeSpent = timeSpent?.plus(timeOnQuestion)
         }
+        _uiState.value.copy(answers = answerList)
+
+//        _uiState.update {
+//            val answerList: List<Answer> = _uiState.value.answers
+//            answerList[currentQuestIndex].apply {
+//                timeSpent = timeSpent?.plus(timeOnQuestion)
+//            }
+//            it.copy(answers = answerList)
+//        }
     }
 
     private fun updateAnswer(answerNbr: Int, currentQuestIndex: Int, timeOnQuestion: Int){
-//          TODO Use this when saving and finalizing test.
-//        if (answerNbr == _uiState.value.questions[_uiState.value.currentQuestionIndex].correctAnswer){
-//        }
-        _uiState.value.currentQuestionIndex.inc()
-        _uiState.update {
-//            _uiState.value.answers[1].chosenAnswer.
-            val answerList: List<Answer> = _uiState.value.answers
-            val questionList: List<QuestionState> = _uiState.value.questionStateList
-            answerList.elementAt(currentQuestIndex).apply {
-                chosenAnswer = answerNbr
-                timeSpent = timeSpent?.plus(timeOnQuestion)
-            }
-            questionList.map {
+
+        val answerList: List<Answer> = _uiState.value.answers
+        val questionList: List<QuestionState> = _uiState.value.questionStateList
+        answerList.elementAt(currentQuestIndex).apply {
+            chosenAnswer = answerNbr
+            timeSpent = timeSpent?.plus(timeOnQuestion)
+        }
+        questionList.map {
                 questionState1 ->
-                if (questionState1.questionStateId == questionList[currentQuestIndex].questionStateId )
-                    questionState1.copy(chosenAnswer = uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer)
-                else questionState1
-            }
-
-            val chosenAnsId = _uiState.value.answers[currentQuestIndex].questionId
-            val questionState = _uiState.value.questionStateList[currentQuestIndex].copy(
-                chosenAnswer = answerNbr
-            )
-            val question: QuestionState = _uiState.value.questionStateList[currentQuestIndex]
-            question.copy(
-                chosenAnswer = answerNbr
-            )
-
-            it.copy(
-
-                answers = answerList,
-                questionStateList = questionList,
-            )
+            if (questionState1.questionStateId == questionList[currentQuestIndex].questionStateId )
+                questionState1.copy(chosenAnswer = uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer)
+            else questionState1
         }
-    }
 
-    private fun showCurrentQuestion(){
-        _uiState.update {
-            it.copy()
-        }
-        val number = _uiState.value.currentQuestionIndex
-//        if (number == _uiState.value.questions.)
+        _uiState.value = _uiState.value.copy(
+            answers = answerList,
+            questionStateList = questionList,
+        )
     }
-
 }
-
-/*
-@Composable
-private fun SurveyBottomBar(
-    questionState: TestState,
-    onPreviousPressed: () -> Unit,
-    onNextPressed: () -> Unit,
-    onDonePressed: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = 7.dp
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 20.dp)
-        ) {
-            if (questionState.) {
-                OutlinedButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    onClick = onPreviousPressed
-                ) {
-                    Text(text = "Previous") //stringResource(id = R.string.previous)
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-            }
-            if (questionState.showDone) {
-                Button(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    onClick = onDonePressed,
-                    enabled = questionState.enableNext
-                ) {
-                    Text(text = stringResource(id = R.string.done))
-                }
-            } else {
-                Button(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    onClick = onNextPressed,
-                    enabled = questionState.enableNext
-                ) {
-                    Text(text = stringResource(id = R.string.next))
-                }
-            }
-        }
-    }
-}   */

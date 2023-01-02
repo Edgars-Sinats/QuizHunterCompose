@@ -4,4 +4,5 @@ sealed class TestEvent {
     object Previous: TestEvent()
     data class Submit(val value: Int): TestEvent()
     object Next: TestEvent()
+    data class AnswerSelected(val value: Int): TestEvent()
 }

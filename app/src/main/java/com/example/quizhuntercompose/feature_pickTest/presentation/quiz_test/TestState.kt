@@ -13,12 +13,13 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 //     val showPrevious: Boolean = false, //Back/Atpakal
 //     val showDone: Boolean = false, // Submit/Iesniegt/Apstiprinat
 //     val showNext:Boolean = true,// Skip/Izlaist
-    val showPreview: Boolean = false
+    val showPreview: Boolean = false,
+     val currentQuestionIndex : Int = 0
+
 //On back press -> back -> done. Save results if not answered fully // If null for time stamp - don`t change/save question in answer table.
 
 
 ){
-    var currentQuestionIndex by mutableStateOf(0)
 }
 
 data class QuestionState(
