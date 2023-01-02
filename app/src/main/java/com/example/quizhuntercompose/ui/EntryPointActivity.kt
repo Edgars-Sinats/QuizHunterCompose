@@ -111,16 +111,6 @@ private fun QuizHunterApp1() {
 
 @Composable
 private fun QuizTestDestination(navController: NavHostController) {
-/*      viewModel = hilt // OR uiState
-//    var viewModel: TestViewModel = hiltViewModel()
-//    val uiState by viewModel.uiState.collectAsState()
-//if (uiState.answers.isNotEmpty() ){
-//    Log.i("EntryPoint: ", "uiState answer: " + uiState.answers[uiState.currentQuestionIndex].chosenAnswer.toString())
-//    Log.i("EntryPoint: ", "viewModel" + viewModel.uiState.collectAsState().value.answers[1].chosenAnswer)
-//
-//}
-//    viewModel.on
-*/
     TestRoute(
 //        Modifier,
         navigateToFinish = { navigateTo -> navController.findDestination(NavigationKeys.Route.QUIZ_TEST_DETAILS) } //TODO need to fix navigation on start choose quiz.
