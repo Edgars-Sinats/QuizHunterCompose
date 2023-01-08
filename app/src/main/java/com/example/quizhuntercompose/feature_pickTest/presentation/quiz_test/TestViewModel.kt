@@ -4,22 +4,16 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
-import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
-import com.example.quizhuntercompose.feature_pickTest.db.repository.QuestionRepositoryImpl
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
-import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
-import com.example.quizhuntercompose.feature_pickTest.domain.use_case.GetStartTest
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val VIEW_MODEL = "TestViewModel: "
 
 @HiltViewModel
 class TestViewModel @Inject constructor(
@@ -29,7 +23,8 @@ class TestViewModel @Inject constructor(
 //    private val quizUseCaseObj: @JvmSuppressWildcards String = "Start Test"
 ): ViewModel() {
 
-    private val _uiState = mutableStateOf<TestState>( TestState() )        //
+
+    private val _uiState = mutableStateOf<TestState>( TestState(showPreview = false) )      //
     val uiState: State<TestState> = _uiState
 
     private val _currentlySelectAnswer = mutableStateOf<Int?>(null)
@@ -56,6 +51,7 @@ class TestViewModel @Inject constructor(
         answerStateList = emptyList()
         questionCount = 0
 
+
         viewModelScope.launch(Dispatchers.IO) {
 
 //            if (quizUseCaseObj == "Start test"){
@@ -64,6 +60,8 @@ class TestViewModel @Inject constructor(
             val listOfQuestion: List<Question?>?= questionRepository.getXQuestions(3)
 
             if (listOfQuestion != null) {
+                Log.i("TestViewMod_List: ", "listOfQuestionConsist is not null!")
+
                 listOfQuestion.forEach { question ->
 
                     if (question != null) {
@@ -77,21 +75,23 @@ class TestViewModel @Inject constructor(
                     }
                 }
 
-                _uiState.value = TestState(
-                    questionStateList,// stucked here
+                delay(100)
+                _uiState.value = TestState( // TODO stacked here. For first  run of the app.  TestScreen() is executed.
+                    questionStateList,//  stacked here for debugging.
                     answerStateList,
                     answerTime = false,
                     showPreview = false,
                     currentQuestionIndex = 0
                 )
 
-                _isLoading.value = false
+
 //                _uiState.update { it }
 
             } else {
-                Log.i("TestViewMod: ", "Warning _uiState of question list failed!!!")
+                Log.i(VIEW_MODEL, "Warning _uiState of question list failed!!!")
             }
-            Log.i("TestViewMod: ", "Created _uiState of 3 question") //TODO 3/question...
+            Log.i(VIEW_MODEL, "Created _uiState of 3 question") //TODO 3/question...
+            _isLoading.value = false
         }
 
     }
@@ -130,62 +130,103 @@ class TestViewModel @Inject constructor(
          start = System.currentTimeMillis() //TODO move in open new Question On display
     }
 
-    fun submitAnswer(answer: Int){
-        val endTime =  (System.currentTimeMillis() - start ).toInt()
-        updateAnswer(answer, _uiState.value.currentQuestionIndex, endTime)
-        if (checkIfAllAnswered(uiState.value.questionStateList)) {
-            updateQuestion()
-        }
-    }
+//    fun submitAnswer(answer: Int){
+//        val endTime =  (System.currentTimeMillis() - start ).toInt()
+//        updateAnswer(answer, _uiState.value.currentQuestionIndex, endTime)
+//        if (checkIfAllAnswered(uiState.value.questionStateList)) {
+//            updateQuestion()
+//        }
+//    }
 
     fun onEvent(event: TestEvent, ) {
         //TODO check start time if answer already has been viewer using Skip. Don`t update time if answer has been answered(like using Previous)
         val latestState = _uiState.value  //Not needed
-        val _currentQuestionIndex = _uiState.value.currentQuestionIndex
+        val currentQuestIndex = _uiState.value.currentQuestionIndex
 
         val endTime =  (System.currentTimeMillis() - start ).toInt()
+        println("PRINTING End time: ${endTime} \n AND start: ${start}")
+        println("Current time in Millis: ${System.currentTimeMillis()}")
 
         when (event) {
 
+
             is TestEvent.Previous -> {
 
-
-                updateTime(_currentQuestionIndex, endTime) //call update
-                _uiState.value = _uiState.value.copy(currentQuestionIndex = _currentQuestionIndex.dec() )
-//                _uiState.update {
-//                    it
-//                }
+                updateTime(currentQuestIndex, endTime) //call update
+                _uiState.value = _uiState.value.copy(currentQuestionIndex = currentQuestIndex.dec() )
+                _currentlySelectAnswer.value = _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer
             }
 
             //TODO If onAppDestroy, should save currentQuestionState.
             is TestEvent.Submit -> {
 
-                updateAnswer(event.value, _currentQuestionIndex, endTime)
+                Log.i("TestViewModel Submit", "showPreview:" + _uiState.value.showPreview)
 
-                if (checkIfAllAnswered(uiState.value.questionStateList)) {
+                updateAnswer(event.value, currentQuestIndex, endTime)
+
+                // Check if all answers is updated, except current. currentQuestIndex is not jet updated, and checkIfAllAnswered() read it as non answered before updateAnswer() is finished.
+                if (checkIfAllAnswered(uiState.value.questionStateList, currentQuestIndex))  {
+                    Log.i("TestViewModel Submit", "all answer checked")
                     updateQuestion() //update In Database // TODO check how to save answers when app is onDestroy(), at least answers what are answered in the test.
+                    _uiState.value = _uiState.value.copy(showPreview = true)  //Redundant of updateQuestion
+
                 } else {
-                    _uiState.value = uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex +1 ) //Show next question! //TODO, check if next question in answered or any other in the row, otherwise open/check previous question from list.
-                    _currentlySelectAnswer.value = null // From MC STAR - how can make event.id
-                    println("PRINTING 2 ${uiState.value.answers} AND ${uiState.value.currentQuestionIndex}")
+                    Log.i("TestViewModel Submit", "all answer checked, taking next question")
+
+                    if (_uiState.value.answers[currentQuestIndex].isLastQuestion) {
+
+                        val unansweredQuestId = _uiState.value.questionStateList.first { questionState -> questionState.chosenAnswer == null }.questionStateId
+                        _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId)
+                        _currentlySelectAnswer.value = unansweredQuestId
+                        Log.i("TestViewModel Non ans", "Non answered question: $unansweredQuestId" )
+
+                    } else {
+                        _uiState.value = uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex +1 ) //Show next question!
+                        _currentlySelectAnswer.value = _uiState.value.questionStateList[_uiState.value.currentQuestionIndex].chosenAnswer
+                        println("PRINTING 2 next question ans: ${uiState.value.answers} \n AND index of question: ${uiState.value.currentQuestionIndex}")
+                    }
+
                 }
             }
 
             is TestEvent.Next -> {
-                Log.i("TestViewModel ChosAns: ", "answer1:___ " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
 
-                _uiState.value.currentQuestionIndex.inc()
-                updateTime(_currentQuestionIndex, endTime)
-                Log.i("TestViewModel ChosAns: ", "Next has executed:___ " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
+                Log.i("TestViewModel Next: ", "answer1: " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
+                updateTime(currentQuestIndex, endTime)
+                _uiState.value = _uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex.inc() )
+                _currentlySelectAnswer.value = _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer
+
+                Log.i("TestViewModel Next: ", "Next has executed:___\n Chosen (A) answer: " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString() + "\n currentQIndex: " + _uiState.value.currentQuestionIndex)
             }
 
             is TestEvent.AnswerSelected -> {
+                println("PRINTING AnswerSelected: ${uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.value.currentQuestionIndex}")
+                println("PRINTING Event value:: ${event.value}")
                 _isLoading.value = true
 
                 _currentlySelectAnswer.value = event.value // From MC STAR - how can make event.id
-                _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer = event.value
 
+//                _uiState.update { newState ->
+//                    uiState.value.answers[uiState.value.currentQuestionIndex].copy(chosenAnswer = event.value)
+//                    newState.copy(answers = uiState.value.answers)
+////                currentState.answers[_uiState.value.currentQuestionIndex].copy(chosenAnswer = selectedAnswer)
+////                (uiState.value.copy(answers = answer1)  )
+//            }
+
+//                _uiState.update { it.copy(
+//                answers =
+//                )}
+//                _uiState.apply {
+                    _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer = event.value
+//                _uiState.apply { _uiState}
+//                _uiState.value.apply {  }
+//                _currentlySelectAnswer.value = event.value
+//                _uiState.value.answers[_uiState.value.currentQuestionIndex].copy(chosenAnswer = event.value)
+
+//                _uiState
                 _isLoading.value = false
+                println("PRINTING AnswerSelected: ${uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.value.currentQuestionIndex}")
+                println("PRINTING ViewModel: ${_uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer} \n AND _isLoading: ${_isLoading.value}")
 
             }
         }
@@ -212,39 +253,43 @@ class TestViewModel @Inject constructor(
                 lastAnsTime = 1
             }
 
-            questionRepository.updateQuestion(
-                _uiState.value.questionStateList[_questionStatePosition].question.copy(
-                    lastAnswerTime = lastAnsTime,
-                    correctAnswers =
-                    if (_currentQuestionState.chosenAnswer == _currentQuestion.correctAnswer) {
-                        it.question.correctAnswers+1
-                    } else {
-                        it.question.correctAnswers
-                    },
+            try {
+                questionRepository.updateQuestion(
+                    _uiState.value.questionStateList[_questionStatePosition].question.copy(
+                        lastAnswerTime = lastAnsTime,
+                        correctAnswers =
+                        if (_currentQuestionState.chosenAnswer == _currentQuestion.correctAnswer-1) {
+                            it.question.correctAnswers+1
+                        } else {
+                            it.question.correctAnswers
+                        },
 
-                    nonAnswers =
-                    if (lastAnsTime == 1 && (_currentQuestionState.chosenAnswer != _currentQuestion.correctAnswer)) {
-                        it.question.nonAnswers+1
-                    }else  {
-                        it.question.nonAnswers
-                    },
-                    wrongAnswers =
-                    if (_currentQuestionState.chosenAnswer != _currentQuestion.correctAnswer) {
-                        it.question.wrongAnswers+1
-                    }else {
-                        it.question.wrongAnswers
-                    },
-                    averageAnswerTime = ( _totalAnsTime + lastAnsTime ) / ( answerTimes+1 ), //TODO I might want to change last answer time value more valuable once more questions has been answered.
-                                                                    // So the average ans time change with bigger impact when multiple answers already answered.
-                                                                    // For example when will choose in testChoose screen, based on answer time.,
-                                                                    // if some question has been answered multiple times with long ans time, and last time it was answered quickly,
-                                                                    // it show person know the answer finally well, and should be skipped or ranked lower for choosing question.
-                )
-            )
-            _questionStatePosition++
+                        nonAnswers =
+                        if (lastAnsTime == 1 && (_currentQuestionState.chosenAnswer != _currentQuestion.correctAnswer-1)) {
+                            it.question.nonAnswers+1
+                        }else  {
+                            it.question.nonAnswers
+                        },
+                        wrongAnswers =
+                        if (_currentQuestionState.chosenAnswer != _currentQuestion.correctAnswer-1) {
+                            it.question.wrongAnswers+1
+                        }else {
+                            it.question.wrongAnswers
+                        },
+                        averageAnswerTime = ( _totalAnsTime + lastAnsTime ) / ( answerTimes+1 ), //TODO I might want to change last answer time value more valuable once more questions has been answered.
+                        // So the average ans time change with bigger impact when multiple answers already answered.
+                        // For example when will choose in testChoose screen, based on answer time.,
+                        // if some question has been answered multiple times with long ans time, and last time it was answered quickly,
+                        // it show person know the answer finally well, and should be skipped or ranked lower for choosing question.
+                    )//_uiState
+                )//updateQuestion
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            }
+            Log.i("TestViewModel Update: ", "NextQuestion to be loaded in db. Current loaded: " + _questionStatePosition )
+            _questionStatePosition = _questionStatePosition+1
         }
-        _uiState.value.copy(showPreview = true)
-
+        _uiState.value.copy(showPreview = true) //SHOW PREVIEW
     }
 
     /**
@@ -255,9 +300,9 @@ class TestViewModel @Inject constructor(
      *
      */
 
-    private fun checkIfAllAnswered(questionList: List<QuestionState>) : Boolean{
+    private fun checkIfAllAnswered(questionList: List<QuestionState>, lastQuestionId: Int) : Boolean{
         //if NotNull(QuestSFound) -> no ans(for one).       // null -> non answered
-        return questionList.find { questionState -> questionState.chosenAnswer == null } == null
+        return questionList.find { questionState -> questionState.chosenAnswer == null && questionState.questionStateId != lastQuestionId } == null
     }
 
 

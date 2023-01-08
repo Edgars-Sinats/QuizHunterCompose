@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
-import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
+//import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
 import com.example.quizhuntercompose.ui.EntryPointActivity
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import dagger.hilt.android.HiltAndroidApp

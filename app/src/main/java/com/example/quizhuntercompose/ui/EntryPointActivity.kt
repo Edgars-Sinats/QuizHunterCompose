@@ -23,8 +23,8 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestRoute
-import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
-import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestViewModel
+//import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
+//import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestViewModel
 import com.example.quizhuntercompose.ui.NavigationKeys.Arg.TEST_CATEGORY_ID
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import dagger.hilt.android.AndroidEntryPoint

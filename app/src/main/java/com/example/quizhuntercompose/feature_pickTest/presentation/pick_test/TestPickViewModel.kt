@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
+import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TestPickViewModel @Inject constructor(
 //    private val quizUseCase: QuizUseCase,
+    private val questionRepository: @JvmSuppressWildcards QuestionRepository,
+
     savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
 //    onNavigationRequested: @JvmSuppressWildcards (itemId: String) -> Unit
 ) : ViewModel() {

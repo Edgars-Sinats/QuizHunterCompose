@@ -10,6 +10,7 @@ import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.key.Key.Companion.Window
 import androidx.compose.ui.platform.LocalView
@@ -23,7 +24,9 @@ private val DarkColorPalette = darkColors(
     primary = Purple200,
     primaryVariant = Purple700,
     secondary = Teal200,
-    secondaryVariant = PurpleGrey80
+    secondaryVariant = PurpleGrey80,
+
+    onPrimary = Color.Green
 )
 
 private val LightColorPalette = lightColors(
