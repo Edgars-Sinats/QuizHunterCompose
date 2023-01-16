@@ -6,4 +6,5 @@ sealed class TestEvent {
     object Next: TestEvent()
     data class AnswerSelected(val value: Int): TestEvent()
     object ShowResults: TestEvent()
+    object ShowDialog: TestEvent()
 }

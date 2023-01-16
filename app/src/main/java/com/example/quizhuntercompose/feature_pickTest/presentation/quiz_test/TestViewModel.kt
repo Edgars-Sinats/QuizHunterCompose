@@ -56,7 +56,8 @@ class TestViewModel @Inject constructor(
 
 //            if (quizUseCaseObj == "Start test"){
 //                true //TODO need to check which useCase provided.
-//            }
+          val listOfQuestion1: List<Question?>?= quizUseCase.getXQuestion.invoke(3)
+//            questionRepository.getXQuestions(3)  }
             val listOfQuestion: List<Question?>?= questionRepository.getXQuestions(3)
 
             if (listOfQuestion != null) {
@@ -81,7 +82,9 @@ class TestViewModel @Inject constructor(
                     answerStateList,
                     answerTime = false,
                     showPreview = false,
-                    currentQuestionIndex = 0
+                    currentQuestionIndex = 0,
+                    wrongAnswerCount = 0,
+                    correctAnswerCount = 0
                 )
 
 
@@ -149,6 +152,12 @@ class TestViewModel @Inject constructor(
 
         when (event) {
 
+            is TestEvent.ShowDialog -> {
+                println("PRINTING   ")
+
+//                _uiState.value.apply {  }
+                _uiState.value.run { _uiState.value= _uiState.value.copy(showDialog = !_uiState.value.showDialog) }
+            }
 
             is TestEvent.Previous -> {
 
@@ -168,7 +177,6 @@ class TestViewModel @Inject constructor(
                 if (checkIfAllAnswered(uiState.value.questionStateList, currentQuestIndex))  {
                     Log.i("TestViewModel Submit", "all answer checked")
                     updateQuestion() //update In Database // TODO check how to save answers when app is onDestroy(), at least answers what are answered in the test.
-                    _uiState.value = _uiState.value.copy(showPreview = true)  //Redundant of updateQuestion
 
                 } else {
                     Log.i("TestViewModel Submit", "all answer checked, taking next question")
@@ -239,6 +247,8 @@ class TestViewModel @Inject constructor(
      */
     private fun updateQuestion() = CoroutineScope(Dispatchers.IO).launch{
         var _questionStatePosition: Int
+        var _correctAnswer: Int = 0
+
         _uiState.value.questionStateList.forEach {
             _questionStatePosition= 0
             val _currentQuestionState = _uiState.value.questionStateList[_questionStatePosition]
@@ -247,6 +257,11 @@ class TestViewModel @Inject constructor(
             var lastAnsTime = _uiState.value.answers[_questionStatePosition].timeSpent  //AnswerTime // lastAnswerTime
             val _averageAnsTime = _currentQuestion.averageAnswerTime
             val _totalAnsTime = _averageAnsTime * answerTimes
+
+            if (_currentQuestionState.chosenAnswer == _currentQuestion.correctAnswer-1){
+                _correctAnswer += 1
+            }
+
 
             if (lastAnsTime == null) {
                 Log.i("ViewMod. LastAns time:", "Last ans time can`t be null, if question is not answered 0 or 0.1 sec need to add to db.: " + _uiState.value.answers[_questionStatePosition].timeSpent.toString() )
@@ -289,7 +304,13 @@ class TestViewModel @Inject constructor(
             Log.i("TestViewModel Update: ", "NextQuestion to be loaded in db. Current loaded: " + _questionStatePosition )
             _questionStatePosition = _questionStatePosition+1
         }
-        _uiState.value.copy(showPreview = true) //SHOW PREVIEW
+//        _uiState.value.copy(showPreview = true) //SHOW PREVIEW, WRONG - Not applying value!
+        _uiState.value = _uiState.value.copy(
+            correctAnswerCount = _correctAnswer,
+            wrongAnswerCount = _uiState.value.questionStateList.size - _correctAnswer,
+            showPreview = true,
+            showDialog = true
+        )
     }
 
     /**

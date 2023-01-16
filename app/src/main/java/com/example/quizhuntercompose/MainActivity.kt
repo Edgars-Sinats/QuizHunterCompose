@@ -103,10 +103,10 @@ fun createRecord(database: QuizDatabase): Boolean{
 //    }
 //}
 
-@Composable
-fun StartAct() {
-    TestPickScreen()
-}
+//@Composable
+//fun StartAct() {
+////    TestPickScreen()
+//}
 
 @Composable
 fun Greeting(name: String) {
@@ -125,6 +125,6 @@ fun DefaultPreview() {
 @Composable
 fun DefaultScreenPreview() {
     QuizHunterComposeTheme {
-        TestPickScreen()
+//        TestPickScreen()
     }
 }

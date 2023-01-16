@@ -15,4 +15,14 @@
     <string name="done">Done</string>
     <string name="choose">Choose</string>
 
+
+<!--    Image description.-->
+    <string name="ic_baseline_sentiment_very_satisfied_24">Perfect</string>
+    <string name="ic_baseline_sentiment_satisfied_alt_24">Satisfied</string>
+    <string name="ic_baseline_sentiment_dissatisfied">Dissatisfied</string>
+
+    <string name="ic_baseline_error_24">Error</string>
+
+
+
 </resources>

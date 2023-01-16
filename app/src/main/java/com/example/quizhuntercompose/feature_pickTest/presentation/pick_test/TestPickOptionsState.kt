@@ -7,17 +7,21 @@ import androidx.compose.runtime.setValue
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 // State flows after input event-> recomposition happens.
 data class TestPickOptionsState(
-    val questions: List<Question> = emptyList(),
-    val topics: List<String> = emptyList()
+
+    var questions: List<Question> = emptyList(), //All Questions? TODO How is the performance with all of them?
+    val topics: List<String> = emptyList(),
+    val isOptionsSectionVisible: Boolean,
+    var count: Int = 0, //Nbr of questions
+
+    var unanswered: Boolean = false,
+    val wrongAnswersState: Boolean = false,
+    val answerTime: Boolean = false, //Longest answered time
+
+    val pickedAllTopic: Boolean = true, //Checkbox from Answers {title}
+    val pickedQuestions: List<Question>, //Taken Question form SQL OR in code level selects.
+    val pickedTopic: List<String> //List of chosen topics.
 ) {
-    var isOptionsSectionVisible: Boolean by mutableStateOf(false)
-    var count by mutableStateOf<Int>(5) //Nbr of questions
-    var unanswered by mutableStateOf(false)
-    var wrongAnswersState by mutableStateOf(false)
-    var answerTime by mutableStateOf (false) //Longest answered time
-    var pickedAllTopic by mutableStateOf (true) //Checkbox from Answers {title}
-    var pickedQuestions = listOf<Question>() //Taken Question form SQL OR in code level selects.
-    var pickedTopic = mutableStateListOf<String>() //List of chosen topics.
+
 }
 
 

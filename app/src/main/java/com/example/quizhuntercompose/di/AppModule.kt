@@ -1,6 +1,7 @@
 package com.example.quizhuntercompose.di
 
 import android.app.Application
+import android.util.Log
 import androidx.room.Room
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.StartingQuestions
@@ -21,6 +22,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideQuizDatabase(app: Application): QuizDatabase {
+        Log.i("App Module","Database starting to build from callback as it should." )
 
         return Room.databaseBuilder(
             app,
@@ -28,8 +30,6 @@ object AppModule {
             QuizDatabase.DATABASE_NAME
         ).addCallback(StartingQuestions( app.applicationContext))
 //            .createFromAsset("huntQuestion.db")
-
-
 //            .addCallback(object : RoomDatabase.Callback() {
 //                override fun onCreate(db: SupportSQLiteDatabase) {
 //                    super.onCreate(db)
@@ -37,7 +37,6 @@ object AppModule {
 //                            }
 //            })
             .build()
-//            .query("" + Room.MASTER_TABLE_NAME, null)
 
     }
 
@@ -46,10 +45,6 @@ object AppModule {
     fun provideQuestionRepository(db: QuizDatabase): QuestionRepository {
         return QuestionRepositoryImpl(db.questionDao)
     }
-
-//    @Provides
-//    @Singleton
-//    fun
 
     @Provides
     @Singleton

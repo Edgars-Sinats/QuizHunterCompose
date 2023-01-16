@@ -4,22 +4,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
-import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestRoute
@@ -28,9 +20,6 @@ import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.Tes
 import com.example.quizhuntercompose.ui.NavigationKeys.Arg.TEST_CATEGORY_ID
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /*
 val question1 = Question(
@@ -58,29 +47,6 @@ class EntryPointActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val db = QuizDatabase.getDatabase(this)
-
-/*   Does db has problem? - NO All good.
-        val db = Room.databaseBuilder(
-//            applicationContext,
-//            QuizDatabase::class.java,
-//            "hunt1Question"
-//        ).createFromAsset("huntQuestion.db")
-//            .build()
-//        db = QuizDatabase.getDatabase(this)
-
-//        var text: String = "nullito"
-//        CoroutineScope(Dispatchers.Default).launch {
-////            db.openHelper.writableDatabase // why can`t copy?
-////            db.query("SELECT * FROM " + Room.MASTER_TABLE_NAME, null)
-////            db.questionDao.updateQuestion(
-////                    question1
-////                )
-//            if (db.questionDao.getQuestionX(4)!= null){
-//                text = db.questionDao.getQuestionX(4).question
-//            }
-//        }
-*/
 
         setContent {
             QuizHunterComposeTheme {
@@ -94,9 +60,10 @@ class EntryPointActivity : ComponentActivity() {
 @Composable
 private fun QuizHunterApp1() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = NavigationKeys.Route.TEST_CATEGORIES_LIST) {
-        composable(route = NavigationKeys.Route.TEST_CATEGORIES_LIST) {
-            QuizTestDestination(navController) // Quiz screen - answering a test.
+    NavHost(navController, startDestination = NavigationKeys.Route.TEST_CHOOSE_SCREEN) {
+        composable(route = NavigationKeys.Route.TEST_CHOOSE_SCREEN) {
+            TestPickDestination(navController) // Choosing A Test
+//            QuizTestDestination(navController) // Quiz screen - answering a test.
         }
         composable(
             route = NavigationKeys.Route.QUIZ_TEST_DETAILS,
@@ -104,7 +71,9 @@ private fun QuizHunterApp1() {
                 type = NavType.StringType
             })
         ) {
-            TestPickDestination() // Choosing A Test
+            QuizTestDestination(navController) // Quiz screen - answering a test.
+//            TestPickDestination() // Choosing A Test
+
         }
     }
 }
@@ -113,7 +82,8 @@ private fun QuizHunterApp1() {
 private fun QuizTestDestination(navController: NavHostController) {
     TestRoute(
 //        Modifier,
-        navigateToFinish = { navigateTo -> navController.findDestination(NavigationKeys.Route.QUIZ_TEST_DETAILS) } //TODO need to fix navigation on start choose quiz.
+        navigateToFinish = { navController.navigate(NavigationKeys.Route.TEST_CHOOSE_SCREEN)
+            } //TODO need to fix navigation on start choose quiz.
     )
 
 //        effectFlow = viewModel.effects.receiveAsFlow(),
@@ -122,10 +92,21 @@ private fun QuizTestDestination(navController: NavHostController) {
 }
 
 
+/*
+    Chosing a test
+ */
 @Composable
-private fun TestPickDestination() {
+private fun TestPickDestination(navController: NavHostController) {
     val viewModel: TestPickViewModel = hiltViewModel()
-    TestPickScreen()
+
+    TestPickScreen(
+        viewModel,
+        onNavigationRequested = {
+            Log.i("EntryPointAct: ", "should go for QuizTestDet")
+
+            navController.navigate(NavigationKeys.Route.QUIZ_TEST_DETAILS)
+        }
+    )
 }
 
 object NavigationKeys {
@@ -135,8 +116,8 @@ object NavigationKeys {
     }
 
     object Route {
-        const val TEST_CATEGORIES_LIST = "food_categories_list"
-        const val QUIZ_TEST_DETAILS = "$TEST_CATEGORIES_LIST/{$TEST_CATEGORY_ID}"
+        const val TEST_CHOOSE_SCREEN = "test_categories_list"
+        const val QUIZ_TEST_DETAILS = "$TEST_CHOOSE_SCREEN/{$TEST_CATEGORY_ID}"
     }
 
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
+import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,17 +19,18 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
         CoroutineScope(Dispatchers.IO).launch {
-            fillWithStartingNotes(context)
+             (context)
         }
     }
 
-    private suspend fun fillWithStartingNotes(context: Context) {
+    private suspend fun fillWithStartingDatabase(context: Context) {
         val dao = QuizDatabase.getDatabase(context).questionDao
 
         // using try catch to load the necessary data
         try {
             //creating variable that holds the loaded data
             val questionN = loadJSONArray(context)
+            val topicN = loadJSONArrayTopics(context)
             if (questionN != null){
                 //looping through the variable as specified fields are loaded with data
                 for (i in 0 until questionN.length()){
@@ -75,6 +77,24 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
                     Log.d("StartingQuestion: ","questionUpdated: $questionId")
                 }
             }
+
+            // Update topics
+            if (topicN != null) {
+                val listTopics: List<Topic> = emptyList()
+                val topicMutableList = listTopics.toMutableList()
+                for (i in 0 until topicN.length()){
+                    val item = topicN.getJSONObject(i)
+                    val topicId = item.getInt("topic_id")
+                    val topicName = item.getString("topic")
+                    val topicEntity = Topic(
+                        topic = topicName,
+                        topicId = topicId
+                    )
+                    topicMutableList.add(topicEntity)
+                }
+                dao.updateTopics(topicMutableList)
+            }
+
         }
         //error when exception occurs
         catch (e: JSONException) {
@@ -92,5 +112,13 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
         BufferedReader(inputStream.reader()).use {
             return JSONArray(it.readText())
         }
+    }
+
+    private fun loadJSONArrayTopics(context: Context): JSONArray?{
+        val inputStream = context.assets.open("topic_table.json")
+        BufferedReader(inputStream.reader()).use {
+            return JSONArray(it.readText())
+        }
+
     }
 }

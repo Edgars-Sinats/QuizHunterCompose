@@ -14,7 +14,10 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 //     val showDone: Boolean = false, // Submit/Iesniegt/Apstiprinat
 //     val showNext:Boolean = true,// Skip/Izlaist
     var showPreview: Boolean,
-     val currentQuestionIndex : Int = 0
+     val currentQuestionIndex : Int = 0,
+     val correctAnswerCount: Int = 0,
+     val wrongAnswerCount: Int = 0,
+     val showDialog: Boolean = false
 //On back press -> back -> done. Save results if not answered fully // If null for time stamp - don`t change/save question in answer table.
 ){
 }

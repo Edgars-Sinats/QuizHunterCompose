@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -11,72 +12,130 @@ import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCas
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class TestPickViewModel @Inject constructor(
 //    private val quizUseCase: QuizUseCase,
     private val questionRepository: @JvmSuppressWildcards QuestionRepository,
+    private val quizUseCase: @JvmSuppressWildcards QuizUseCase,
 
-    savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
+//    private val savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
 //    onNavigationRequested: @JvmSuppressWildcards (itemId: String) -> Unit
 ) : ViewModel() {
 
     //For now, replace with barPicker
-    private val _quizPickOptions = TestPickOptionsState(  ) //It is 5 already inside
+    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedQuestions = emptyList(), pickedTopic = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
+    val uiState: State<TestPickOptionsState> = _quizPickOptions
 
-    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
-    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
+//    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
+//    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
 
-    var optionsFieldOpen: Boolean = _quizPickOptions.isOptionsSectionVisible
-    var questionCount: Int = _quizPickOptions.count
-    var questionTopics: List<String> = _quizPickOptions.topics
-    var unanswered: Boolean = _quizPickOptions.unanswered
-    var wrongAnswers: Boolean = _quizPickOptions.wrongAnswersState
-    var answerTime: Boolean = _quizPickOptions.answerTime
+//    var optionsFieldOpen: Boolean = _quizPickOptions.value.isOptionsSectionVisible
+
+    var questionCount: Int = _quizPickOptions.value.count
+    var questionStateList: List<Question> = _quizPickOptions.value.questions
+
+//    var questionTopics: List<String> = _quizPickOptions.topics
+//    var unanswered: Boolean = _quizPickOptions.unanswered
+//    var wrongAnswers: Boolean = _quizPickOptions.wrongAnswersState
+//    var answerTime: Boolean = _quizPickOptions.answerTime
+
+
 
     init {
+        questionStateList = emptyList()
+        questionCount = 10 //TODO remove as will change on event, or stay as for first loading.
 
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
+            delay(900) //TODO How to wait till loaded before creating State
+
+            if (listOfQuestion != null){ //Might not need as try catch.
+
+                    try {
+                        questionStateList = listOfQuestion as List<Question>
+
+                        _quizPickOptions.value = TestPickOptionsState(
+                            topics = emptyList(), //TODO see all topics
+                            count = questionCount,
+                            pickedTopic = emptyList(),
+                            pickedQuestions = questionStateList,
+                            isOptionsSectionVisible = false
+                        )
+
+                    } catch (cancellationException: CancellationException) {
+                        throw cancellationException
+                    }
+
+
+            }
+
+        }
     }
 
     fun onEvent(event: TestPickEvent) {
         when (event) {
             is TestPickEvent.StartQuiz -> {
+                //TODO navigate/call TestScreen
                 CoroutineScope(Dispatchers.IO).launch {
-//                    val questions: List<Question> = quizUseCase.startTest.invoke() //Start with 3 questions
 
+//                    quizUseCase.
+                    event.value
+//                    val questions: List<Question> = quizUseCase.startTest.invoke() //Start with 3 questions
                 }
+            }
+            is TestPickEvent.ChooseCount -> {
+                _quizPickOptions.value = _quizPickOptions.value.copy(count = event.value)
+//                questionCount = _quizPickOptions.value.count
             }
             is TestPickEvent.OpenOptions -> {
-                optionsFieldOpen = if (optionsFieldOpen == _quizPickOptions.isOptionsSectionVisible ){
-                    !_quizPickOptions.isOptionsSectionVisible
-                } else {
-                    _quizPickOptions.isOptionsSectionVisible
-                }
-                }
-            is TestPickEvent.ChooseCount -> {
-                questionCount = _quizPickOptions.count
+//                optionsFieldOpen = !optionsFieldOpen
+                _quizPickOptions.value = _quizPickOptions.value.copy(isOptionsSectionVisible = !_quizPickOptions.value.isOptionsSectionVisible)
             }
             is TestPickEvent.PickUnanswered -> {
+                _quizPickOptions.value = _quizPickOptions.value.copy(unanswered = !_quizPickOptions.value.unanswered)
 
             }
             is TestPickEvent.PickWrongAnswered -> {
-                _quizPickOptionsState.value = quizPickOptions.value.copy(
-//                    wrongAnswers = !wrongAnswers
+                _quizPickOptions.value = _quizPickOptions.value.copy(
+                    wrongAnswersState = !_quizPickOptions.value.wrongAnswersState
 //                    wrongAnswers =
                 )
-
             }
             is TestPickEvent.PickTime -> {
                 //TODO create calculation for average and last time answers - give higher rating for last run 0.65?.
-
-            }
-            is TestPickEvent.ChooseTopics -> {
-                _quizPickOptionsState.value = quizPickOptions.value.copy(
-                    topics = questionTopics
+                _quizPickOptions.value = _quizPickOptions.value.copy(
+                    answerTime = !_quizPickOptions.value.answerTime
                 )
             }
+
+            is TestPickEvent.CheckTopicQuestionCount -> {
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        questionCount = questionRepository.getQuestionCount(event.topic)
+                    } catch (cancellationException: CancellationException) {
+                        throw cancellationException
+                    }
+                    Log.i("TestPickViewModel", "try success, new question count: $questionCount"  )
+                    _quizPickOptions.value = _quizPickOptions.value.copy(count = questionCount)
+
+                }
+
+//                questionCount = count
+//                return count
+
+            }
+//            is TestPickEvent.ChooseTopics -> {
+//                _quizPickOptionsState.value = quizPickOptions.value.copy(
+//                    topics = questionTopics
+//                )
+//            }
 
         }
     }

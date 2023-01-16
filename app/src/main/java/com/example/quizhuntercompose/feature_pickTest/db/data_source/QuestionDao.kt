@@ -10,6 +10,12 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 @Dao
 interface QuestionDao {
 
+    @Query("SELECT COUNT (*) " +
+            "FROM question_table " +
+            "WHERE topic_id = :id " +
+            "AND (correct_answers > wrong_answers) ")
+    fun getQuestionCount(id: Int): Int
+
     @Query("SELECT * FROM question_table") //ORDER BY question_id ASC
     fun getAllQuestions(): List<Question>
 

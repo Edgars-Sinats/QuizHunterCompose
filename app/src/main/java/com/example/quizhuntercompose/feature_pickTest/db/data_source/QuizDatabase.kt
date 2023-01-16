@@ -52,6 +52,8 @@ abstract class QuizDatabase: RoomDatabase() {
 //                        .createOpenHelper().writableDatabase.execSQL(DROP)
 
                     INSTANCE = instance
+                    Log.i("QuizDatabase","INSTANCE WAS NULL QUIZDATABASE? Now created." )
+
                 }
                 return instance
 

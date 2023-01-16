@@ -1,61 +1,80 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.room.RawQuery
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickOptionsState
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
+import kotlin.math.roundToInt
 
 
 @Composable
 fun TestPickContent(
     //    navController: NavController,
-    viewModel: TestPickViewModel = hiltViewModel(),
-    testPickOptionsState: TestPickOptionsState
+//    quizUseCase: @JvmSuppressWildcards QuizUseCase,
+
+    viewModel: TestPickViewModel,
+    testPickOptionsState: TestPickOptionsState,
+    onNavigationTest: () -> Unit,
 ) {
 //    viewModel = hiltViewModel()
-    TextButton(
-        onClick = {
+    Column() {
+        TextButton(
+            onClick = {
+                onNavigationTest.invoke()
+//                viewModel.onEvent(TestPickEvent.StartQuiz("Start"))
 
-        viewModel.onEvent(TestPickEvent.StartQuiz)
-                  },
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Text(text = "Start Quiz")
+                      },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clickable { },
+
+        ) {
+            Text(text = "Start Quiz", color = MaterialTheme.colors.secondary)
+        }
+
+        StepsSliderSample( steps = testPickOptionsState.pickedQuestions.size/2, maxSteps = testPickOptionsState.pickedQuestions.size, onSlide = viewModel::onEvent )
+        //{
+//            testPickOptionsState.count = it
+        //}
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // We keep track if the message is expanded or not in this
+        // variable
+        var isExpanded by remember { mutableStateOf(false) }
+
+        // We toggle the isExpanded variable when we click on this Column
+        QuizOptionsField2(
+
+
+            modifier = Modifier.clickable { isExpanded = !isExpanded },
+            pickTestViewModel = viewModel,
+//            uiState = viewModel.uiState.value,
+            onTopicsSelected = viewModel::onEvent,
+            expanded = false,
+            onTestOptionState = viewModel::onEvent,
+            onPickWrongAnswered = viewModel::onEvent,
+            onPickUnanswered = viewModel::onEvent,
+            onPickTime = viewModel::onEvent,
+            onCheckTopicQuestions = viewModel::onEvent
+            )
+
     }
 
-    StepsSliderSample(steps = 2, maxSteps = testPickOptionsState.questions.count()){
-        testPickOptionsState.count = it
-    }
-    Spacer(modifier = Modifier.height(16.dp))
-
-    // We keep track if the message is expanded or not in this
-    // variable
-    var isExpanded by remember { mutableStateOf(false) }
-
-    // We toggle the isExpanded variable when we click on this Column
-    QuizOptionsField2(
-
-        modifier = Modifier.clickable { isExpanded = !isExpanded },
-        testOptionState = testPickOptionsState,
-
-        onTopicsSelected = { /*TODO*/ },
-        expanded = false,
-
-    )
 
 }
 
 @Composable
-fun StepsSliderSample(steps: Int, maxSteps: Int, onSlide: (count: Int) -> Unit = {} )   {
+fun StepsSliderSample(steps: Int,
+                      maxSteps: Int,
+                      onSlide: (TestPickEvent) -> Unit )   {
     var sliderPosition by remember { mutableStateOf(0f) }
     Text(text = sliderPosition.toInt().toString(), style = MaterialTheme.typography.h3)
     Slider(
@@ -63,7 +82,7 @@ fun StepsSliderSample(steps: Int, maxSteps: Int, onSlide: (count: Int) -> Unit =
         onValueChange = { sliderPosition = it },
         valueRange = 0f..maxSteps.toFloat(),
         onValueChangeFinished = {
-            onSlide.invoke(sliderPosition.toInt())
+            onSlide(TestPickEvent.ChooseCount(value = sliderPosition.roundToInt() ))
         },
         steps = steps,
         colors = SliderDefaults.colors(
@@ -72,4 +91,19 @@ fun StepsSliderSample(steps: Int, maxSteps: Int, onSlide: (count: Int) -> Unit =
         )
     )
     //return intCount?
+}
+
+@Composable
+@Preview
+fun TestPickContentPreview(){
+    TestPickContent(
+        viewModel = hiltViewModel(),
+        TestPickOptionsState(count = 5, pickedTopic = listOf("1","2"), pickedQuestions = emptyList(), pickedAllTopic = true,  questions = emptyList(), topics = emptyList(), isOptionsSectionVisible = true, answerTime = false, unanswered = false, wrongAnswersState = false ),
+        onNavigationTest = {} )
+}
+
+@Composable
+@Preview
+fun StepsSliderSamplePreview(){
+    StepsSliderSample(5,9, onSlide = {} )
 }

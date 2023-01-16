@@ -1,10 +1,12 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test
 
 import android.util.Log
+
 import androidx.compose.animation.*
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,10 +14,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -32,13 +34,27 @@ private const val CONTENT_ANIMATION_DURATION = 500
 fun TestRoute(
     testViewModel: TestViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    navigateToFinish: (String) -> Unit
+    navigateToFinish: () -> Unit
 ){
 
     val selectedAnswer1 by testViewModel.currentlySelectAnswer
     val uiState = testViewModel.uiState.value // Did not work with .collectAsStateWithLifecycle() or //better then just .collectAsState()  https://medium.com/androiddevelopers/consuming-flows-safely-in-jetpack-compose-cde014d0d5a3
 //    val uiState = uiState1.value
     val isLoading by testViewModel.isLoading.collectAsState()
+
+    if (uiState.showDialog){
+        Log.i("TestScreen_Dialog: ", "dialogLoading")
+
+        popUpDialog(
+            onClosePreviewScreen = navigateToFinish,
+            onDismiss =  testViewModel::onEvent,
+//            onConfirm = { /*TODO*/ },
+            dialogState = uiState.showDialog,
+            correctCount = uiState.correctAnswerCount,
+            wrongCount = uiState.wrongAnswerCount
+        )
+
+    }
 
     if (!isLoading ) {
 //        Log.i("TestScreen_:", "isLoading DONE, \n uiState (questionStateID: " + uiState.questionStateList[uiState.currentQuestionIndex].questionStateId.toString()
@@ -52,7 +68,8 @@ fun TestRoute(
         onNextPressed = testViewModel::onEvent,
         onPreviousPressed = testViewModel::onEvent,
         onDonePressed = testViewModel::onEvent,
-        testViewModel = testViewModel
+        testViewModel = testViewModel,
+
         )
 
     } else {
@@ -66,6 +83,8 @@ fun TestRoute(
                 .padding(vertical = 24.dp, horizontal = 16.dp)
         )
     }
+
+
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -78,9 +97,12 @@ fun TestScreen(
         onDonePressed: (TestEvent) -> Unit,
         onPreviousPressed: (TestEvent) -> Unit,
         testViewModel: TestViewModel,
+//        onBackPressedCallback: OnBackPressedCallback
 
     ) {
+
         Surface(modifier = Modifier.supportWideScreen()) {
+
             Scaffold(
 
                 topBar = {}, //TODO
@@ -440,19 +462,26 @@ private fun QuestionAnswers(
                     MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
                 }
 
+                //Correct
                 answerBackgroundColor = if (optionSelected && answer.chosenAnswer == question.correctAnswer-1) {
                     MaterialTheme.colors.onPrimary.copy(alpha = 0.12f) //Green
-
-                } else if( optionSelected) {
-                    MaterialTheme.colors.error.copy(alpha = 0.12f)
+                }
+                //Wrong
+                else if ( optionSelected) {
+                    MaterialTheme.colors.error.copy(alpha = 0.12f)//Red
                 }
                 //Show correct answer
-                else if (answer.chosenAnswer != question.correctAnswer ){
+                else if (index == question.correctAnswer-1 ){
                     MaterialTheme.colors.onPrimary.copy(alpha = 0.12f) //Green
                 }
-                else {
+                else if (index != question.correctAnswer-1) {
                     MaterialTheme.colors.background
                 }
+
+                else {
+                    MaterialTheme.colors.onError.copy(alpha = 0.1f) //Green
+                }
+
 
 
             }else {
@@ -509,6 +538,91 @@ private fun QuestionAnswers(
             }
         }
     }
+}
+
+@Composable
+fun popUpDialog(
+    onClosePreviewScreen: () -> Unit,
+    onDismiss: (TestEvent) -> Unit,
+//    onConfirm: () -> Unit,
+//    textDescription: String,
+//    textTitle: String,
+    dialogState: Boolean,
+    onDialogStateChange: ((Boolean) -> Unit)? = null,
+    onDismissRequest: (() -> Unit)? = null,
+    correctCount: Int,
+    wrongCount: Int,
+){
+    Log.i("TestScreen_Dialog: ", "dialog has loaded. \n Correct: $correctCount and wrong: $wrongCount.")
+
+    val dialogShape = RoundedCornerShape(16.dp)
+    val dialogImageBitmap: Unit
+    val titleText:String
+
+    if ( wrongCount == 0 && correctCount > 0 ){
+        titleText= "Excellent"
+        dialogImageBitmap = Image(
+            painter = painterResource(id = R.drawable.ic_baseline_sentiment_very_satisfied_24),
+            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
+        )
+    }
+    else if ( correctCount > wrongCount ){
+            titleText= "Good"
+        dialogImageBitmap = Image(
+            painter = painterResource(id = R.drawable.ic_baseline_sentiment_satisfied_alt_24),
+            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
+        )
+    }
+    else if ( wrongCount == 0 && correctCount == 0 ) {
+        titleText= "Something went wrong" //ic_baseline_error_24
+        dialogImageBitmap = Image(
+            painter = painterResource(id = R.drawable.ic_baseline_error_24),
+            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
+        )
+    }
+    else {
+            titleText= "Not met expectation"
+        dialogImageBitmap = Image(
+            painter = painterResource(id = R.drawable.ic_baseline_sentiment_dissatisfied_24),
+            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_dissatisfied )
+        )
+    }
+
+
+    if (dialogState){
+
+        AlertDialog(
+            onDismissRequest = {
+                //TODO close all test. Open choose test. (Option of Show previous test => Don`t close last testViewModel, clean it up on open?) ?
+                onDialogStateChange?.invoke(false)
+                onDismissRequest?.invoke()
+            },
+            buttons = {
+                      Column(modifier = Modifier.fillMaxWidth(),
+                      horizontalAlignment = Alignment.CenterHorizontally) {
+
+                          TextButton( onClick = { onDismiss(TestEvent.ShowDialog) } ) {
+                              Text(text = "View Answers")
+                          }
+                          TextButton(onClick = {onClosePreviewScreen } ) {
+                              Text(text = "Dismiss_2")
+                              onDialogStateChange?.invoke(false)
+                              onDismissRequest?.invoke()
+//                              onDismiss(TestEvent.ShowDialog)
+                          }
+                      }
+            },
+            title = {
+                    dialogImageBitmap.apply {  }
+                    Text(text = titleText)
+            },
+            text = { Text( text = "You have answered $correctCount questions correctly of total " + (wrongCount+correctCount) + "." ) },
+            shape = dialogShape,
+
+
+        )//AlertDialog
+    } //dialogState
+
 }
 
 //@Preview

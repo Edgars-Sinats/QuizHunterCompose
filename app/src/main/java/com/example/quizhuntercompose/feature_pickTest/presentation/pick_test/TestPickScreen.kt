@@ -2,25 +2,28 @@ package com.example.quizhuntercompose.feature_pickTest.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickOptionsState
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 
 @Composable
-fun TestPickScreen(){
-    val _quizPickOption = TestPickOptionsState()
+fun TestPickScreen(
+    pickViewModel: TestPickViewModel = hiltViewModel(),
+    onNavigationRequested: () -> Unit
+){
+    val testPickOptionsState = pickViewModel.uiState.value
+
 
     Column(
         modifier= Modifier
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState()) // => Please try to remove the source of infinite constraints in the hierarchy above the scrolling container.
             .padding(vertical = 16.dp)
     ) {
         //TODO Top app bar
-        TestPickContent(testPickOptionsState = _quizPickOption)
+        TestPickContent(testPickOptionsState = testPickOptionsState, viewModel = pickViewModel, onNavigationTest = onNavigationRequested)
 
     }
 }
@@ -28,5 +31,5 @@ fun TestPickScreen(){
 @Composable
 @Preview
 fun TestPickScreenPreview(){
-    TestPickScreen()
+//    TestPickScreen()
 }
