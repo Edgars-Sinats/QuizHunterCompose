@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
+import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class TestPickViewModel @Inject constructor(
     //For now, replace with barPicker
     private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedQuestions = emptyList(), pickedTopic = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
     val uiState: State<TestPickOptionsState> = _quizPickOptions
+    var topicNames: List<Topic> = emptyList()
 
 //    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
 //    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
@@ -47,12 +49,16 @@ class TestPickViewModel @Inject constructor(
 
 
     init {
+
         questionStateList = emptyList()
-        questionCount = 10 //TODO remove as will change on event, or stay as for first loading.
+        questionCount = 10
 
         viewModelScope.launch(Dispatchers.IO) {
 
             val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
+            val exampleTopicNames = questionRepository.getAllTopics()
+            topicNames = exampleTopicNames
+
             delay(900) //TODO How to wait till loaded before creating State
 
             if (listOfQuestion != null){ //Might not need as try catch.
@@ -71,8 +77,6 @@ class TestPickViewModel @Inject constructor(
                     } catch (cancellationException: CancellationException) {
                         throw cancellationException
                     }
-
-
             }
 
         }
@@ -90,6 +94,7 @@ class TestPickViewModel @Inject constructor(
                 }
             }
             is TestPickEvent.ChooseCount -> {
+                Log.i("TestPickViewModel", "ChooseCount")
                 _quizPickOptions.value = _quizPickOptions.value.copy(count = event.value)
 //                questionCount = _quizPickOptions.value.count
             }

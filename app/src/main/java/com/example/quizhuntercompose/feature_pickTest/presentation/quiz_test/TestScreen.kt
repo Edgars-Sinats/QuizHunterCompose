@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test
 
+import android.content.res.Configuration
 import android.util.Log
 
 import androidx.compose.animation.*
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.util.supportWideScreen
+import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import com.example.quizhuntercompose.ui.theme.slightlyDeemphasizedAlpha
 
 private const val CONTENT_ANIMATION_DURATION = 500
@@ -45,14 +47,18 @@ fun TestRoute(
     if (uiState.showDialog){
         Log.i("TestScreen_Dialog: ", "dialogLoading")
 
-        popUpDialog(
-            onClosePreviewScreen = navigateToFinish,
-            onDismiss =  testViewModel::onEvent,
+        QuizHunterComposeTheme {
+            popUpDialog(
+                onClosePreviewScreen = navigateToFinish,
+
+                onDismiss =  testViewModel::onEvent,
 //            onConfirm = { /*TODO*/ },
-            dialogState = uiState.showDialog,
-            correctCount = uiState.correctAnswerCount,
-            wrongCount = uiState.wrongAnswerCount
-        )
+                dialogState = uiState.showDialog,
+                correctCount = uiState.correctAnswerCount,
+                wrongCount = uiState.wrongAnswerCount
+            )
+        }
+
 
     }
 
@@ -352,7 +358,7 @@ fun QuestionScreen(
 //    onDonePressed: () -> Unit
 
 ){
-    Column() {
+    Column(modifier = Modifier.padding (all = 8.dp) ) {
         // QuestionList
         LazyColumn(){
             item {
@@ -453,8 +459,9 @@ private fun QuestionAnswers(
             val answerBorderColor: Color
             val answerBackgroundColor: Color
             if(showPreview) {
+
                 answerBorderColor = if (optionSelected && answer.chosenAnswer == question.correctAnswer-1) {
-                    MaterialTheme.colors.onPrimary.copy(alpha = 0.5f) //Green
+                    MaterialTheme.colors.secondaryVariant.copy(alpha = 1f) //Green
                 } else if (optionSelected){
                     MaterialTheme.colors.error.copy(alpha = 0.5f) //
                 }
@@ -464,22 +471,23 @@ private fun QuestionAnswers(
 
                 //Correct
                 answerBackgroundColor = if (optionSelected && answer.chosenAnswer == question.correctAnswer-1) {
-                    MaterialTheme.colors.onPrimary.copy(alpha = 0.12f) //Green
+                    MaterialTheme.colors.secondaryVariant.copy(alpha = 0.7f) //Green
                 }
                 //Wrong
                 else if ( optionSelected) {
                     MaterialTheme.colors.error.copy(alpha = 0.12f)//Red
                 }
+
                 //Show correct answer
                 else if (index == question.correctAnswer-1 ){
-                    MaterialTheme.colors.onPrimary.copy(alpha = 0.12f) //Green
+                    MaterialTheme.colors.secondaryVariant.copy(alpha = .5f) //Green
                 }
                 else if (index != question.correctAnswer-1) {
                     MaterialTheme.colors.background
                 }
 
                 else {
-                    MaterialTheme.colors.onError.copy(alpha = 0.1f) //Green
+                    MaterialTheme.colors.onError.copy(alpha = 0.1f) //Red?
                 }
 
 
@@ -502,7 +510,11 @@ private fun QuestionAnswers(
             Surface(
                 shape = MaterialTheme.shapes.small,
                 border = BorderStroke(
-                    width = 1.dp,
+                    if (optionSelected) {
+                        2.dp
+                    } else {
+                        1.dp
+                    },
                     color = answerBorderColor
                 ),
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -529,7 +541,12 @@ private fun QuestionAnswers(
                     )
                     RadioButton(
                         selected = optionSelected,
-                        onClick = onClickHandle,
+                        onClick = if(!showPreview){
+                                onClickHandle
+                        } else {
+                            {/* Disabled - show preview only */}
+                        },
+
                         colors = RadioButtonDefaults.colors(
                             selectedColor = MaterialTheme.colors.primary
                         )
@@ -598,25 +615,33 @@ fun popUpDialog(
                 onDismissRequest?.invoke()
             },
             buttons = {
-                      Column(modifier = Modifier.fillMaxWidth(),
-                      horizontalAlignment = Alignment.CenterHorizontally) {
+                      Row(
+                          modifier = Modifier.fillMaxWidth(),
 
-                          TextButton( onClick = { onDismiss(TestEvent.ShowDialog) } ) {
-                              Text(text = "View Answers")
-                          }
-                          TextButton(onClick = {onClosePreviewScreen } ) {
-                              Text(text = "Dismiss_2")
-                              onDialogStateChange?.invoke(false)
-                              onDismissRequest?.invoke()
+                        verticalAlignment =  Alignment.CenterVertically) {
+
+                          TextButton(onClick = {onClosePreviewScreen.invoke() } ) {
+                              Text(text = "Dismiss")
+//                              onDialogStateChange?.invoke(false)
+//                              onDismissRequest?.invoke()
 //                              onDismiss(TestEvent.ShowDialog)
                           }
+                          Spacer(Modifier.weight(0.2f))
+
+                          TextButton(
+                              onClick = { onDismiss(TestEvent.ShowDialog) } ) {
+                              Text(text = "Review Answers")
+                          }
+
                       }
             },
             title = {
-                    dialogImageBitmap.apply {  }
+                    dialogImageBitmap.run {  }
                     Text(text = titleText)
             },
-            text = { Text( text = "You have answered $correctCount questions correctly of total " + (wrongCount+correctCount) + "." ) },
+            text = {
+                Text( text = "You have answered $correctCount questions correctly of total " + (wrongCount+correctCount) + "." )
+                   },
             shape = dialogShape,
 
 
@@ -625,15 +650,78 @@ fun popUpDialog(
 
 }
 
-//@Preview
-//@Composable
-//fun TestScreenPreview(){
-////    TestScreen(
-////        uiState = TestState(),
-////
-////    )
-//
-//}
+val question1 = Question(
+    questionID= 1,
+    question= "Lets try out in view how much we can expend this  question Question. Lets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question Question",
+    answer1= "Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1.Question ans nbr. 1.",
+    answer2= "2. Weary long text with no hidden meaning but only for test purposes. ",
+    answer3 = "3",
+    answer4 = "Small next preview",
+    correctAnswer = 2,
+    topic = 1,
+    correctAnswers = 1, //make sure in initalizer it is = 0
+    wrongAnswers = 1,
+    nonAnswers = 0,
+    averageAnswerTime = 21,
+    lastAnswerTime = 2
+)
+val selectedAnsPreview: Int = 2
+
+val answer1 = Answer(questionId = 2, chosenAnswer = selectedAnsPreview, timeSpent = 201, isFirstQuestion = false, isLastQuestion = true)
+var selectedAnswerPreview: State<Int?>  = mutableStateOf(2)
+
+@Preview
+@Preview("DarkScreen Question Preview" , uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun QuestionScreenPreview(){
+    QuizHunterComposeTheme() {
+        QuestionScreen(
+            answer = answer1,
+            onAnswer = {},
+            question = question1,
+            chosenAnswerState = true,
+            selectedAnswer = selectedAnswerPreview,
+            showPreview = true
+        )
+    }
+
+}
+
+@Preview
+@Preview("DarkScreen AnswerPrev" , uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun QuestionAnswersPreview(){
+
+
+
+    QuizHunterComposeTheme {
+
+        QuestionAnswers(
+            question = question1,
+            answer = answer1,
+            onAnswerSelected = {answer1.chosenAnswer = it},
+            chosenAnswerState = true,
+            showPreview = true
+        )
+    }
+}
+
+@Preview("LightScreen")
+@Preview("DarkScreen" , uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun popUpDialogPreview(){
+
+    QuizHunterComposeTheme{
+        popUpDialog(
+            onClosePreviewScreen = { /*TODO*/ },
+            onDismiss = {},
+            dialogState = true,
+            correctCount = 3,
+            wrongCount = 5
+        )
+    }
+
+}
 
 @Preview
 @Composable

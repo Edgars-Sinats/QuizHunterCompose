@@ -16,6 +16,8 @@ import androidx.compose.ui.input.key.Key.Companion.Window
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.compose.material.lightColors
+
 
 const val stronglyDeemphasizedAlpha = 0.6f
 const val slightlyDeemphasizedAlpha = 0.87f
@@ -25,15 +27,26 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Purple700,
     secondary = Teal200,
     secondaryVariant = PurpleGrey80,
-
     onPrimary = Color.Green
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    secondaryVariant = PurpleGrey40
+    primary = ColorPrimaryColor,
+    primaryVariant = ColorPrimaryLightColor,
+    onPrimary = ColorPrimaryTextColor,
+
+    secondary = ColorSecondaryColor,
+    secondaryVariant = ColorSecondaryLightColor, //Green (correct answer)
+    onSecondary = ColorSecondaryTextColor,
+
+    error = ColorErrorLightColor,               //Red (wrong answer)
+    onError = ColorOnErrorLightColor,
+
+    surface = ColorSecondaryDarkColor,
+    onSurface = ColorOnSurfaceColor,
+    background = ColorPrimaryDarkColor,
+
+//    onBackground = ColorOnSurfaceColor,
 
     /* Other default colors to override
     background = Color.White,

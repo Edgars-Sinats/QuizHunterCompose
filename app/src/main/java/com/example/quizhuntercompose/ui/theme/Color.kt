@@ -16,3 +16,25 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val Green40 = Color(0xFF4BCF36)
+
+
+
+val ColorPrimaryColor = Color(0xFFFFFFFF)
+val ColorPrimaryLightColor = Color(0xFFffffff)
+val ColorPrimaryDarkColor = Color(0xFF6d6d6d)
+
+val ColorSecondaryColor = Color(0x9FF65a54)
+val ColorSecondaryLightColor = Color(0xFF76FF03)
+val ColorSecondaryDarkColor = Color(0xFF662f2b)
+
+val ColorPrimaryTextColor = Color(0xFF000000)
+val ColorSecondaryTextColor = Color(0xFFFFFFFF)
+
+val ColorErrorLightColor = Color(0xFFC51C1F)
+val ColorOnErrorLightColor = Color(0xFF8C0000)
+
+val ColorOnSurfaceColor = Color(0xFF000000)
+
+
+
+//val ColorgreenTextColor = Color(0xFF62181A)

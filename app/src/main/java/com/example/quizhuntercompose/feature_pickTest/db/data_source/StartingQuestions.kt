@@ -16,10 +16,11 @@ import java.io.BufferedReader
 
 
 class StartingQuestions (private val context: Context) : RoomDatabase.Callback() {
+    //tODO 1.____ START HERE Does we load question in db.
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
         CoroutineScope(Dispatchers.IO).launch {
-             (context)
+            fillWithStartingDatabase(context)
         }
     }
 

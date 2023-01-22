@@ -77,6 +77,7 @@ class TestViewModel @Inject constructor(
                 }
 
                 delay(100)
+                Log.i("TestViewMod: ", "Loading UI STATE")
                 _uiState.value = TestState( // TODO stacked here. For first  run of the app.  TestScreen() is executed.
                     questionStateList,//  stacked here for debugging.
                     answerStateList,
@@ -132,14 +133,6 @@ class TestViewModel @Inject constructor(
     fun onNewQuestionOpen(){
          start = System.currentTimeMillis() //TODO move in open new Question On display
     }
-
-//    fun submitAnswer(answer: Int){
-//        val endTime =  (System.currentTimeMillis() - start ).toInt()
-//        updateAnswer(answer, _uiState.value.currentQuestionIndex, endTime)
-//        if (checkIfAllAnswered(uiState.value.questionStateList)) {
-//            updateQuestion()
-//        }
-//    }
 
     fun onEvent(event: TestEvent, ) {
         //TODO check start time if answer already has been viewer using Skip. Don`t update time if answer has been answered(like using Previous)
