@@ -16,6 +16,14 @@ interface QuestionDao {
             "AND (correct_answers > wrong_answers) ")
     fun getQuestionCount(id: Int): Int
 
+    @Query("SELECT COUNT (*) " +
+            "FROM question_table " +
+            "WHERE topic_id IN (:ids) " +
+            "AND non_answers <=  :noAns " +
+            "AND wrong_answers > correct_answers " +
+            "ORDER BY average_time_sec DESC " )
+    fun getQuestionCountFrom(ids: List<Int>, noAns: Int): Int
+
     @Query("SELECT * FROM question_table") //ORDER BY question_id ASC
     fun getAllQuestions(): List<Question>
 

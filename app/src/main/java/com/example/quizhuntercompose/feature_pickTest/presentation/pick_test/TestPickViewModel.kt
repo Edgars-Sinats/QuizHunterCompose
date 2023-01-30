@@ -3,7 +3,6 @@ package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
@@ -29,24 +28,18 @@ class TestPickViewModel @Inject constructor(
 ) : ViewModel() {
 
     //For now, replace with barPicker
-    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedQuestions = emptyList(), pickedTopic = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
+    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedQuestions = emptyList(), pickedTopicId = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
     val uiState: State<TestPickOptionsState> = _quizPickOptions
     var topicNames: List<Topic> = emptyList()
+    var selectedTopic: List<Int> = emptyList()
 
 //    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
 //    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
 
 //    var optionsFieldOpen: Boolean = _quizPickOptions.value.isOptionsSectionVisible
 
-    var questionCount: Int = _quizPickOptions.value.count
+    var questionCount: Int = _quizPickOptions.value.totalCount
     var questionStateList: List<Question> = _quizPickOptions.value.questions
-
-//    var questionTopics: List<String> = _quizPickOptions.topics
-//    var unanswered: Boolean = _quizPickOptions.unanswered
-//    var wrongAnswers: Boolean = _quizPickOptions.wrongAnswersState
-//    var answerTime: Boolean = _quizPickOptions.answerTime
-
-
 
     init {
 
@@ -68,10 +61,11 @@ class TestPickViewModel @Inject constructor(
 
                         _quizPickOptions.value = TestPickOptionsState(
                             topics = emptyList(), //TODO see all topics
-                            count = questionCount,
-                            pickedTopic = emptyList(),
+                            totalCount = questionCount,
+                            pickedTopicId = emptyList(),
                             pickedQuestions = questionStateList,
-                            isOptionsSectionVisible = false
+                            isOptionsSectionVisible = false,
+                            count = questionCount/2
                         )
 
                     } catch (cancellationException: CancellationException) {
@@ -128,22 +122,70 @@ class TestPickViewModel @Inject constructor(
                         throw cancellationException
                     }
                     Log.i("TestPickViewModel", "try success, new question count: $questionCount"  )
-                    _quizPickOptions.value = _quizPickOptions.value.copy(count = questionCount)
+                    _quizPickOptions.value = _quizPickOptions.value.copy(totalCount = questionCount)
 
                 }
-
-//                questionCount = count
 //                return count
-
             }
-//            is TestPickEvent.ChooseTopics -> {
-//                _quizPickOptionsState.value = quizPickOptions.value.copy(
-//                    topics = questionTopics
-//                )
-//            }
 
-        }
-    }
+            is TestPickEvent.CheckTopicsQuestionCount -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        questionCount = questionRepository.getQuestionCountFrom(event.topic, event.noAns)
+                    } catch (cancellationException: CancellationException) {
+                        throw cancellationException
+                    }
+                    _quizPickOptions.value = _quizPickOptions.value.copy(totalCount = questionCount)
 
+                }
+            }
+            is TestPickEvent.CheckAllTopics -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val listOfIds : MutableList<Int>  = mutableListOf()
+
+                    topicNames.forEach { listOfIds.add( it.topicId ) }
+
+                    if ( _quizPickOptions.value.pickedTopicId == listOfIds.toList() ) {
+//                        questionCount = questionRepository.getQuestionCount(0)
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = 0,
+                            pickedTopicId = emptyList()
+                        )
+
+
+                    } else {
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = questionRepository.getQuestionCountFrom(listOfIds.toList(), 3),
+                            pickedTopicId = listOfIds.toList()
+                        )
+                    }
+                }
+
+//                val topicIds = topicNames.forEach { it -> listOfIds.add(topicNames.topicId ) }
+//                _quizPickOptions.value = _quizPickOptions.value.copy(pickedTopicId =  listOfIds)
+            }
+            is TestPickEvent.CheckTopics -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val topicList = _quizPickOptions.value.pickedTopicId.toMutableList()
+
+//                    val listOfIds : MutableList<Int>  = mutableListOf()
+//                    topicNames.forEach { listOfIds.add( it.topicId ) }
+
+                    if (topicList.contains( event.topic ) ) {
+                        topicList.remove(event.topic)
+
+                    } else {
+                        topicList.add(event.topic)
+                    }
+//                    _quizPickOptions.value = _quizPickOptions.value.copy(pickedTopicId = topicList.toList())
+                    _quizPickOptions.value = _quizPickOptions.value.copy(
+                        totalCount = questionRepository.getQuestionCountFrom(topicList.toList(), 3),
+                        pickedTopicId = topicList.toList()
+                    )
+                }
+            }
+
+        }//event
+    }//onEvent
 
 }

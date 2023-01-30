@@ -19,14 +19,10 @@ import kotlin.math.roundToInt
 @Composable
 fun TestPickContent(
     //    navController: NavController,
-//    quizUseCase: @JvmSuppressWildcards QuizUseCase,
-
     viewModel: TestPickViewModel,
     testPickOptionsState: TestPickOptionsState,
-    topicList: List<Topic>,
     onNavigationTest: () -> Unit,
 ) {
-//    viewModel = hiltViewModel()
     Column() {
         TextButton(
             onClick = {
@@ -43,36 +39,31 @@ fun TestPickContent(
             Text(text = "Start Quiz", color = MaterialTheme.colors.secondary)
         }
 
-        StepsSliderSample( steps = testPickOptionsState.pickedQuestions.size/2, maxSteps = testPickOptionsState.pickedQuestions.size, onSlide = viewModel::onEvent )
-        //{
-//            testPickOptionsState.count = it
-        //}
+        StepsSliderSample( steps = viewModel.uiState.value.totalCount, maxSteps = viewModel.uiState.value.totalCount, currentSteps = viewModel.uiState.value.count, onSlide = viewModel::onEvent )
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // We keep track if the message is expanded or not in this
-        // variable
+        // We keep track if the message is expanded or not in this variable
         var isExpanded by remember { mutableStateOf(false) }
 
         // We toggle the isExpanded variable when we click on this Column
         QuizOptionsField2(
             modifier = Modifier.clickable { isExpanded = !isExpanded },
-//            pickTestViewModel = viewModel,
-//            uiState = viewModel.uiState.value,
-
             unanswered = TestPickEvent.PickUnanswered(viewModel.uiState.value.unanswered),
             answerTime = TestPickEvent.PickTime(viewModel.uiState.value.answerTime),
             wronglyAnswered = TestPickEvent.PickWrongAnswered(viewModel.uiState.value.wrongAnswersState),
 
-            onTopicsSelected = viewModel::onEvent,
-            expanded = false,
+            checkAllTopics = TestPickEvent.CheckAllTopics(viewModel.uiState.value.pickedAllTopic),
+            onCheckAllTopics = viewModel::onEvent,
+            questionCount = viewModel.uiState.value.totalCount,
+            expanded = true,
             onTestOptionState = viewModel::onEvent,
             onPickWrongAnswered = viewModel::onEvent,
             onPickUnanswered = viewModel::onEvent,
             onPickTime = viewModel::onEvent,
-            checkedTopics = viewModel::onEvent,
-            allTopicQuestions =viewModel.topicNames,
-//            onCheckTopicQuestions =
-
+            onTopicsSelected = viewModel::onEvent,
+            allTopicList = viewModel.topicNames,
+            selectedTopics = testPickOptionsState.pickedTopicId
         )
 
     }
@@ -83,9 +74,10 @@ fun TestPickContent(
 @Composable
 fun StepsSliderSample(steps: Int,
                       maxSteps: Int,
+                      currentSteps: Int,
                       onSlide: (TestPickEvent) -> Unit )   {
     var sliderPosition by remember { mutableStateOf(0f) }
-    Text(text = sliderPosition.toInt().toString(), style = MaterialTheme.typography.h3)
+    Text(text = currentSteps.toString(), style = MaterialTheme.typography.h3)
     Slider(
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
@@ -106,16 +98,28 @@ fun StepsSliderSample(steps: Int,
 @Composable
 @Preview
 fun TestPickContentPreview(){
+    val topicList : List<Topic> = listOf(Topic(0,"First or zero topic"), Topic(1,"Some random"), Topic(2,"Second topic"))
+
     TestPickContent(
-        viewModel = hiltViewModel(),
-        TestPickOptionsState(count = 5, pickedTopic = listOf("1","2"), pickedQuestions = emptyList(), pickedAllTopic = true,  questions = emptyList(), topics = emptyList(), isOptionsSectionVisible = true, answerTime = false, unanswered = false, wrongAnswersState = false ),
+        viewModel = hiltViewModel(   ),
+        TestPickOptionsState(
+            totalCount = 5,
+            pickedTopicId = listOf(2,3),
+            pickedQuestions = emptyList(),
+            pickedAllTopic = true,
+            questions = emptyList(),
+            topics = topicList, //AllTopics
+            isOptionsSectionVisible = true,
+            answerTime = false,
+            unanswered = false,
+            wrongAnswersState = false ),
         onNavigationTest = {},
-        topicList = emptyList()
+//        topicList = topicList
     )
 }
 
 @Composable
 @Preview
 fun StepsSliderSamplePreview(){
-    StepsSliderSample(5,9, onSlide = {} )
+    StepsSliderSample(5,9, onSlide = {}, currentSteps = 3 )
 }

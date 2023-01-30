@@ -8,8 +8,11 @@ sealed class TestPickEvent {
     data class PickUnanswered(val value: Boolean) : TestPickEvent()
     data class PickWrongAnswered(val value: Boolean) : TestPickEvent()
     data class PickTime(val value: Boolean) : TestPickEvent()
-    data class ChooseTopics(val topics: List<Int>) : TestPickEvent()
+    data class CheckTopics(val topic: Int) : TestPickEvent()
+    data class CheckAllTopics(val value: Boolean) : TestPickEvent()
     data class CheckTopicQuestionCount(val topic: Int): TestPickEvent()
+    data class CheckTopicsQuestionCount(val topic: List<Int>, val noAns: Int): TestPickEvent()
+//    getQuestionCountFrom
 
 }
 

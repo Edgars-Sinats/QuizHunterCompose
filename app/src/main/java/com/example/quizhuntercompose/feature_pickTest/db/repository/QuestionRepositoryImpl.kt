@@ -16,6 +16,10 @@ class QuestionRepositoryImpl@Inject constructor(
         return dao.getQuestionCount(topic_id)
     }
 
+    override suspend fun getQuestionCountFrom(topic_ids: List<Int>, noAns: Int) : Int{
+        return dao.getQuestionCountFrom(topic_ids, noAns)
+    }
+
     override fun getAllQuestions(): List<Question> {
         return dao.getAllQuestions()
     }

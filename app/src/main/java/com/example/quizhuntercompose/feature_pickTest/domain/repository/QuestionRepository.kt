@@ -5,7 +5,9 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 
 interface QuestionRepository {
 
-    suspend fun getQuestionCount(topic_ic: Int): Int
+    suspend fun getQuestionCount(topic_id: Int): Int
+
+    suspend fun getQuestionCountFrom(topic_ids: List<Int>, noAns: Int) : Int
 
     fun getAllQuestions(): List<Question>
 

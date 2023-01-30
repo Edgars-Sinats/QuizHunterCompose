@@ -15,7 +15,7 @@ fun TestPickScreen(
     onNavigationRequested: () -> Unit
 ){
     val testPickOptionsState = pickViewModel.uiState.value
-    val topicList = pickViewModel.topicNames
+//    val topicList = pickViewModel.topicNames
 
 
     Column(
@@ -24,7 +24,7 @@ fun TestPickScreen(
             .padding(vertical = 16.dp)
     ) {
         //TODO Top app bar
-        TestPickContent(testPickOptionsState = testPickOptionsState, topicList = topicList,  viewModel = pickViewModel, onNavigationTest = onNavigationRequested)
+        TestPickContent(testPickOptionsState = testPickOptionsState,   viewModel = pickViewModel, onNavigationTest = onNavigationRequested) //topicList = topicList,
 
     }
 }
