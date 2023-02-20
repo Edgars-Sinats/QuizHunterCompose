@@ -11,7 +11,7 @@ sealed class TestPickEvent {
     data class CheckTopics(val topic: Int) : TestPickEvent()
     data class CheckAllTopics(val value: Boolean) : TestPickEvent()
     data class CheckTopicQuestionCount(val topic: Int): TestPickEvent()
-    data class CheckTopicsQuestionCount(val topic: List<Int>, val noAns: Int): TestPickEvent()
+    data class CheckTopicsQuestionsCount(val topic: List<Int>): TestPickEvent()
 //    getQuestionCountFrom
 
 }

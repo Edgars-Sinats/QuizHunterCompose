@@ -4,4 +4,7 @@
     <style name="Theme.QuizHunterCompose" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/purple_700</item>
     </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:propertyName" type="animator"> </item>
+    </style>
 </resources>

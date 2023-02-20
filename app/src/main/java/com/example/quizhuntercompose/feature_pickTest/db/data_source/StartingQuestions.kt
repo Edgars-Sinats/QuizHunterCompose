@@ -6,9 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.BufferedReader
@@ -22,6 +20,10 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
         CoroutineScope(Dispatchers.IO).launch {
             fillWithStartingDatabase(context)
         }
+    }
+
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        super.onOpen(db)
     }
 
     private suspend fun fillWithStartingDatabase(context: Context) {
@@ -107,6 +109,8 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
 
     // loads JSON data
     private fun loadJSONArray(context: Context): JSONArray?{
+        Log.d("StartingQuestion: ","loadJsonQuestions")
+
         //obtain input byte
         val inputStream = context.assets.open("question_table.json") //.apenRawResource(R.raw.notes)
         //using Buffered reader to read the inputstream byte
@@ -116,6 +120,7 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
     }
 
     private fun loadJSONArrayTopics(context: Context): JSONArray?{
+        Log.d("StartingQuestion: ","loadJsonTopics")
         val inputStream = context.assets.open("topic_table.json")
         BufferedReader(inputStream.reader()).use {
             return JSONArray(it.readText())

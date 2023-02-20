@@ -17,7 +17,7 @@ data class TestPickOptionsState(
     val answerTime: Boolean = false, //Longest answered time
 
     val pickedAllTopic: Boolean = true, //Checkbox from Answers {title}
-    val pickedQuestions: List<Question>, //Taken Question form SQL OR in code level selects.
+//    val pickedQuestions: List<Question>, //Taken Question form SQL OR in code level selects.
     val pickedTopicId: List<Int> //List of chosen topics.
 ) {
 

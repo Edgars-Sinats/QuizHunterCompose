@@ -13,58 +13,73 @@ import javax.inject.Singleton
 
 @Database( entities = [Question::class, Topic::class], version = 1 )
 abstract class QuizDatabase: RoomDatabase() {
-//    fun init(context: Context) {
-//        getDatabase(context = context)
-//    }
+
+    fun init(context: Context) {
+        Log.i("QuizDatabase: ", " INIT DATABASE !")
+        getDatabase(context = context)
+    }
 
     abstract val questionDao: QuestionDao
 
-    companion object {
+    companion   object {
         const val DATABASE_NAME = "HuntQuestion2"
 
 
-
-        //    companion object {
         // Singleton prevents multiple instances of database opening at the
         // same time. todo why volatile
         @Volatile
 //        @Provides
         @Singleton
-        private var INSTANCE :  QuizDatabase? = null
-        //...getDatabase(, viewModelScope: CoroutineScope)
-        fun getDatabase(context: Context): QuizDatabase {
-            // if the INSTANCE is not null, then return it,
-            // if it is, then create the database
-            synchronized(this) {
-                var instance = INSTANCE
+        private var INSTANCE: QuizDatabase? = null
 
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        QuizDatabase::class.java,
-                        DATABASE_NAME
-                    )
-                        .addCallback(StartingQuestions(context))
+        //...getDatabase(, viewModelScope: CoroutineScope)
+        fun getDatabase(context: Context): QuizDatabase =
+            INSTANCE ?: synchronized(this) {
+                Log.i("QuizDatabase: ", "After synchronized")
+                INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
+
+            }
+
+
+//                if (instance == null) {
+//                    instance = Room.databaseBuilder(
+//                        context.applicationContext,
+//                        QuizDatabase::class.java,
+//                        DATABASE_NAME
+//                    )
+
+//                        .callback(StartingQuestions(context))
+//                        .addCallback(StartingQuestions(context))
 //                        .createFromAsset("db/huntQuestion.db") //huntQuestion.db
 //                    .fallbackToDestructiveMigration()
 
-                        .build()
+//                        .build()
+//                        .also { INSTANCE=it }
 //                        .createOpenHelper().writableDatabase.execSQL(DROP)
+//                    INSTANCE = instance
 
-                    INSTANCE = instance
-                    Log.i("QuizDatabase","INSTANCE WAS NULL QUIZDATABASE? Now created." )
-
-                }
-                return instance
+//                    Log.i("QuizDatabase","INSTANCE WAS NULL QUIZDATABASE? Now created." )
 
 
-                Log.i("QuizDatabase","is load only:" )
-                // return instance
+//                return instance
+
+
+//                Log.i("QuizDatabase","is load only:" )
 //                return@getDatabase instance
 //                instance.questionDao.updateQuestion(context.assets.open("assets/").)
-            }
-        }
+
+
+
+        private fun buildDatabase(appContext: Context) =
+            Room.databaseBuilder(
+                appContext.applicationContext,
+                QuizDatabase::class.java,
+                DATABASE_NAME)
+//                .fallbackToDestructiveMigration()
+                .addCallback(StartingQuestions(appContext))
+                .build()
     }
+
 //}
 
 }

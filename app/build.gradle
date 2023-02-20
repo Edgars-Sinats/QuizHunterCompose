@@ -64,6 +64,9 @@ android {
 
 dependencies {
 
+    //Moshi //faster and less memory then GSON
+    implementation 'com.squareup.moshi:moshi-kotlin:1.14.0'
+
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
 

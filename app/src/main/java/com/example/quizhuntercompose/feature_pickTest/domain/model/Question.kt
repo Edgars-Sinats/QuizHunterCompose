@@ -17,10 +17,10 @@ data class Question(
     @ColumnInfo(name = "question_id") val questionID: Int,
     @ColumnInfo(name = "topic_id") val topic: Int, //I had naming as "topic" in my table. Should export schema from app.
 
-
     @ColumnInfo(name = "correct_answers") val correctAnswers: Int,
     @ColumnInfo(name = "wrong_answers") val wrongAnswers: Int,
     @ColumnInfo(name = "non_answers") val nonAnswers: Int,
+
     @ColumnInfo(name = "average_time_sec") val averageAnswerTime: Int,
     @ColumnInfo(name = "last_time_sec") val lastAnswerTime: Int //Milli sec
 

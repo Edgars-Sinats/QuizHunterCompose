@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS "topics_table" (
 DROP TABLE IF EXISTS "question_table";
 CREATE TABLE IF NOT EXISTS "question_table" (
 	"question"	TEXT NOT NULL,
-	"answer_1"	NUMERIC NOT NULL,
-	"answer_2"	NUMERIC NOT NULL,
-	"answer_3"	NUMERIC,
+	"answer_1"	TEXT NOT NULL,
+	"answer_2"	TEXT NOT NULL,
+	"answer_3"	TEXT,
 	"answer_4"	TEXT,
 	"correct_answer"	INTEGER NOT NULL,
 	"topic_id"	INTEGER NOT NULL,

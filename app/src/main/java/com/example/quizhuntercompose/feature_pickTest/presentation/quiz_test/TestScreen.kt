@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.util.supportWideScreen
@@ -34,6 +35,7 @@ private const val CONTENT_ANIMATION_DURATION = 500
 
 @Composable
 fun TestRoute(
+    navCont : NavHostController,
     testViewModel: TestViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     navigateToFinish: () -> Unit

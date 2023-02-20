@@ -60,24 +60,7 @@ fun QuizOptionsField2(
             )
         }
 
-
-        Row() {
-            Button(
-                enabled = false,
-                onClick = {
-                Log.i(
-                    "QuizOptionField",
-                    "For your info: Switches need pop up with explanation."
-                )
-            }) {
-
-                Text(text = "For now switches is disabled and test start with 3 questions")
-            }
-        }
-
-
         if (expanded1) {
-
 
             Row(
                 modifier.fillMaxWidth(),
@@ -138,7 +121,7 @@ fun QuizOptionsField2(
             ) {
 
                 val listOfIds: MutableList<Int> = mutableListOf()
-                allTopicList.forEach { listOfIds.add(it.topicId) }
+                allTopicList.forEach { listOfIds.add(it.topicId -1) }
 
                 Text(
                     text = "Select all topics",
@@ -148,7 +131,7 @@ fun QuizOptionsField2(
                 )
                 Checkbox(
                     checked = selectedTopics == listOfIds,
-                    onCheckedChange = null // null recommended for accessibility with screenreaders
+                    onCheckedChange =  { onCheckAllTopics(TestPickEvent.CheckAllTopics(checkAllTopics.value)) } // null recommended for accessibility with screenreaders
                 )
             }
 
@@ -227,7 +210,7 @@ fun CheckBoxRowPreview() {
 //@Preview("TestPick - QuizOptionsFieldPreview2" , uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun QuizOptionsFieldPreview2(modifier: Modifier = Modifier) {
-    val topicList : List<Topic> = listOf(Topic(1,"sa"), Topic(2,"Second topic"), Topic(3,"NewTopic"))
+    val topicList : List<Topic> = listOf(Topic(0,"sa"), Topic(1,"Second topic"), Topic(2,"NewTopic"))
     QuizOptionsField2(
         expanded = true,
         onTopicsSelected = { /*TODO*/ },

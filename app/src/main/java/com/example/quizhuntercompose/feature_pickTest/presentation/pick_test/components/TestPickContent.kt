@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,22 +25,27 @@ fun TestPickContent(
     onNavigationTest: () -> Unit,
 ) {
     Column() {
-        TextButton(
-            onClick = {
-                onNavigationTest.invoke()
-//                viewModel.onEvent(TestPickEvent.StartQuiz("Start"))
-
-                      },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .clickable { },
-
-        ) {
-            Text(text = "Start Quiz", color = MaterialTheme.colors.secondary)
-        }
-
-        StepsSliderSample( steps = viewModel.uiState.value.totalCount, maxSteps = viewModel.uiState.value.totalCount, currentSteps = viewModel.uiState.value.count, onSlide = viewModel::onEvent )
+        TestPickContentDetails(
+            onNavigation = onNavigationTest,
+            steps = viewModel.uiState.value.totalCount,
+            currentSteps = viewModel.uiState.value.count,
+            onSlide = viewModel::onEvent
+        )
+//        TextButton(
+//            onClick = {
+//                onNavigationTest.invoke()
+////                viewModel.onEvent(TestPickEvent.StartQuiz("Start"))
+//                      },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp)
+//                .clickable { },
+//
+//        ) {
+//            Text(text = "Start Quiz", color = MaterialTheme.colors.secondary)
+//        }
+//
+//        StepsSliderSample( steps = viewModel.uiState.value.totalCount, maxSteps = viewModel.uiState.value.totalCount, currentSteps = viewModel.uiState.value.count, onSlide = viewModel::onEvent )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -67,17 +73,45 @@ fun TestPickContent(
         )
 
     }
-
-
 }
+
+@Composable
+fun TestPickContentDetails(onNavigation: () -> Unit, steps: Int, currentSteps: Int, onSlide: (TestPickEvent) -> Unit){
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth(1f)) {
+        TextButton(
+            onClick = {
+                onNavigation.invoke() //Entry Point Activity -> onNavigationRequested
+//                viewModel.onEvent(TestPickEvent.StartQuiz("Start"))
+
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .clickable { },
+
+            ) {
+            Text(text = "Start Quiz", color = MaterialTheme.colors.onPrimary)
+        }
+
+        StepsSliderSample(
+            steps = steps,
+            maxSteps = steps,
+            currentSteps = currentSteps,
+            onSlide = onSlide
+        )
+    }
+    }
 
 @Composable
 fun StepsSliderSample(steps: Int,
                       maxSteps: Int,
                       currentSteps: Int,
-                      onSlide: (TestPickEvent) -> Unit )   {
+                      onSlide: (TestPickEvent) -> Unit )
+{
     var sliderPosition by remember { mutableStateOf(0f) }
+
     Text(text = currentSteps.toString(), style = MaterialTheme.typography.h3)
+
     Slider(
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
@@ -89,7 +123,7 @@ fun StepsSliderSample(steps: Int,
         steps = steps,
         colors = SliderDefaults.colors(
             thumbColor = MaterialTheme.colors.secondary,
-            activeTrackColor = MaterialTheme.colors.secondary
+            activeTrackColor = MaterialTheme.colors.surface
         )
     )
     //return intCount?
@@ -100,22 +134,23 @@ fun StepsSliderSample(steps: Int,
 fun TestPickContentPreview(){
     val topicList : List<Topic> = listOf(Topic(0,"First or zero topic"), Topic(1,"Some random"), Topic(2,"Second topic"))
 
-    TestPickContent(
-        viewModel = hiltViewModel(   ),
-        TestPickOptionsState(
-            totalCount = 5,
-            pickedTopicId = listOf(2,3),
-            pickedQuestions = emptyList(),
-            pickedAllTopic = true,
-            questions = emptyList(),
-            topics = topicList, //AllTopics
-            isOptionsSectionVisible = true,
-            answerTime = false,
-            unanswered = false,
-            wrongAnswersState = false ),
-        onNavigationTest = {},
-//        topicList = topicList
-    )
+    TestPickContentDetails(onNavigation = {  }, steps = 5, currentSteps = 4, onSlide = { } )
+//    TestPickContent(
+//        viewModel = TestPickViewModel(),
+//        TestPickOptionsState(
+//            totalCount = 5,
+//            pickedTopicId = listOf(2,3),
+////            pickedQuestions = emptyList(),
+//            pickedAllTopic = true,
+//            questions = emptyList(),
+//            topics = topicList, //AllTopics
+//            isOptionsSectionVisible = true,
+//            answerTime = false,
+//            unanswered = false,
+//            wrongAnswersState = false ),
+//        onNavigationTest = {},
+////        topicList = topicList
+//    )
 }
 
 @Composable

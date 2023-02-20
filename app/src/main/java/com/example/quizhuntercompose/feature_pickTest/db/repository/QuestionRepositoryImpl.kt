@@ -12,6 +12,14 @@ class QuestionRepositoryImpl@Inject constructor(
 //    private val database: QuizDatabase,
 ) : QuestionRepository {
 
+    override suspend fun getQuestionCountChecker(ids: List<Int>, nonAns: Boolean, wrongAns: Boolean): Int {
+        return dao.getQuestionCountChecker(ids, nonAns, wrongAns)
+    }
+
+    override suspend fun getMyQuestions(ids: List<Int>?, nonAns: Boolean, wrongAns: Boolean, count: Int): List<Question> {
+        return dao.getMyQuestions(count,  nonAns, wrongAns, ids)
+    }
+
     override suspend fun getQuestionCount(topic_id: Int): Int {
         return dao.getQuestionCount(topic_id)
     }
@@ -49,7 +57,7 @@ class QuestionRepositoryImpl@Inject constructor(
     }
 
 
-    override fun getAllTopics(): List<Topic> {
+    override suspend fun getAllTopics(): List<Topic> {
         return dao.getAllTopic()
     }
 

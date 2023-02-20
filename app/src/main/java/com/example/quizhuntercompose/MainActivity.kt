@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
-import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 //import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
 import com.example.quizhuntercompose.ui.EntryPointActivity
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
@@ -54,35 +53,36 @@ val question2 = Question(
 )
 
 @HiltAndroidApp
-class QuizApp : Application() {
+class QuizApp : Application()
 //    @Inject
-//     var database: QuizDatabase
+//abstract var database: QuizDatabase
 //    val database
 
-    override fun onCreate() {
-        super.onCreate()
+//    override fun onCreate() {
+//        super.onCreate()
+//
+//    }
+//}
 //        database
-        Log.i("Main:", "before create rec.")
+//        Log.i("Main:", "before create rec.")
 //        database.init(applicationContext)
 //        database.openHelper.writableDatabase
 
 //        val database1 by lazy { QuizDatabase.getDatabase(this) }
 //        Log.i("Main:", "database created - first question:" + database1.questionDao.getQuestionX(1).question)
 //        createRecord(database1)
-        Log.i("Main:", "record reacted")
+//        Log.i("Main:", "record reacted")
 
 
 
 
-    }
-}
 
-fun createRecord(database: QuizDatabase): Boolean{
-//    database.questionDao.updateQuestion(question1)
-//    database.questionDao.updateQuestion(question2)
-    return true
-
-}
+//fun createRecord(database: QuizDatabase): Boolean{
+////    database.questionDao.updateQuestion(question1)
+////    database.questionDao.updateQuestion(question2)
+//    return true
+//
+//}
 
 //
 //class MainActivity : ComponentActivity() {

@@ -3,6 +3,7 @@ package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
@@ -26,12 +27,13 @@ class TestPickViewModel @Inject constructor(
 //    private val savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
 //    onNavigationRequested: @JvmSuppressWildcards (itemId: String) -> Unit
 ) : ViewModel() {
-
+//    val savedState = savedStateHandle.keys()
+    private val TAG = "TestPickViewModel"
     //For now, replace with barPicker
-    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedQuestions = emptyList(), pickedTopicId = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
+    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedTopicId = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
     val uiState: State<TestPickOptionsState> = _quizPickOptions
     var topicNames: List<Topic> = emptyList()
-    var selectedTopic: List<Int> = emptyList()
+//    var selectedTopic: List<Int> = emptyList()
 
 //    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
 //    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
@@ -41,29 +43,45 @@ class TestPickViewModel @Inject constructor(
     var questionCount: Int = _quizPickOptions.value.totalCount
     var questionStateList: List<Question> = _quizPickOptions.value.questions
 
+//    var questionCountState: Int =
+
     init {
 
-        questionStateList = emptyList()
-        questionCount = 10
+//        questionStateList = emptyList()
+//        questionCount = 10
 
         viewModelScope.launch(Dispatchers.IO) {
+            Log.i(TAG, "viewModel_Start")
 
-            val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
-            val exampleTopicNames = questionRepository.getAllTopics()
+            val exampleTopicNames: List<Topic> = questionRepository.getAllTopics()
+            delay(400)
             topicNames = exampleTopicNames
 
-            delay(900) //TODO How to wait till loaded before creating State
+            val listOfIds : MutableList<Int>  = mutableListOf()
+            Log.i(TAG, "topicNames: $topicNames")
 
-            if (listOfQuestion != null){ //Might not need as try catch.
+            topicNames.forEach { listOfIds.add( it.topicId -1 ) }
+            Log.i(TAG, "listOfIds: $listOfIds")
+
+            questionCount = questionRepository.getQuestionCountChecker(listOfIds,
+                nonAns = false,
+                wrongAns = false
+            )
+            Log.i(TAG, "questionCount: $questionCount")
+            Log.i(TAG, "topicNames: $topicNames")
+
+//            val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
+
+            delay(1000) //TODO How to wait till loaded before creating State
 
                     try {
-                        questionStateList = listOfQuestion as List<Question>
+//                        questionStateList = listOfQuestion as List<Question>
 
                         _quizPickOptions.value = TestPickOptionsState(
-                            topics = emptyList(), //TODO see all topics
+                            topics = topicNames, //TODO see all topics
                             totalCount = questionCount,
-                            pickedTopicId = emptyList(),
-                            pickedQuestions = questionStateList,
+                            pickedTopicId = listOfIds.toList(),
+//                            pickedQuestions = questionStateList,
                             isOptionsSectionVisible = false,
                             count = questionCount/2
                         )
@@ -71,8 +89,18 @@ class TestPickViewModel @Inject constructor(
                     } catch (cancellationException: CancellationException) {
                         throw cancellationException
                     }
-            }
+            Log.i(TAG, "questionCount: $questionCount")
 
+
+
+        }
+    }
+
+    private fun checkCountVsTotal(){
+        if (_quizPickOptions.value.totalCount < _quizPickOptions.value.count) {
+            _quizPickOptions.value = _quizPickOptions.value.copy(count = _quizPickOptions.value.totalCount)
+        } else {
+            _quizPickOptions.value = _quizPickOptions.value.copy(count = _quizPickOptions.value.count)
         }
     }
 
@@ -88,24 +116,56 @@ class TestPickViewModel @Inject constructor(
                 }
             }
             is TestPickEvent.ChooseCount -> {
-                Log.i("TestPickViewModel", "ChooseCount")
+                Log.i(TAG, "ChooseCount")
                 _quizPickOptions.value = _quizPickOptions.value.copy(count = event.value)
 //                questionCount = _quizPickOptions.value.count
             }
+
             is TestPickEvent.OpenOptions -> {
 //                optionsFieldOpen = !optionsFieldOpen
                 _quizPickOptions.value = _quizPickOptions.value.copy(isOptionsSectionVisible = !_quizPickOptions.value.isOptionsSectionVisible)
             }
-            is TestPickEvent.PickUnanswered -> {
-                _quizPickOptions.value = _quizPickOptions.value.copy(unanswered = !_quizPickOptions.value.unanswered)
 
+            is TestPickEvent.PickUnanswered -> {
+                CoroutineScope(Dispatchers.IO).launch{
+
+                    if (_quizPickOptions.value.wrongAnswersState){
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = questionRepository.getQuestionCountChecker(_quizPickOptions.value.pickedTopicId, !_quizPickOptions.value.unanswered, wrongAns = false),
+                            unanswered = !_quizPickOptions.value.unanswered,
+                            wrongAnswersState = false)
+                    } else {
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = questionRepository.getQuestionCountChecker(_quizPickOptions.value.pickedTopicId, !_quizPickOptions.value.unanswered, wrongAns = true),
+                            unanswered = !_quizPickOptions.value.unanswered)
+                    }
+
+                }
+                checkCountVsTotal()
             }
+
             is TestPickEvent.PickWrongAnswered -> {
-                _quizPickOptions.value = _quizPickOptions.value.copy(
-                    wrongAnswersState = !_quizPickOptions.value.wrongAnswersState
-//                    wrongAnswers =
-                )
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    if (_quizPickOptions.value.unanswered){
+
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = questionRepository.getQuestionCountChecker(_quizPickOptions.value.pickedTopicId, false, wrongAns = !_quizPickOptions.value.wrongAnswersState),
+                            wrongAnswersState = !_quizPickOptions.value.wrongAnswersState,
+                            unanswered = false
+                        )
+                    } else {
+                        _quizPickOptions.value = _quizPickOptions.value.copy(
+                            totalCount = questionRepository.getQuestionCountChecker(_quizPickOptions.value.pickedTopicId, true, wrongAns = !_quizPickOptions.value.wrongAnswersState),
+                            wrongAnswersState = !_quizPickOptions.value.wrongAnswersState
+                        )
+                    }
+
+                }
+                checkCountVsTotal()
             }
+
+            //TODO
             is TestPickEvent.PickTime -> {
                 //TODO create calculation for average and last time answers - give higher rating for last run 0.65?.
                 _quizPickOptions.value = _quizPickOptions.value.copy(
@@ -113,6 +173,7 @@ class TestPickViewModel @Inject constructor(
                 )
             }
 
+            //Usless
             is TestPickEvent.CheckTopicQuestionCount -> {
 
                 CoroutineScope(Dispatchers.IO).launch {
@@ -128,10 +189,11 @@ class TestPickViewModel @Inject constructor(
 //                return count
             }
 
-            is TestPickEvent.CheckTopicsQuestionCount -> {
+            //Usless
+            is TestPickEvent.CheckTopicsQuestionsCount -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        questionCount = questionRepository.getQuestionCountFrom(event.topic, event.noAns)
+                        questionCount = questionRepository.getQuestionCountChecker(event.topic, _quizPickOptions.value.unanswered, wrongAns = _quizPickOptions.value.wrongAnswersState)
                     } catch (cancellationException: CancellationException) {
                         throw cancellationException
                     }
@@ -139,11 +201,12 @@ class TestPickViewModel @Inject constructor(
 
                 }
             }
+            //Good
             is TestPickEvent.CheckAllTopics -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val listOfIds : MutableList<Int>  = mutableListOf()
 
-                    topicNames.forEach { listOfIds.add( it.topicId ) }
+                    topicNames.forEach { listOfIds.add( it.topicId-1 ) }
 
                     if ( _quizPickOptions.value.pickedTopicId == listOfIds.toList() ) {
 //                        questionCount = questionRepository.getQuestionCount(0)
@@ -155,15 +218,16 @@ class TestPickViewModel @Inject constructor(
 
                     } else {
                         _quizPickOptions.value = _quizPickOptions.value.copy(
-                            totalCount = questionRepository.getQuestionCountFrom(listOfIds.toList(), 3),
+                            totalCount = questionRepository.getQuestionCountChecker(listOfIds.toList(), _quizPickOptions.value.unanswered, wrongAns = _quizPickOptions.value.wrongAnswersState),
                             pickedTopicId = listOfIds.toList()
                         )
                     }
                 }
+                checkCountVsTotal()
+                Log.i("TestPickView", "Total questions: ${_quizPickOptions.value.totalCount} and chosen Questions: ${_quizPickOptions.value.count}" )
 
-//                val topicIds = topicNames.forEach { it -> listOfIds.add(topicNames.topicId ) }
-//                _quizPickOptions.value = _quizPickOptions.value.copy(pickedTopicId =  listOfIds)
             }
+            //Good
             is TestPickEvent.CheckTopics -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val topicList = _quizPickOptions.value.pickedTopicId.toMutableList()
@@ -179,10 +243,12 @@ class TestPickViewModel @Inject constructor(
                     }
 //                    _quizPickOptions.value = _quizPickOptions.value.copy(pickedTopicId = topicList.toList())
                     _quizPickOptions.value = _quizPickOptions.value.copy(
-                        totalCount = questionRepository.getQuestionCountFrom(topicList.toList(), 3),
+                        totalCount = questionRepository.getQuestionCountChecker( topicList.toList(), _quizPickOptions.value.unanswered, wrongAns = _quizPickOptions.value.wrongAnswersState ),
                         pickedTopicId = topicList.toList()
                     )
                 }
+                checkCountVsTotal()
+                Log.i("TestPickView", "Total questions: ${_quizPickOptions.value.totalCount} and chosen Questions: ${_quizPickOptions.value.count}" )
             }
 
         }//event

@@ -1,6 +1,6 @@
 package com.example.quizhuntercompose.di
 
-import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
@@ -11,6 +11,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext // Depricated
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,24 +20,28 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
+
     @Singleton
-    fun provideQuizDatabase(app: Application): QuizDatabase {
+    @Provides
+    fun provideQuizDatabase(@ApplicationContext app: Context): QuizDatabase {
+        return QuizDatabase.getDatabase(app.applicationContext)
         Log.i("App Module","Database starting to build from callback as it should." )
 
-        return Room.databaseBuilder(
-            app,
-            QuizDatabase::class.java,
-            QuizDatabase.DATABASE_NAME
-        ).addCallback(StartingQuestions( app.applicationContext))
-//            .createFromAsset("huntQuestion.db")
+//        return Room.databaseBuilder(
+//            app,
+//            QuizDatabase::class.java,
+//            QuizDatabase.DATABASE_NAME
+//        ).addCallback(StartingQuestions( app.applicationContext))
+//            .build()
+
+        //            .createFromAsset("huntQuestion.db")
 //            .addCallback(object : RoomDatabase.Callback() {
 //                override fun onCreate(db: SupportSQLiteDatabase) {
 //                    super.onCreate(db)
 //                    db.execSQL()
 //                            }
 //            })
-            .build()
+
 
     }
 
@@ -51,6 +56,7 @@ object AppModule {
     fun provideQuestionUseCases(repository: QuestionRepository): QuizUseCase {
         return QuizUseCase(
             getAllQuestions = GetAllQuestions(repository),
+            getMyQuestions = GetMyQuestions(repository),
             getXQuestion = GetQuestions(repository),
             startTest = GetStartTest(repository),
             updateAnswer = UpdateAnswer(repository),
