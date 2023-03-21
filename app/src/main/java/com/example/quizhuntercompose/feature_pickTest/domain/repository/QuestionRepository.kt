@@ -21,7 +21,7 @@ interface QuestionRepository {
 
     suspend fun getQuestionById(id: Int): Question?
 
-    suspend fun getXQuestionFromTopic(topic: String, count: Int): List<Question>
+    suspend fun getXQuestionFromTopic(topic: Int, count: Int): List<Question>
 
     suspend fun updateQuestion(question: Question)
 

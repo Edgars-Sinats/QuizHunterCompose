@@ -3,7 +3,6 @@ package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
@@ -20,55 +19,47 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class TestPickViewModel @Inject constructor(
-//    private val quizUseCase: QuizUseCase,
     private val questionRepository: @JvmSuppressWildcards QuestionRepository,
-    private val quizUseCase: @JvmSuppressWildcards QuizUseCase,
+//    private val quizUseCase: @JvmSuppressWildcards QuizUseCase,
 
-//    private val savedStateHandle: @JvmSuppressWildcards SavedStateHandle,
 //    onNavigationRequested: @JvmSuppressWildcards (itemId: String) -> Unit
 ) : ViewModel() {
-//    val savedState = savedStateHandle.keys()
     private val TAG = "TestPickViewModel"
     //For now, replace with barPicker
-    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedTopicId = emptyList(), isOptionsSectionVisible = false ))  //It is 5 already inside
+    private val _quizPickOptions = mutableStateOf(TestPickOptionsState( questions = emptyList(), pickedTopicId = emptyList(), isOptionsSectionVisible = false ))
     val uiState: State<TestPickOptionsState> = _quizPickOptions
     var topicNames: List<Topic> = emptyList()
-//    var selectedTopic: List<Int> = emptyList()
 
 //    private val _quizPickOptionsState = mutableStateOf(TestPickOptionsState())
 //    var quizPickOptions: State<TestPickOptionsState> = _quizPickOptionsState
-
 //    var optionsFieldOpen: Boolean = _quizPickOptions.value.isOptionsSectionVisible
 
     var questionCount: Int = _quizPickOptions.value.totalCount
     var questionStateList: List<Question> = _quizPickOptions.value.questions
-
-//    var questionCountState: Int =
+    var databaseLoading : Boolean = true
 
     init {
 
-//        questionStateList = emptyList()
-//        questionCount = 10
 
         viewModelScope.launch(Dispatchers.IO) {
-            Log.i(TAG, "viewModel_Start")
+//            Log.i(TAG, "viewModel_Start")
 
             val exampleTopicNames: List<Topic> = questionRepository.getAllTopics()
             delay(400)
             topicNames = exampleTopicNames
 
             val listOfIds : MutableList<Int>  = mutableListOf()
-            Log.i(TAG, "topicNames: $topicNames")
+//            Log.i(TAG, "topicNames: $topicNames")
 
             topicNames.forEach { listOfIds.add( it.topicId -1 ) }
-            Log.i(TAG, "listOfIds: $listOfIds")
+//            Log.i(TAG, "listOfIds: $listOfIds")
 
             questionCount = questionRepository.getQuestionCountChecker(listOfIds,
                 nonAns = false,
                 wrongAns = false
             )
-            Log.i(TAG, "questionCount: $questionCount")
-            Log.i(TAG, "topicNames: $topicNames")
+//            Log.i(TAG, "questionCount: $questionCount")
+//            Log.i(TAG, "topicNames: $topicNames")
 
 //            val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
 
@@ -94,6 +85,7 @@ class TestPickViewModel @Inject constructor(
 
 
         }
+        databaseLoading = false
     }
 
     private fun checkCountVsTotal(){

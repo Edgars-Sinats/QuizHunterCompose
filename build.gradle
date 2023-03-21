@@ -6,7 +6,7 @@ buildscript {
         appCompatVersion = '1.4.0'
         constraintLayoutVersion = '2.1.2'
         coreTestingVersion = '2.1.0'
-        coroutines = '1.5.2'
+        coroutines = '1.6.4'
         lifecycleVersion = '2.4.0'
         materialVersion = '1.4.0'
         roomVersion = '2.3.0'
@@ -18,6 +18,7 @@ buildscript {
     dependencies{
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
+        classpath 'com.google.gms:google-services:4.3.15'
 
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.

@@ -1,6 +1,5 @@
-package com.example.quizhuntercompose.feature_pickTest.presentation
+package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,12 +7,14 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import com.example.quizhuntercompose.cor.util.TestTags
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 
@@ -49,8 +50,8 @@ fun QuizOptionsField2(
     ) {
 
         Button(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
-            onClick = { expanded1 = !expanded1 }) {
+            modifier = Modifier.padding(4.dp).fillMaxWidth().testTag(TestTags.PICK_QUIZ_OPTIONS_ENABLER_BUTTON),
+            onClick = { expanded1 = !expanded1 } ) {
             Text(
                 text = if (!expanded1) {
                     "Open options"
@@ -63,7 +64,7 @@ fun QuizOptionsField2(
         if (expanded1) {
 
             Row(
-                modifier.fillMaxWidth(),
+                modifier.fillMaxWidth().testTag(TestTags.PICK_QUIZ_OPTIONS_UNANSWERED_ROW),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {

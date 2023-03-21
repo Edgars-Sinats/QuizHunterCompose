@@ -80,7 +80,7 @@ interface QuestionDao {
     fun getQuestionX(id: Int): Question
 
     @Query("SELECT * FROM question_table WHERE topic_id = :topic LIMIT :count ")
-    fun getXFromTopic(topic : String, count: Int): List<Question>
+    fun getXFromTopic(topic : Int, count: Int): List<Question>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun updateQuestion(question: Question)

@@ -7,13 +7,15 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.quizhuntercompose.cor.util.TestTags
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickOptionsState
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
+import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.components.QuizOptionsField2
 import kotlin.math.roundToInt
 
 
@@ -49,7 +51,7 @@ fun TestPickContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // We keep track if the message is expanded or not in this variable
+        // We keep track if the options box(column) is expanded or not in this variable
         var isExpanded by remember { mutableStateOf(false) }
 
         // We toggle the isExpanded variable when we click on this Column
@@ -110,7 +112,7 @@ fun StepsSliderSample(steps: Int,
 {
     var sliderPosition by remember { mutableStateOf(0f) }
 
-    Text(text = currentSteps.toString(), style = MaterialTheme.typography.h3)
+    Text(text = currentSteps.toString(), style = MaterialTheme.typography.h3, modifier = Modifier.testTag(TestTags.PICK_QUIZ_TEXT_VIEW_QUESTION_COUNT))
 
     Slider(
         value = sliderPosition,
@@ -124,7 +126,8 @@ fun StepsSliderSample(steps: Int,
         colors = SliderDefaults.colors(
             thumbColor = MaterialTheme.colors.secondary,
             activeTrackColor = MaterialTheme.colors.surface
-        )
+        ),
+        modifier = Modifier.testTag(TestTags.PICK_QUIZ_SLIDER)
     )
     //return intCount?
 }

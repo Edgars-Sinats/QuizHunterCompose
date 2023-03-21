@@ -7,7 +7,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import javax.inject.Inject
 
-class QuestionRepositoryImpl@Inject constructor(
+class QuestionRepositoryImpl @Inject constructor(
     private val dao: QuestionDao
 //    private val database: QuizDatabase,
 ) : QuestionRepository {
@@ -44,7 +44,7 @@ class QuestionRepositoryImpl@Inject constructor(
         return dao.getQuestionX(id)
     }
 
-    override suspend fun getXQuestionFromTopic(topic: String, count: Int): List<Question> {
+    override suspend fun getXQuestionFromTopic(topic: Int, count: Int): List<Question> {
         return dao.getXFromTopic(topic, count)
     }
 

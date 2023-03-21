@@ -7,6 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
+import dagger.Provides
 import javax.inject.Singleton
 
 
@@ -16,7 +17,7 @@ abstract class QuizDatabase: RoomDatabase() {
 
     fun init(context: Context) {
         Log.i("QuizDatabase: ", " INIT DATABASE !")
-        getDatabase(context = context)
+//        getDatabase(context = context)
     }
 
     abstract val questionDao: QuestionDao
@@ -26,7 +27,7 @@ abstract class QuizDatabase: RoomDatabase() {
 
 
         // Singleton prevents multiple instances of database opening at the
-        // same time. todo why volatile
+        // same time.  Volatile - writes on this thread made visible on other threads.
         @Volatile
 //        @Provides
         @Singleton

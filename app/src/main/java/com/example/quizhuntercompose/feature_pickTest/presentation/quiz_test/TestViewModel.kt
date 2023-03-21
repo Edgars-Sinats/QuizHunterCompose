@@ -7,7 +7,6 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.TestOptions
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCase
-import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickOptionsState
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,21 +26,11 @@ class TestViewModel @Inject constructor(
 ): ViewModel() {
 
     private val arguments = savedStateHandle.get<String>("testCategoryName")
-    val moshi = Moshi.Builder()
+    private val moshi: Moshi = Moshi.Builder()
         .addLast(KotlinJsonAdapterFactory())
         .build()
-    val jsonAdapter = moshi.adapter(TestOptions::class.java) //.lenient()
-    val m1 = jsonAdapter.fromJson(arguments!!)
-//        try {
-//        jsonAdapter.fromJson(arguments)
-//    } catch (e: NullPointerException) {
-//        Log.i("TestViewModel", "arguments are null, with exception: $e.  Defoult value added for 1 question")
-//        val m1 : TestOptions = TestOptions(count = 1, ids = listOf(1,2), wrongAns = false, nonAns = false )
-//    }
-//    Log.i("TestViewMod_ : ", "m1: $m1 ...And moshiJson: $arguments" )
-
-    //val testIds = m1
-
+    private val jsonAdapter = moshi.adapter(TestOptions::class.java)!! //.lenient()
+    private val testOptionsObject = jsonAdapter.fromJson(arguments!!)
 
 //    private val arguments2: Int = checkNotNull(savedStateHandle.get<Int>("test1"))
 //    private val arguments3: Boolean = checkNotNull(savedStateHandle.get<Boolean>("nonAns"))
@@ -74,43 +63,28 @@ class TestViewModel @Inject constructor(
 
         questionStateList = emptyList()
         answerStateList = emptyList()
-        questionCount = m1!!.count
-//            if (arguments != null) ({
-//            m1?.count
-//        })!! else {
-//            1
-//        }
-
-//        val n1 : TestPickOptionsState
+        questionCount = testOptionsObject!!.count
 
         viewModelScope.launch(Dispatchers.IO) {
 
-//            if (quizUseCaseObj == "Start test"){
-//                true //TODO need to check which useCase provided.
-            val listOfQuestion: List<Question> =  questionRepository.getMyQuestions(count = m1.count, ids = m1.ids, nonAns = m1.nonAns, wrongAns = m1.wrongAns)
-//            questionRepository.getXQuestions(3)  }
-//            val listOfQuestion: List<Question?>?= questionRepository.getXQuestions(3)
+            val listOfQuestion: List<Question> =  questionRepository.getMyQuestions(count = testOptionsObject.count, ids = testOptionsObject.ids, nonAns = testOptionsObject.nonAns, wrongAns = testOptionsObject.wrongAns)
 
             if (listOfQuestion != null) {
                 Log.i("TestViewMod_List: ", "listOfQuestionConsist is not null!")
 
                 listOfQuestion.forEach { question ->
 
-                    if (question != null) {
-                        val newQuestionState: QuestionState = QuestionState(question, chosenAnswer = null, questionStateId = questionCount)
-                        val newAnswerState: Answer = Answer(questionId = questionCountForInit, chosenAnswer = null, timeSpent = null, isFirstQuestion = questionCountForInit==0, isLastQuestion = questionCountForInit == listOfQuestion.lastIndex )
-                        answerStateList = answerStateList + newAnswerState
-                        questionStateList = questionStateList + newQuestionState
-                        questionCountForInit++
-                    } else {
-                        Log.i("TestViewMod: ", "listOfQuestionConsist of null question... Please investigate")
-                    }
+                    val newQuestionState: QuestionState = QuestionState(question, chosenAnswer = null, questionStateId = questionCount)
+                    val newAnswerState: Answer = Answer(questionId = questionCountForInit, chosenAnswer = null, timeSpent = null, isFirstQuestion = questionCountForInit==0, isLastQuestion = questionCountForInit == listOfQuestion.lastIndex )
+                    answerStateList = answerStateList + newAnswerState
+                    questionStateList = questionStateList + newQuestionState
+                    questionCountForInit++
                 }
 
                 delay(100)
                 Log.i("TestViewMod: ", "Loading UI STATE")
-                _uiState.value = TestState( // TODO stacked here. For first  run of the app.  TestScreen() is executed.
-                    questionStateList,//  stacked here for debugging.
+                _uiState.value = TestState(
+                    questionStateList,
                     answerStateList,
                     answerTime = false,
                     showPreview = false,
@@ -119,46 +93,13 @@ class TestViewModel @Inject constructor(
                     correctAnswerCount = 0
                 )
 
-
-//                _uiState.update { it }
-
             } else {
-                Log.i(VIEW_MODEL, "Warning _uiState of question list failed!!!")
+                Log.i(VIEW_MODEL, "Warning _uiState of question list failed!")
             }
-            Log.i(VIEW_MODEL, "Created _uiState of 3 question") //TODO 3/question...
+            Log.i(VIEW_MODEL, "Created _uiState of new question/s")
             _isLoading.value = false
         }
 
-    }
-
-    fun onAnswerSelected(selectedAnswer: Int){
-//        JatpackComposeState instead of flow.
-        _isLoading.value = true
-
-
-        Log.i("TestViewModel ChosAns: ", "_uiState BEFORE UPDATE " + _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer.toString())
-
-        Log.i("TestViewModel ChosAns: ", "uiState answer" + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
-//        Log.i("TestViewModel ChosAns: ", "answer1:___ " + answer1[uiState.value.currentQuestionIndex].chosenAnswer.toString())
-//        viewModelScope.launch {
-//        viewModelScope.launch {
-
-//        answerStateList = uiState.value.answers[1].copy(chosenAnswer = selectedAnswer)
-
-//            _uiState.update {
-//                it.copy(answers = answerStateList)
-////                currentState.answers[currentState.currentQuestionIndex].copy(chosenAnswer = selectedAnswer)
-////                currentState.answers[_uiState.value.currentQuestionIndex].copy(chosenAnswer = selectedAnswer)
-////                (uiState.value.copy(answers = answer1)  )
-//            }
-//            _uiState.update { it.copy(
-//                answers = answer1
-//            )}
-//        }
-
-        Log.i("TestViewModel ChosAns: ", "_uiState AFTER UPDATE " + _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer.toString())
-        _isLoading.value = false
-//        }
     }
 
     fun onNewQuestionOpen(){
@@ -167,7 +108,6 @@ class TestViewModel @Inject constructor(
 
     fun onEvent(event: TestEvent, ) {
         //TODO check start time if answer already has been viewer using Skip. Don`t update time if answer has been answered(like using Previous)
-        val latestState = _uiState.value  //Not needed
         val currentQuestIndex = _uiState.value.currentQuestionIndex
 
         val endTime =  (System.currentTimeMillis() - start ).toInt()
@@ -177,9 +117,7 @@ class TestViewModel @Inject constructor(
         when (event) {
 
             is TestEvent.ShowDialog -> {
-                println("PRINTING   ")
-
-//                _uiState.value.apply {  }
+                println("PRINTING ")
                 _uiState.value.run { _uiState.value= _uiState.value.copy(showDialog = !_uiState.value.showDialog) }
             }
 
@@ -194,6 +132,7 @@ class TestViewModel @Inject constructor(
             is TestEvent.Submit -> {
 
                 Log.i("TestViewModel Submit", "showPreview:" + _uiState.value.showPreview)
+                Log.i("TestViewModel Submit", "currentQuestIndex: $currentQuestIndex. And " )
 
                 updateAnswer(event.value, currentQuestIndex, endTime)
 
@@ -206,10 +145,12 @@ class TestViewModel @Inject constructor(
                     Log.i("TestViewModel Submit", "all answer checked, taking next question")
 
                     if (_uiState.value.answers[currentQuestIndex].isLastQuestion) {
+                        Log.i("TestViewModel Submit", "all answers should be checked, last answer...")
+                        Log.i("TestViewModel Submit", " _uiState.value.answers[currentQuestIndex]... ${_uiState.value.answers[currentQuestIndex]} ")
 
                         val unansweredQuestId = _uiState.value.questionStateList.first { questionState -> questionState.chosenAnswer == null }.questionStateId
-                        _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId)
-                        _currentlySelectAnswer.value = unansweredQuestId
+                        _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId-1)
+                        _currentlySelectAnswer.value = unansweredQuestId-1 //TODO check new channges
                         Log.i("TestViewModel Non ans", "Non answered question: $unansweredQuestId" )
 
                     } else {

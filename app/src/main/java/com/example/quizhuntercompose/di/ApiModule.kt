@@ -2,9 +2,8 @@ package com.example.quizhuntercompose.di
 
 import android.content.Context
 import android.util.Log
-import androidx.room.Room
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
-import com.example.quizhuntercompose.feature_pickTest.db.data_source.StartingQuestions
+//import com.example.quizhuntercompose.feature_pickTest.db.data_source.StartingQuestions
 import com.example.quizhuntercompose.feature_pickTest.db.repository.QuestionRepositoryImpl
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.*
@@ -16,9 +15,13 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
+
+//class AppModule{
+//
+//}
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object ApiModule {
 
 
     @Singleton
