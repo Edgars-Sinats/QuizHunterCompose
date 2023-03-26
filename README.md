@@ -8,6 +8,8 @@ This code demonstrates the Android Architecture pattern MVVM and component like 
 Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() did`t work with .db or json.
 Next step read data from Firebase Firestore just like in previous project https://github.com/Edgars-Sinats/LumiBricks
 
+
+
 Getting Started - 
 ---------------
 1. On load screen choose which topic questions you want to take. You will have options to choose filter out answered questions and correctly answered.
@@ -20,7 +22,7 @@ Currently implemented quiz with questions and option to choose count of question
 ```_quiz_test``` folder under```feature_pickTest/presentation``` represent only feature.
 
 - __quiz_test__: This is responsible for taken test.
-- - __pick_test__: This is responsible for choosing test. //```_TODO``` 
+- - __pick_test__: This is responsible for choosing test.
 
 
 
@@ -43,3 +45,8 @@ Currently implemented quiz with questions and option to choose count of question
 - [Moshi Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson) - A Converter which uses Moshi for serialization to and from JSON.
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
 - [Truth](https://github.com/google/truth) - Truth is a library for performing assertions in tests:
+
+MVVM Architecture: 
+
+```_TODO```  Next step - impement Firebase Authentication.
+![image](https://user-images.githubusercontent.com/24652033/227798887-b5586e16-3d4e-48d1-91a2-83b782c902e2.png)
