@@ -3,6 +3,7 @@
 
 <!--    <string name="back">  Atpakal / Apstiptinat_Iesniegt / Izlaist_Nakamais  </string>-->
 
+    <string name="startQuiz">Start quiz</string>
     <string name="back">Back</string>
     <string name="previous">Previous</string>
 
@@ -22,6 +23,8 @@
     <string name="ic_baseline_sentiment_dissatisfied">Dissatisfied</string>
 
     <string name="ic_baseline_error_24">Error</string>
+
+    <string name="ColorCorrectColor"> 0xFF12D08D</string>
 
 
 

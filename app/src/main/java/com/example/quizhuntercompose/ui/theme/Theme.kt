@@ -20,33 +20,45 @@ import androidx.compose.material.lightColors
 
 
 const val stronglyDeemphasizedAlpha = 0.6f
-const val slightlyDeemphasizedAlpha = 0.87f
+const val slightlyDeemphasizedAlpha = 0.8f
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    secondaryVariant = PurpleGrey80,
-    onPrimary = Color.Green
+    primary = DarkColorPrimaryColor,            //white
+    primaryVariant = DarkColorPrimaryDarkColor, // Should be non [White Card - min gray]
+    onPrimary = DarkColorOnPrimaryTextColor,      ///
+
+
+    secondary = DarkColorSecondaryColor,             //Purple
+    secondaryVariant = DarkColorSecondaryDarkColor, //Yellow (complimentary)
+    onSecondary = DarkColorOnSecondaryTextColor,       //White
+
+    error = DarkColorErrorColor,               //Red (wrong answer)
+    onError = DarkColorOnErrorLightColor,               //white (text)
+
+    surface = DarkColorSurfaceColor,
+    onSurface = DarkColorOnSurfaceColor,
+    background = DarkColorBackgroundColor,
+    onBackground = DarkColorOnBackgroundColor
+
 )
 
 private val LightColorPalette = lightColors(
-    primary = ColorPrimaryColor,
-    primaryVariant = ColorPrimaryLightColor,
-    onPrimary = ColorPrimaryTextColor,
+    primary = ColorPrimaryColor,            //white
+    primaryVariant = ColorPrimaryDarkColor, // Should be non [White Card - min gray]
+    onPrimary = ColorOnPrimaryTextColor,      ///
 
-    secondary = ColorSecondaryColor,
-    secondaryVariant = ColorSecondaryLightColor, //Green (correct answer)
-    onSecondary = ColorSecondaryTextColor,
 
-    error = ColorErrorLightColor,               //Red (wrong answer)
-    onError = ColorOnErrorLightColor,
+    secondary = ColorSecondaryColor,             //Purple
+    secondaryVariant = ColorSecondaryDarkColor, //Yellow (complimentary)
+    onSecondary = ColorOnSecondaryTextColor,       //White
 
-    surface = ColorSecondaryDarkColor,
+    error = ColorErrorColor,               //Red (wrong answer)
+    onError = ColorOnErrorLightColor,               //white (text)
+
+    surface = ColorSurfaceColor,
     onSurface = ColorOnSurfaceColor,
-    background = ColorPrimaryDarkColor,
-
-//    onBackground = ColorOnSurfaceColor,
+    background = ColorBackgroundColor,
+    onBackground = ColorOnBackgroundColor
 
     /* Other default colors to override
     background = Color.White,

@@ -31,7 +31,6 @@ class EntryPointActivity : ComponentActivity() {
         Log.i("EntryPointAct: ", "Before setContent.")
 
         setContent {
-
             QuizHunterComposeTheme {
                 QuizHunterApp1()
             }
@@ -85,6 +84,7 @@ private fun QuizTestDestination(navController: NavHostController) {
 private fun TestPickDestination(navController: NavHostController) {
     Log.i("EntryPointAct: ", "Before TestPickViewModel build")
     val viewModel: TestPickViewModel = hiltViewModel()
+
 
     TestPickScreen(
         viewModel,

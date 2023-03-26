@@ -67,12 +67,10 @@ fun TestPickScreen(
 
         }
     }
-
-
 }
 
-@Composable
-@Preview
-fun TestPickScreenPreview(){
-//    TestPickScreen()
-}
+//@Composable
+//@Preview
+//fun TestPickScreenPreview(){
+//    TestPickScreen(hiltViewModel(), onNavigationRequested = {})
+//}

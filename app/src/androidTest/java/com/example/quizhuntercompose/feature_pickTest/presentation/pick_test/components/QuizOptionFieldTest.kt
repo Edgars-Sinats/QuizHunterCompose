@@ -10,7 +10,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.presentation.StepsSliderSample
-import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickContentDetails
+import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickContentSliderDetails
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 import com.example.quizhuntercompose.ui.EntryPointActivity
@@ -98,7 +98,7 @@ class QuizOptionFieldTest {
         val viewModle: TestPickViewModel = TestPickViewModel(repository)
         composeRule.setContent {
             QuizHunterComposeTheme {
-                    QuizOptionsField2(
+                    QuizSelectOptionsTopics(
                         unanswered = TestPickEvent.PickUnanswered(true),
                         wronglyAnswered = TestPickEvent.PickWrongAnswered(true),
                         answerTime = TestPickEvent.PickTime(true),
@@ -132,7 +132,7 @@ class QuizOptionFieldTest {
 
         composeRule.setContent {
             QuizHunterComposeTheme() {
-                TestPickContentDetails(
+                TestPickContentSliderDetails(
                     onNavigation = { /*TODO*/ },
                     steps = viewModel.uiState.value.totalCount,
                     currentSteps = viewModel.uiState.value.count,

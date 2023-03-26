@@ -1,9 +1,13 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.components
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,14 +17,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import com.example.quizhuntercompose.cor.util.TestTags
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 
 // TODO  Interactive + Bounce layout
 @Composable
-fun QuizOptionsField2(
+fun QuizSelectOptionsTopics(
     modifier: Modifier = Modifier,
     unanswered: TestPickEvent.PickUnanswered,
     wronglyAnswered: TestPickEvent.PickWrongAnswered,
@@ -50,7 +53,10 @@ fun QuizOptionsField2(
     ) {
 
         Button(
-            modifier = Modifier.padding(4.dp).fillMaxWidth().testTag(TestTags.PICK_QUIZ_OPTIONS_ENABLER_BUTTON),
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .testTag(TestTags.PICK_QUIZ_OPTIONS_ENABLER_BUTTON),
             onClick = { expanded1 = !expanded1 } ) {
             Text(
                 text = if (!expanded1) {
@@ -63,50 +69,58 @@ fun QuizOptionsField2(
 
         if (expanded1) {
 
-            Row(
-                modifier.fillMaxWidth().testTag(TestTags.PICK_QUIZ_OPTIONS_UNANSWERED_ROW),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Unanswered")
-                Switch(
-                    checked = unanswered.value,
-                    onCheckedChange = { onPickUnanswered(TestPickEvent.PickUnanswered(unanswered.value)) })
-            }
-            Row(
-                modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Wrongly answered")
-                Switch(
-                    checked = wronglyAnswered.value,
-                    onCheckedChange = {
-                        onPickWrongAnswered(
-                            TestPickEvent.PickWrongAnswered(
-                                wronglyAnswered.value
+            //Options of Switches
+            //modifier.weight(0.3f,false)
+            Column() {
+                Row(
+                    modifier
+                        .fillMaxWidth()
+                        .testTag(TestTags.PICK_QUIZ_OPTIONS_UNANSWERED_ROW),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Unanswered")
+                    Switch(
+                        checked = unanswered.value,
+                        onCheckedChange = { onPickUnanswered(TestPickEvent.PickUnanswered(unanswered.value)) })
+                }
+                Row(
+                    modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Wrongly answered")
+                    Switch(
+                        checked = wronglyAnswered.value,
+                        onCheckedChange = {
+                            onPickWrongAnswered(
+                                TestPickEvent.PickWrongAnswered(
+                                    wronglyAnswered.value
+                                )
                             )
-                        )
-                    })
-            }
-            Row(
-                modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Time based / not yet")
-                Switch(
-                    checked = answerTime.value,
-                    onCheckedChange = { onPickTime(TestPickEvent.PickTime(answerTime.value)) })
+                        })
+                }
+                Row(
+                    modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Time based / not yet")
+                    Switch(
+                        checked = answerTime.value,
+                        onCheckedChange = { onPickTime(TestPickEvent.PickTime(answerTime.value)) })
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            //Check All Topics row
             Row(
                 modifier = modifier
-                    .padding(horizontal = 16.dp)
+
                     .fillMaxWidth()
-                    //            .height(56.dp)
+                    //.padding(all = 4.dp)
+                    .height(70.dp)
                     .toggleable(
                         value = selectedTopics == allTopicList,
                         onValueChange = {
@@ -115,9 +129,10 @@ fun QuizOptionsField2(
                         },
                         role = androidx.compose.ui.semantics.Role.Checkbox
                     )
+//                    .weight(0.2f, false)
                     .background(MaterialTheme.colors.primaryVariant),
+//                verticalAlignment = Alignment.CenterVertically,
 
-                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
@@ -127,8 +142,9 @@ fun QuizOptionsField2(
                 Text(
                     text = "Select all topics",
                     style = MaterialTheme.typography.h5,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
+                    textAlign = TextAlign.Center
+//                    ,
+//                    modifier = Modifier.weight(0.3f, false)
                 )
                 Checkbox(
                     checked = selectedTopics == listOfIds,
@@ -136,7 +152,14 @@ fun QuizOptionsField2(
                 )
             }
 
-            LazyColumn() {
+            LazyColumn(
+//                modifier
+//                    .weight(0.8f, false)
+//                    .verticalScroll(
+////                        flingBehavior = stat,
+//                        state = rememberScrollState() )
+            )
+            {
                 item {
                     if (allTopicList.isNotEmpty()) {
                         val checkBoxRow = allTopicList.forEachIndexed() { index, topic ->
@@ -152,6 +175,8 @@ fun QuizOptionsField2(
                             )
 
                         }
+                    } else {
+                        //Todo add default row - Sorry, what! No items :o ?
                     }
                 }
             }
@@ -170,7 +195,7 @@ fun CheckBoxRow1(
     Surface(modifier = Modifier.padding(vertical = 4.dp)) {
         Row(
             modifier = modifier
-                .padding(horizontal = 16.dp)
+                .padding(all = 2.dp)
                 .fillMaxWidth()
                 //            .height(56.dp)
                 .toggleable(
@@ -181,7 +206,8 @@ fun CheckBoxRow1(
                     },
                     role = androidx.compose.ui.semantics.Role.Checkbox
                 )
-                .background(MaterialTheme.colors.primaryVariant)
+                .background(MaterialTheme.colors.surface)
+
             ,
 
             verticalAlignment = Alignment.CenterVertically,
@@ -212,7 +238,7 @@ fun CheckBoxRowPreview() {
 @Composable
 fun QuizOptionsFieldPreview2(modifier: Modifier = Modifier) {
     val topicList : List<Topic> = listOf(Topic(0,"sa"), Topic(1,"Second topic"), Topic(2,"NewTopic"))
-    QuizOptionsField2(
+    QuizSelectOptionsTopics(
         expanded = true,
         onTopicsSelected = { /*TODO*/ },
         onTestOptionState = {},

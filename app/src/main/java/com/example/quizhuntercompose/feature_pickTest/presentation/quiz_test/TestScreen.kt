@@ -9,8 +9,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -23,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColor
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.quizhuntercompose.R
@@ -121,7 +124,11 @@ fun TestScreen(
                             val animationSpec: TweenSpec<IntOffset> = tween(CONTENT_ANIMATION_DURATION)
 
                             val direction =
-                                if (targetState.questionStateList[uiState.currentQuestionIndex].questionStateId > initialState.questionStateList[uiState.currentQuestionIndex].questionStateId) {
+//                                if(targetState.questionStateList[uiState.currentQuestionIndex].questionStateId == initialState.questionStateList[uiState.currentQuestionIndex].questionStateId){
+//                                    AnimatedContentScope.SlideDirection.Start
+//                                }
+
+                                if (targetState.questionStateList[uiState.currentQuestionIndex].questionStateId < initialState.questionStateList[uiState.currentQuestionIndex].questionStateId) {
                                     // Going forwards in the survey: Set the initial offset to start
                                     // at the size of the content so it slides in from right to left, and
                                     // slides out from the left of the screen to -fullWidth
@@ -135,11 +142,29 @@ fun TestScreen(
                             slideIntoContainer(
                                 towards = direction,
                                 animationSpec = animationSpec
-                            ) with
-                                    slideOutHorizontally(
-                                        animationSpec = tween(CONTENT_ANIMATION_DURATION),
-                                        targetOffsetX = { fullWidth ->  -fullWidth }
-                                    )
+                            ) with slideOutOfContainer (
+                                towards =
+                                    if ( direction == AnimatedContentScope.SlideDirection.Left )
+                                    { AnimatedContentScope.SlideDirection.Right }
+                                    else { AnimatedContentScope.SlideDirection.Left }
+                                        ,
+                                animationSpec = animationSpec  ,
+                                targetOffset =
+                                    if (direction == AnimatedContentScope.SlideDirection.Right)
+                                        { fullWidth -> fullWidth   }
+                                    else
+                                        { fullWidth -> -fullWidth }
+
+                            )
+                        //                            with
+//                                    slideOutHorizontally(
+//                                        animationSpec = tween(CONTENT_ANIMATION_DURATION),
+//                                        targetOffsetX =
+//                                            if (direction == AnimatedContentScope.SlideDirection.Left)
+//                                                { fullWidth -> fullWidth  }
+//                                            else
+//                                                { fullWidth -> -fullWidth }
+//                                    )
 
                         }
 
@@ -362,8 +387,8 @@ fun QuestionScreen(
 ){
     Column(modifier = Modifier.padding (all = 8.dp) ) {
         // QuestionList
-        LazyColumn(){
-            item {
+        //LazyColumn(){
+//            item {
                 Spacer(modifier = Modifier.height(32.dp))
                 QuestionTitle(question.question + " "
                         + "\n\n And last answer.ChosenAnswer: " + answer.chosenAnswer
@@ -382,11 +407,11 @@ fun QuestionScreen(
                     answer = answer,
                     onAnswerSelected = { answer -> onAnswer(answer) }, //TODO check //Unit test. Should i put on onsAnswer on update it
                     chosenAnswerState = chosenAnswerState,
-                    modifier = Modifier.fillParentMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     showPreview = showPreview
                 )
-            }
-        }
+//            }
+        //}
 
     }
 
@@ -448,10 +473,11 @@ private fun QuestionAnswers(
 
 
 
-    Column(modifier = modifier) {
+    LazyColumn(modifier = modifier) {
 
-        //TODO implement them. //Can delete-  val radOptKeys =
-        val radOptKeys = radioOptions.forEachIndexed { index, text -> //TODO use this to color the UI composable
+        //TODO implement them.
+        // Can delete-  val radOptKeys =
+        item {  radioOptions.forEachIndexed { index, text -> //TODO use this to color the UI composable
             val onClickHandle = {
                 onOptionSelected(index)
                 radioOptions[index].let { onAnswerSelected(index) }
@@ -460,6 +486,7 @@ private fun QuestionAnswers(
             val optionSelected = index == selectedOption
             val answerBorderColor: Color
             val answerBackgroundColor: Color
+
             if(showPreview) {
 
                 answerBorderColor = if (optionSelected && answer.chosenAnswer == question.correctAnswer-1) {
@@ -471,9 +498,10 @@ private fun QuestionAnswers(
                     MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
                 }
 
-                //Correct
+                //
                 answerBackgroundColor = if (optionSelected && answer.chosenAnswer == question.correctAnswer-1) {
-                    MaterialTheme.colors.secondaryVariant.copy(alpha = 0.7f) //Green
+                    Color.Green.copy(alpha = 0.65f)
+//                    MaterialTheme.colors.secondaryVariant.copy(alpha = 0.7f) //Green
                 }
                 //Wrong
                 else if ( optionSelected) {
@@ -482,7 +510,7 @@ private fun QuestionAnswers(
 
                 //Show correct answer
                 else if (index == question.correctAnswer-1 ){
-                    MaterialTheme.colors.secondaryVariant.copy(alpha = .5f) //Green
+                    Color.Green //MaterialTheme.colors.secondaryVariant.copy(alpha = .5f) //Green
                 }
                 else if (index != question.correctAnswer-1) {
                     MaterialTheme.colors.background
@@ -494,7 +522,8 @@ private fun QuestionAnswers(
 
 
 
-            }else {
+            }
+            else {
                 answerBorderColor = if (optionSelected) {
                     MaterialTheme.colors.primary.copy(alpha = 0.5f)
                 } else {
@@ -524,6 +553,7 @@ private fun QuestionAnswers(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable { !showPreview }
                         .selectable(
                             selected = optionSelected,
                             onClick = onClickHandle
@@ -555,7 +585,8 @@ private fun QuestionAnswers(
                     )
                 }
             }
-        }
+        } //End radOptKeys
+        }//End item [Lazy]
     }
 }
 
