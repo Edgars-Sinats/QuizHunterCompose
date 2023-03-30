@@ -20,7 +20,6 @@ data class TestPickOptionsState(
 //    val pickedQuestions: List<Question>, //Taken Question form SQL OR in code level selects.
     val pickedTopicId: List<Int> //List of chosen topics.
 ) {
-
 }
 
 

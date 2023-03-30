@@ -1,13 +1,10 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -15,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,21 +29,12 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TestPickContent(
-    //    navController: NavController,
     viewModel: TestPickViewModel,
     testPickOptionsState: TestPickOptionsState,
     onNavigationTest: () -> Unit,
 ) {
-//    val verticalScroll = rememberScrollState()
-//    var verticalBias by remember { mutableStateOf(-1f) }
-//    val  alignment by animateHorizontalAlignmentAsState(verticalBias)
-
-//    val fabVisibility by derivedStateOf {
-//        listState.firstVisibleItemIndex == 0
-//    }
-
     Scaffold(
-        floatingActionButtonPosition = FabPosition.Center, //TODO End - when  scroll & collapse. Use implement Material 3
+        floatingActionButtonPosition = FabPosition.End, //TODO End - when  scroll & collapse. Use implement Material 3
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text(
@@ -57,10 +44,18 @@ fun TestPickContent(
                 onClick = { onNavigationTest.invoke() }, //Entry Point Activity -> onNavigationRequested
                 shape = MaterialTheme.shapes.large.copy(CornerSize(percent = 50)),
                 backgroundColor = MaterialTheme.colors.secondary,
-                icon = { Icon (Icons.Filled.Build, contentDescription = null )} )
+                icon = { Icon (Icons.Filled.Build, contentDescription = null )}
+            )
         },
-        isFloatingActionButtonDocked = false //Bottom navigation
-
+        isFloatingActionButtonDocked = true, //Bottom navigation
+        bottomBar = {
+            StepsSliderSample(
+                steps = viewModel.uiState.value.totalCount,
+                maxSteps = viewModel.uiState.value.totalCount,
+                currentSteps = viewModel.uiState.value.count,
+                onSlide = viewModel::onEvent
+            )
+        }
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -71,9 +66,7 @@ fun TestPickContent(
             // We toggle the isExpanded variable when we click on this Column
             QuizSelectOptionsTopics(
                 modifier = Modifier
-                    .clickable { isExpanded = !isExpanded }
-                    .weight(0.5f, false),
-//                    .verticalScroll(verticalScroll),
+                    .clickable { isExpanded = !isExpanded },
                 unanswered = TestPickEvent.PickUnanswered(viewModel.uiState.value.unanswered),
                 answerTime = TestPickEvent.PickTime(viewModel.uiState.value.answerTime),
                 wronglyAnswered = TestPickEvent.PickWrongAnswered(viewModel.uiState.value.wrongAnswersState),
@@ -92,13 +85,6 @@ fun TestPickContent(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            TestPickContentSliderDetails(
-                modifier = Modifier.weight(0.2f,false),
-                steps = viewModel.uiState.value.totalCount,
-                currentSteps = viewModel.uiState.value.count,
-                onSlide = viewModel::onEvent
-            )
         }
     }
 
@@ -115,8 +101,8 @@ private fun animateHorizontalAlignmentAsState(
 }
 
 @Composable
-fun TestPickContentSliderDetails(modifier: Modifier, steps: Int, currentSteps: Int, onSlide: (TestPickEvent) -> Unit){
-    Column(modifier = modifier.fillMaxWidth(1f)) {
+fun TestPickContentSliderDetails(steps: Int, currentSteps: Int, onSlide: (TestPickEvent) -> Unit){
+    Column(modifier = Modifier.fillMaxWidth(1f)) {
 
         StepsSliderSample(
             steps = steps,
@@ -135,7 +121,7 @@ fun StepsSliderSample(steps: Int,
 {
     var sliderPosition by remember { mutableStateOf(currentSteps) }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.1f)), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(
             text = currentSteps.toString(),
@@ -153,14 +139,12 @@ fun StepsSliderSample(steps: Int,
             steps = steps,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colors.secondary,
-                activeTrackColor = MaterialTheme.colors.surface,
+                activeTrackColor = MaterialTheme.colors.primary,
 
                 ),
             modifier = Modifier.testTag(TestTags.PICK_QUIZ_SLIDER)
         )
     }
-
-    //return intCount?
 }
 
 @Composable
@@ -170,30 +154,13 @@ fun TestPickContentPreview(){
 
     val slideLocation: Int =4
 
-    TestPickContentSliderDetails( steps = 5, currentSteps = slideLocation, onSlide = {  }, modifier = Modifier )
-//    TestPickContent(
-//        viewModel = TestPickViewModel(),
-//        TestPickOptionsState(
-//            totalCount = 5,
-//            pickedTopicId = listOf(2,3),
-////            pickedQuestions = emptyList(),
-//            pickedAllTopic = true,
-//            questions = emptyList(),
-//            topics = topicList, //AllTopics
-//            isOptionsSectionVisible = true,
-//            answerTime = false,
-//            unanswered = false,
-//            wrongAnswersState = false ),
-//        onNavigationTest = {},
-////        topicList = topicList
-//    )
+    TestPickContentSliderDetails( steps = 5, currentSteps = slideLocation, onSlide = {  } )
 }
 
 @Composable
 @Preview
 fun StepsSliderSamplePreview(){
     MaterialTheme() {
-
         StepsSliderSample(1,4, onSlide = {}, currentSteps = 3 )
     }
 }

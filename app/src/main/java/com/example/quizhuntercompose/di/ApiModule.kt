@@ -2,6 +2,8 @@ package com.example.quizhuntercompose.di
 
 import android.content.Context
 import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.quizhuntercompose.feature_pickTest.db.data_source.QuizDatabase
 //import com.example.quizhuntercompose.feature_pickTest.db.data_source.StartingQuestions
 import com.example.quizhuntercompose.feature_pickTest.db.repository.QuestionRepositoryImpl
@@ -28,24 +30,6 @@ object ApiModule {
     @Provides
     fun provideQuizDatabase(@ApplicationContext app: Context): QuizDatabase {
         return QuizDatabase.getDatabase(app.applicationContext)
-        Log.i("App Module","Database starting to build from callback as it should." )
-
-//        return Room.databaseBuilder(
-//            app,
-//            QuizDatabase::class.java,
-//            QuizDatabase.DATABASE_NAME
-//        ).addCallback(StartingQuestions( app.applicationContext))
-//            .build()
-
-        //            .createFromAsset("huntQuestion.db")
-//            .addCallback(object : RoomDatabase.Callback() {
-//                override fun onCreate(db: SupportSQLiteDatabase) {
-//                    super.onCreate(db)
-//                    db.execSQL()
-//                            }
-//            })
-
-
     }
 
     @Provides

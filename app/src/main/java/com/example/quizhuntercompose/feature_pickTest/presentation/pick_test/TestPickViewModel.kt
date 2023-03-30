@@ -38,98 +38,41 @@ class TestPickViewModel @Inject constructor(
     }
     init {
         Log.i(TAG, "Init func")
+        val listOfIds : MutableList<Int>  = mutableListOf()
 
-            val listOfIds : MutableList<Int>  = mutableListOf()
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            async {
+                topicNames = questionRepository.getAllTopics()
+                Log.i(TAG, ".launch async 1. topic names: $topicNames.")
+            }.await()
 
-            viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-                Log.i(TAG, ".launch 1.")
-                async {
-                    topicNames = questionRepository.getAllTopics()
-                    Log.i(TAG, ".launch async 1. topic names: $topicNames.")
-                }.await()
+            async { topicNames.forEach { listOfIds.add((it.topicId) - 1) }
+                Log.i(TAG, ".launch async 2. listOfIds: $listOfIds.")
+            }.await()
 
-                async { topicNames.forEach { listOfIds.add((it.topicId) - 1) }
-                    Log.i(TAG, ".launch async 2. listOfIds: $listOfIds.")
-                }.await()
+            async { questionCount = questionRepository.getQuestionCountChecker(
+                listOfIds,
+                nonAns = false,
+                wrongAns = false )
+            }.await()
 
-                async { questionCount = questionRepository.getQuestionCountChecker(
-                    listOfIds,
-                    nonAns = false,
-                    wrongAns = false
-                )
-                    Log.i(TAG, ".launch async 3. questionCount: $questionCount.")
-                    Log.i(TAG, ".launch async 3. listOfIds: $listOfIds.")
-                    Log.i(TAG, ".launch async 3. topic names: $topicNames.")
-
-                }.await()
-
-                try {
-                    withContext(Dispatchers.Main){
-                        Log.i(TAG, ".Try value.")
-                        _quizPickOptions.value = TestPickOptionsState(
-                            topics = topicNames, //TODO see all topics
-                            totalCount = questionCount,
-                            pickedTopicId = listOfIds.toList(),
-//                            pickedQuestions = questionStateList,
-                            isOptionsSectionVisible = false,
-                            count = questionCount / 2
-                        )
-                        databaseLoading = false
-                    }
-
-
-                } catch (cancellationException: CancellationException) {
-                    throw cancellationException
+            try {
+                withContext(Dispatchers.Main){
+                    _quizPickOptions.value = TestPickOptionsState(
+                        topics = topicNames, //TODO see all topics
+                        totalCount = questionCount,
+                        pickedTopicId = listOfIds.toList(),
+                        isOptionsSectionVisible = false,
+                        count = questionCount / 2
+                    )
+                    databaseLoading = false
                 }
 
-                Log.i(TAG, ".launch finish.")
+
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
             }
-
-
-
-//        viewModelScope.launch(Dispatchers.IO) {
-//
-//        }
-
-
-//        job2.join()
-            /**
-             *  val exampleTopicNames: Deferred<List<Topic>> = async { questionRepository.getAllTopics() }
-             *             Log.i(TAG, "viewModel_Start")
-             *      val deferreds = listOf(
-             *          val exampleTopicNames: Deferred<List<Topic>> = async {   questionRepository.getAllTopics()  },
-             *          val exampleQuestionCount: <Int> = async {   questionRepository.getAllTopics()  },
-             *       )
-             *       val exampleQuestionCount: Deferred<Int> = async { questionRepository.getQuestionCountChecker(listOfIds,
-             *              nonAns = false,
-             *         wrongAns = false
-             *) }
-             *Log.i(TAG, "questionCount: $questionCount")
-             *val listOfQuestion: List<Question?> = questionRepository.getXQuestions(questionCount)
-             *delay(1000) //TODO How to wait till loaded before creating State
-             *            Thread.sleep(500)
-            Log.i(TAG, "topicNames: $topicNames")
-             */
-
-//            Log.i(TAG, "listOfIds: $listOfIds")
-//        job1.join()
-            ////////////////////////////////
-            Log.i(TAG, "topicNames: $topicNames")
-
-//        val exampleQuestionCount: Deferred<Int>
-//        if (topicNames.isNotEmpty()){
-//            exampleQuestionCount = async { questionRepository.getQuestionCountChecker(listOfIds,
-//                nonAns = false,
-//                wrongAns = false
-//            ) }
-//        } else {
-//
-//            exampleQuestionCount = async { 0 }
-//        }
-//        questionCount = exampleQuestionCount.await()
-
-
-
+        }
         Log.i(TAG, "questionCount: $questionCount")
     }
 
@@ -159,12 +102,10 @@ class TestPickViewModel @Inject constructor(
         when (event) {
             is TestPickEvent.StartQuiz -> {
                 //TODO navigate/call TestScreen
-                CoroutineScope(Dispatchers.IO).launch {
-
-//                    quizUseCase.
-                    event.value
-//                    val questions: List<Question> = quizUseCase.startTest.invoke() //Start with 3 questions
-                }
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    event.value
+////                    val questions: List<Question> = quizUseCase.startTest.invoke() //Start with 3 questions
+//                }
             }
             is TestPickEvent.ChooseCount -> {
                 Log.i(TAG, "ChooseCount")

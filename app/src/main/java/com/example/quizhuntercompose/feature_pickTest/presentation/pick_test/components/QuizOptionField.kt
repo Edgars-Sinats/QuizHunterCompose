@@ -45,7 +45,6 @@ fun QuizSelectOptionsTopics(
         mutableStateOf(expanded)
     }
 
-
     Column (
         modifier
             .fillMaxSize()
@@ -70,7 +69,6 @@ fun QuizSelectOptionsTopics(
         if (expanded1) {
 
             //Options of Switches
-            //modifier.weight(0.3f,false)
             Column() {
                 Row(
                     modifier
@@ -120,7 +118,7 @@ fun QuizSelectOptionsTopics(
 
                     .fillMaxWidth()
                     //.padding(all = 4.dp)
-                    .height(70.dp)
+                    //.height(70.dp)
                     .toggleable(
                         value = selectedTopics == allTopicList,
                         onValueChange = {
@@ -142,10 +140,7 @@ fun QuizSelectOptionsTopics(
                 Text(
                     text = "Select all topics",
                     style = MaterialTheme.typography.h5,
-                    textAlign = TextAlign.Center
-//                    ,
-//                    modifier = Modifier.weight(0.3f, false)
-                )
+                    textAlign = TextAlign.Center )
                 Checkbox(
                     checked = selectedTopics == listOfIds,
                     onCheckedChange =  { onCheckAllTopics(TestPickEvent.CheckAllTopics(checkAllTopics.value)) } // null recommended for accessibility with screenreaders

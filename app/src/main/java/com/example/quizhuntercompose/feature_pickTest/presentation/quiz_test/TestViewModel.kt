@@ -3,10 +3,12 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
+import androidx.navigation.NavHostController
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.TestOptions
 import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.use_case.QuizUseCase
+import com.example.quizhuntercompose.ui.NavigationKeys
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +53,7 @@ class TestViewModel @Inject constructor(
 
 
     private var start: Long = 0
-    private var currentQuestionIndex = _uiState.value.currentQuestionIndex
+//    private var currentQuestionIndex = _uiState.value.currentQuestionIndex
 
     private var questionStateList: List<QuestionState>
     private var answerStateList: List<Answer>
@@ -74,7 +76,7 @@ class TestViewModel @Inject constructor(
 
                 listOfQuestion.forEach { question ->
 
-                    val newQuestionState: QuestionState = QuestionState(question, chosenAnswer = null, questionStateId = questionCount)
+                    val newQuestionState: QuestionState = QuestionState(question, chosenAnswer = null, questionStateId = questionCountForInit)
                     val newAnswerState: Answer = Answer(questionId = questionCountForInit, chosenAnswer = null, timeSpent = null, isFirstQuestion = questionCountForInit==0, isLastQuestion = questionCountForInit == listOfQuestion.lastIndex )
                     answerStateList = answerStateList + newAnswerState
                     questionStateList = questionStateList + newQuestionState
@@ -129,18 +131,19 @@ class TestViewModel @Inject constructor(
             }
 
             //TODO If onAppDestroy, should save currentQuestionState.
+            is TestEvent.FinishTestScreen -> {
+            }
             is TestEvent.Submit -> {
 
                 Log.i("TestViewModel Submit", "showPreview:" + _uiState.value.showPreview)
                 Log.i("TestViewModel Submit", "currentQuestIndex: $currentQuestIndex. And " )
 
-                updateAnswer(event.value, currentQuestIndex, endTime)
+                updateAnswer(answerNbr = event.value, currentQuestIndex = currentQuestIndex, endTime)
 
                 // Check if all answers is updated, except current. currentQuestIndex is not jet updated, and checkIfAllAnswered() read it as non answered before updateAnswer() is finished.
-                if (checkIfAllAnswered(uiState.value.questionStateList, currentQuestIndex))  {
+                if ( checkIfAllAnswered(uiState.value.questionStateList, currentQuestIndex) )  {
                     Log.i("TestViewModel Submit", "all answer checked")
                     updateQuestion() //update In Database // TODO check how to save answers when app is onDestroy(), at least answers what are answered in the test.
-
                 } else {
                     Log.i("TestViewModel Submit", "all answer checked, taking next question")
 
@@ -149,8 +152,8 @@ class TestViewModel @Inject constructor(
                         Log.i("TestViewModel Submit", " _uiState.value.answers[currentQuestIndex]... ${_uiState.value.answers[currentQuestIndex]} ")
 
                         val unansweredQuestId = _uiState.value.questionStateList.first { questionState -> questionState.chosenAnswer == null }.questionStateId
-                        _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId-1)
-                        _currentlySelectAnswer.value = unansweredQuestId-1 //TODO check new channges
+                        _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId)
+                        _currentlySelectAnswer.value = unansweredQuestId //TODO check new channges
                         Log.i("TestViewModel Non ans", "Non answered question: $unansweredQuestId" )
 
                     } else {
@@ -177,7 +180,6 @@ class TestViewModel @Inject constructor(
                 println("PRINTING Event value:: ${event.value}")
                 _isLoading.value = true
 
-                _currentlySelectAnswer.value = event.value // From MC STAR - how can make event.id
 
 //                _uiState.update { newState ->
 //                    uiState.value.answers[uiState.value.currentQuestionIndex].copy(chosenAnswer = event.value)
@@ -190,7 +192,11 @@ class TestViewModel @Inject constructor(
 //                answers =
 //                )}
 //                _uiState.apply {
+//                _uiState.value.answers.get(_uiState.value.currentQuestionIndex) =   _uiState.value.answers.get(index = _uiState.value.currentQuestionIndex).copy(chosenAnswer = 2)
                 _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer = event.value
+                _currentlySelectAnswer.value = event.value // From MC STAR - how can make event.id
+
+                //chosenAnswer = event.value
 //                _uiState.apply { _uiState}
 //                _uiState.value.apply {  }
 //                _currentlySelectAnswer.value = event.value
@@ -213,9 +219,9 @@ class TestViewModel @Inject constructor(
     private fun updateQuestion() = CoroutineScope(Dispatchers.IO).launch{
         var _questionStatePosition: Int
         var _correctAnswer: Int = 0
+        _questionStatePosition= 0
 
         _uiState.value.questionStateList.forEach {
-            _questionStatePosition= 0
             val _currentQuestionState = _uiState.value.questionStateList[_questionStatePosition]
             val _currentQuestion = _currentQuestionState.question
             val answerTimes = _currentQuestion.correctAnswers + _currentQuestion.nonAnswers + _currentQuestion.nonAnswers
@@ -267,7 +273,7 @@ class TestViewModel @Inject constructor(
                 throw cancellationException
             }
             Log.i("TestViewModel Update: ", "NextQuestion to be loaded in db. Current loaded: " + _questionStatePosition )
-            _questionStatePosition = _questionStatePosition+1
+            _questionStatePosition += 1
         }
 //        _uiState.value.copy(showPreview = true) //SHOW PREVIEW, WRONG - Not applying value!
         _uiState.value = _uiState.value.copy(
@@ -286,9 +292,15 @@ class TestViewModel @Inject constructor(
      *
      */
 
+    //TODO something is off, even when middle is not answered, show all good.
     private fun checkIfAllAnswered(questionList: List<QuestionState>, lastQuestionId: Int) : Boolean{
         //if NotNull(QuestSFound) -> no ans(for one).       // null -> non answered
-        return questionList.find { questionState -> questionState.chosenAnswer == null && questionState.questionStateId != lastQuestionId } == null
+        return questionList.find {
+                questionState ->
+                    questionState.chosenAnswer == null      //Some unanswered
+        } == null //All answered
+//                &&
+//                questionState.questionStateId != lastQuestionId
     }
 
 
@@ -316,11 +328,12 @@ class TestViewModel @Inject constructor(
             chosenAnswer = answerNbr
             timeSpent = timeSpent?.plus(timeOnQuestion)
         }
-        questionList.map {
-                questionState1 ->
-            if (questionState1.questionStateId == questionList[currentQuestIndex].questionStateId )
-                questionState1.copy(chosenAnswer = uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer)
-            else questionState1
+        questionList.elementAt(currentQuestIndex).apply {
+            chosenAnswer = answerNbr
+
+//            if (questionState1.questionStateId == questionList[currentQuestIndex].questionStateId )
+//                questionState1.copy(chosenAnswer = answerNbr)
+//            else questionState1
         }
 
         _uiState.value = _uiState.value.copy(

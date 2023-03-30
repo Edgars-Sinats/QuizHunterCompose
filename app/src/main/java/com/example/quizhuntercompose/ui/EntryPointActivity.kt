@@ -66,7 +66,7 @@ private fun QuizHunterApp1() {
 @Composable
 private fun QuizTestDestination(navController: NavHostController) {
     TestRoute(
-        navCont = navController,
+//        navCont = navController,
         navigateToFinish = { navController.navigate(NavigationKeys.Route.TEST_CHOOSE_SCREEN) }
     )
 
@@ -89,8 +89,6 @@ private fun TestPickDestination(navController: NavHostController) {
     TestPickScreen(
         viewModel,
         onNavigationRequested = {
-            Log.i("EntryPointAct: ", "should go for QuizTestDet")
-
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory())
                 .build()
@@ -98,8 +96,6 @@ private fun TestPickDestination(navController: NavHostController) {
             val jsonAdapter = moshi.adapter<TestOptions>(TestOptions::class.java)
             val testOptionsObject = TestOptions(ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState)
             val userJson = jsonAdapter.toJson(testOptionsObject)
-
-//            NavigationKeys.Arg.TEST_QUESTIONS_ = userJson
 
             // TODO pass to testViewModel. => viewModel.questionStateList
             navController.currentBackStackEntry?.savedStateHandle?.set("testPickView", userJson)
