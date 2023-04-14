@@ -10,6 +10,8 @@ buildscript {
         lifecycleVersion = '2.4.0'
         materialVersion = '1.4.0'
         roomVersion = '2.3.0'
+        accompanist_version = '0.28.0'
+        coil_compose_version = '2.2.2'
         // testing
         junitVersion = '4.13.2'
         espressoVersion = '3.4.0'

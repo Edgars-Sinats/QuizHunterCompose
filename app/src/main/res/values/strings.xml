@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">QuizHunterCompose</string>
 
-<!--    <string name="back">  Atpakal / Apstiptinat_Iesniegt / Izlaist_Nakamais  </string>-->
+    <!--IDs-->
+    <string name="web_client_id">your own .... .apps.googleusercontent.com</string>
+
+    <!--    <string name="back">  Atpakal / Apstiptinat_Iesniegt / Izlaist_Nakamais  </string>-->
 
     <string name="startQuiz">Start quiz</string>
     <string name="back">Back</string>
@@ -15,7 +18,22 @@
     <string name="submit">Submit</string>
     <string name="done">Done</string>
     <string name="choose">Choose</string>
+    <string name="non">Non</string>
     <string name="close_preview">Close Preview</string>
+    <string name="review_answers">Review Answers</string>
+
+    <string name="dismiss">Dismiss</string>
+
+
+<!--    PopUpDialog-->
+    <string name="excellent">Excellent</string>
+    <string name="good">Good</string>
+    <string name="something_went_wrong">Something went wrong</string>
+
+    <string name="you_have_answered">You have answered </string>
+    <string name="questions_correctly_of_total"> questions correctly of total </string>
+
+    <string name="not_met_expectation">Not met expectation</string>
 
 
 <!--    Image description.-->

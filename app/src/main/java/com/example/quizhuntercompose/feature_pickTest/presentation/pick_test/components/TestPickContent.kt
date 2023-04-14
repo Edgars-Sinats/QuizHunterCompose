@@ -41,7 +41,7 @@ fun TestPickContent(
                     text =  stringResource(id = R.string.startQuiz),
                     color = MaterialTheme.colors.surface )
                 },
-                onClick = { onNavigationTest.invoke() }, //Entry Point Activity -> onNavigationRequested
+                onClick =  onNavigationTest, //Entry Point Activity -> onNavigationRequested
                 shape = MaterialTheme.shapes.large.copy(CornerSize(percent = 50)),
                 backgroundColor = MaterialTheme.colors.secondary,
                 icon = { Icon (Icons.Filled.Build, contentDescription = null )}
@@ -56,9 +56,9 @@ fun TestPickContent(
                 onSlide = viewModel::onEvent
             )
         }
-    ) {
+    ) { padding->
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(padding)) {
 
             // We keep track if the options box(column) is expanded or not in this variable
             var isExpanded by remember { mutableStateOf(false) }
@@ -87,7 +87,6 @@ fun TestPickContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
-
 
 }
 

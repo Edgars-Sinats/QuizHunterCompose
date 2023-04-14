@@ -4,38 +4,53 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.quizhuntercompose.feature_auth.presentation_auth.AuthViewModel
 import com.example.quizhuntercompose.feature_pickTest.domain.model.TestOptions
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
-import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestRoute
+import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
+import com.example.quizhuntercompose.navigation.NavGraph
+import com.example.quizhuntercompose.navigation.Screen
 import com.example.quizhuntercompose.ui.NavigationKeys.Arg.TEST_CATEGORY_ID
-import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.AndroidEntryPoint
 
-// Single Activity per app
+@ExperimentalAnimationApi
 @AndroidEntryPoint
 class EntryPointActivity : ComponentActivity() {
+    private lateinit var navController: NavHostController
+    private val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i("EntryPointAct: ", "Before setContent.")
-
         setContent {
-            QuizHunterComposeTheme {
-                QuizHunterApp1()
-            }
+            navController = rememberAnimatedNavController()
+            NavGraph(
+                navController = navController
+            )
+            checkAuthState()
         }
     }
+
+    private fun checkAuthState() {
+        if(viewModel.isAuthenticated) {
+            navigateToQuizPickScreen()
+        }
+    }
+
+    private fun navigateToQuizPickScreen() = navController.navigate(Screen.QuizPickScreen.route)
 }
 
 @Composable
@@ -49,13 +64,13 @@ private fun QuizHunterApp1() {
         }
         composable(
             route = NavigationKeys.Route.QUIZ_TEST_DETAILS,
+
             arguments = listOf(navArgument(NavigationKeys.Arg.TEST_CATEGORY_ID) {
                 type = NavType.StringType
             })
         ) {
             QuizTestDestination(navController) // Quiz screen - answering a test.
 //            TestPickDestination() // Choosing A Test
-
         }
     }
 }
@@ -65,9 +80,10 @@ private fun QuizHunterApp1() {
  */
 @Composable
 private fun QuizTestDestination(navController: NavHostController) {
-    TestRoute(
+    TestScreen(
 //        navCont = navController,
-        navigateToFinish = { navController.navigate(NavigationKeys.Route.TEST_CHOOSE_SCREEN) }
+        navigateToFinish = { navController.navigate(NavigationKeys.Route.TEST_CHOOSE_SCREEN) },
+        startingQuestionArg = "navArgument from composable()"
     )
 
 //        effectFlow = viewModel.effects.receiveAsFlow(),
@@ -85,10 +101,9 @@ private fun TestPickDestination(navController: NavHostController) {
     Log.i("EntryPointAct: ", "Before TestPickViewModel build")
     val viewModel: TestPickViewModel = hiltViewModel()
 
-
     TestPickScreen(
         viewModel,
-        onNavigationRequested = {
+        navigateToQuizScreen = {
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory())
                 .build()
@@ -103,7 +118,6 @@ private fun TestPickDestination(navController: NavHostController) {
 
             navController.navigate(NavigationKeys.Route.QUIZ_TEST_DETAILS.replace("{testCategoryName}", userJson))
             Log.i("EntryPointAct", "picketTopicIds: ${viewModel.uiState.value.pickedTopicId} and Test1 totalCount: ${viewModel.uiState.value.totalCount}")
-
         }
     )
 }

@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.R
+import com.example.quizhuntercompose.components.ProgressBar
+import com.example.quizhuntercompose.cor.util.AppConstants.TAG_TEST_SCREEN
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.util.supportWideScreen
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
@@ -35,11 +37,111 @@ import com.example.quizhuntercompose.ui.theme.slightlyDeemphasizedAlpha
 private const val CONTENT_ANIMATION_DURATION = 700
 
 @Composable
-fun TestRoute(
-    testViewModel: TestViewModel = hiltViewModel(),
+//@ExperimentalComposeUiApi
+@ExperimentalAnimationApi
+fun TestScreenMain(
+    uiState: TestState,
+    onSelectAnswer: (TestEvent) -> Unit,
+    onNextPressed: (TestEvent) -> Unit,
+    onDonePressed: (TestEvent) -> Unit,
+    onPreviousPressed: (TestEvent) -> Unit,
+    currentlySelectedAnswer: State<Int?>,
     navigateToFinish: () -> Unit
-){
+//        testViewModel: TestViewModel,
+//        onBackPressedCallback: OnBackPressedCallback
 
+) {
+    Surface(modifier = Modifier.supportWideScreen()) {
+        Scaffold(
+
+            topBar = {}, //TODO
+            content = { padding ->
+                AnimatedContent(
+                    targetState = remember { mutableStateOf(uiState.currentQuestionIndex) },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    transitionSpec = {
+                        val animationSpec: TweenSpec<IntOffset> = tween(CONTENT_ANIMATION_DURATION)
+
+                        if (targetState.value > initialState.value ) {
+                            slideIntoContainer(
+                                animationSpec = animationSpec,
+                                towards = AnimatedContentScope.SlideDirection.Left
+                            ) with
+                                    fadeOut ( animationSpec = tween(600) )
+                        } else if(targetState.value == initialState.value){
+                            slideIntoContainer(
+                                AnimatedContentScope.SlideDirection.Up, animationSpec
+                            ) with fadeOut( animationSpec = tween(600) )
+                        } else {
+                            fadeIn(
+                                animationSpec = tween(1200)
+                            ) with slideOutOfContainer (
+                                towards = AnimatedContentScope.SlideDirection.Right,
+                                animationSpec = animationSpec
+                            )
+                        }.apply {
+                            targetContentZIndex = targetState.value.toFloat()
+                        }
+                    }
+                )
+                {    //targetState ->
+                    QuestionScreen( //Question (+ answers)
+//                            selectedAnswer = selectedAnswer1,
+                        answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
+                        onAnswer = {
+                            println("PRINTING AnswerSelected_screen1: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.currentQuestionIndex}")
+                            onSelectAnswer(TestEvent.AnswerSelected(it))
+//                                testViewModel.onEvent(TestEvent.AnswerSelected(it))
+                            println("PRINTING AnswerSelected_screen2: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.currentQuestionIndex}")
+
+                        },
+                        question = uiState.questionStateList[uiState.currentQuestionIndex].question,
+                        chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
+                        selectedAnswer = currentlySelectedAnswer,
+                        showPreview = uiState.showPreview
+                    )
+                }//TargetState
+            },
+            bottomBar = {
+                AnimatedContent(targetState = uiState) {
+                        targetState1->
+                    SurveyBottomBar(
+                        selectedAnswer = currentlySelectedAnswer,
+                        answerState = uiState.answers[uiState.currentQuestionIndex],
+                        onPreviousPressed = {
+                            onPreviousPressed(TestEvent.Previous)
+                        },
+                        onNextPressed = {
+                            onNextPressed(TestEvent.Next)
+                        }, //SKIP
+                        onDonePressed = { //Submit\Finish
+                            if (uiState.showPreview){
+                                navigateToFinish.invoke()
+                            }else{
+                                onDonePressed(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
+                            }
+                        },
+                        showPreview = uiState.showPreview
+                    )
+                }
+            } //BottomBar
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun TestScreen(
+    testViewModel: TestViewModel = hiltViewModel(),
+    navigateToFinish: () -> Unit,
+    startingQuestionArg: String
+){
+    LaunchedEffect(Unit) {
+        Log.i(TAG_TEST_SCREEN, "getTestArguments in progress...")
+        testViewModel.getTestArguments(startingQuestionArg)
+    }
     val uiState = testViewModel.uiState.value // Did not work with .collectAsStateWithLifecycle() or //better then just .collectAsState()  https://medium.com/androiddevelopers/consuming-flows-safely-in-jetpack-compose-cde014d0d5a3
     val isLoading by testViewModel.isLoading.collectAsState()
 
@@ -56,7 +158,7 @@ fun TestRoute(
     }
 
     if (!isLoading ) {
-        TestScreen(
+        TestScreenMain(
             uiState = testViewModel.uiState.value,
             onSelectAnswer = testViewModel::onEvent,
             onNextPressed = testViewModel::onEvent,
@@ -67,113 +169,8 @@ fun TestRoute(
         )
 
     } else {
-        //TODO create and implement loading circle
-        Text(
-            text = ("Is loading is true"),
-            style = MaterialTheme.typography.subtitle2,
-            color = MaterialTheme.colors.onSurface.copy(alpha = slightlyDeemphasizedAlpha),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp, horizontal = 16.dp)
-        )
+        ProgressBar()
     }
-
-
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun TestScreen(
-        uiState: TestState,
-        onSelectAnswer: (TestEvent) -> Unit,
-        onNextPressed: (TestEvent) -> Unit,
-        onDonePressed: (TestEvent) -> Unit,
-        onPreviousPressed: (TestEvent) -> Unit,
-        currentlySelectedAnswer: State<Int?>,
-        navigateToFinish: () -> Unit
-//        testViewModel: TestViewModel,
-//        onBackPressedCallback: OnBackPressedCallback
-
-    ) {
-        Surface(modifier = Modifier.supportWideScreen()) {
-            Scaffold(
-
-                topBar = {}, //TODO
-                content = {
-                    AnimatedContent(
-
-                        targetState = remember { mutableStateOf(uiState.currentQuestionIndex) },
-                        transitionSpec = {
-                            val animationSpec: TweenSpec<IntOffset> = tween(CONTENT_ANIMATION_DURATION)
-
-                                if (targetState.value > initialState.value ) {
-                                    slideIntoContainer(
-                                        animationSpec = animationSpec,
-                                        towards = AnimatedContentScope.SlideDirection.Left
-                                    ) with
-                                        fadeOut ( animationSpec = tween(600) )
-
-
-                                } else if(targetState.value == initialState.value){
-                                    slideIntoContainer(
-                                        AnimatedContentScope.SlideDirection.Up, animationSpec
-                                    ) with fadeOut( animationSpec = tween(600) )
-
-                                } else {
-                                    fadeIn(
-                                        animationSpec = tween(1200)
-                                    ) with slideOutOfContainer (
-                                        towards = AnimatedContentScope.SlideDirection.Right,
-                                        animationSpec = animationSpec
-                                    )
-                                }.apply {
-                                    targetContentZIndex = targetState.value.toFloat()
-                                }
-                            }
-                    )
-            {//targetState ->
-                        QuestionScreen( //Question (+ answers)
-//                            selectedAnswer = selectedAnswer1,
-                              answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
-                            onAnswer = {
-                                println("PRINTING AnswerSelected_screen1: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.currentQuestionIndex}")
-                                onSelectAnswer(TestEvent.AnswerSelected(it))
-//                                testViewModel.onEvent(TestEvent.AnswerSelected(it))
-                                println("PRINTING AnswerSelected_screen2: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.currentQuestionIndex}")
-
-                            },
-                            question = uiState.questionStateList[uiState.currentQuestionIndex].question,
-                            chosenAnswerState = uiState.questionStateList[uiState.currentQuestionIndex].chosenAnswer != null,
-                            selectedAnswer = currentlySelectedAnswer,
-                            showPreview = uiState.showPreview
-                        )
-                    }//TargetState
-                },
-                bottomBar = {
-                    AnimatedContent(targetState = uiState) {
-                        targetState1->
-                            SurveyBottomBar(
-                                selectedAnswer = currentlySelectedAnswer,
-                                answerState = uiState.answers[uiState.currentQuestionIndex],
-                                onPreviousPressed = {
-                                    onPreviousPressed(TestEvent.Previous)
-                                },
-                                onNextPressed = {
-                                    onNextPressed(TestEvent.Next)
-                                }, //SKIP
-                                onDonePressed = { //Submit\Finish
-                                    if (uiState.showPreview){
-                                        navigateToFinish.invoke()
-                                    }else{
-                                        onDonePressed(TestEvent.Submit(uiState.answers[uiState.currentQuestionIndex].chosenAnswer!!))
-                                    }
-                                },
-                                showPreview = uiState.showPreview
-                            )
-                    }
-                } //BottomBar
-            )
-        }
 }
 
 @Composable
@@ -243,9 +240,9 @@ private fun SurveyBottomBar(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
             } else{
-                Log.i("TestScreen", "ChosenAnswer is NOT NULL !!!!!  " +
-                        "Answer State questionId: " + answerState.questionId.toString() +
-                        "\n Answer state chosen answer:9 " + answerState.chosenAnswer )
+                Log.i(TAG_TEST_SCREEN, "ChosenAnswer is NOT NULL ! " +
+                        "\n Answer State questionId: " + answerState.questionId.toString() +
+                        "\n Answer state chosen answer: " + answerState.chosenAnswer )
 
                 Button(
                     modifier = Modifier
@@ -266,12 +263,12 @@ private fun SurveyBottomBar(
                         .weight(1f)
                         .height(48.dp),
                     onClick = { /* TODO Not supposed to work. All good. Need design change? */
-                        Log.i("TestScreen", "answerState.isLastQuestion: " +
+                        Log.i(TAG_TEST_SCREEN, "answerState.isLastQuestion: " +
                                 answerState.isLastQuestion )
                     },
                 ) {
                     if (answerState.chosenAnswer != null || selectedAnswer.value != null ) {
-                        Text(text = " Non ")
+                        Text(text = stringResource(R.string.non)) //TODO
                     } else {
                         Text(text = stringResource(id = R.string.done))
                     }
@@ -315,6 +312,7 @@ fun QuestionScreen(
 ){
     Column(modifier = Modifier.padding (all = 8.dp) ) {
         Spacer(modifier = Modifier.height(32.dp))
+        //TODO Clean up extra row, extra rows are only for demo so tester know all parameters. Bad decision - I know :[
         QuestionTitle(question.question + " "
                 + "\n\n And last answer.ChosenAnswer: " + answer.chosenAnswer
                 + "\n SelectedAnswer: " + selectedAnswer.value
@@ -515,28 +513,28 @@ fun PopUpDialog(
     val titleText:String
 
     if ( wrongCount == 0 && correctCount > 0 ){
-        titleText= "Excellent"
+        titleText= stringResource( id = R.string.excellent )
         dialogImageBitmap = Image(
             painter = painterResource(id = R.drawable.ic_baseline_sentiment_very_satisfied_24),
             contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
         )
     }
     else if ( correctCount > wrongCount ){
-            titleText= "Good"
+            titleText= stringResource( id = R.string.good )
         dialogImageBitmap = Image(
             painter = painterResource(id = R.drawable.ic_baseline_sentiment_satisfied_alt_24),
             contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
         )
     }
     else if ( wrongCount == 0 && correctCount == 0 ) {
-        titleText= "Something went wrong" //ic_baseline_error_24
+        titleText= stringResource( id = R.string.something_went_wrong )
         dialogImageBitmap = Image(
             painter = painterResource(id = R.drawable.ic_baseline_error_24),
             contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
         )
     }
     else {
-            titleText= "Not met expectation"
+            titleText= stringResource( id = R.string.not_met_expectation )
         dialogImageBitmap = Image(
             painter = painterResource(id = R.drawable.ic_baseline_sentiment_dissatisfied_24),
             contentDescription = stringResource( id = R.string.ic_baseline_sentiment_dissatisfied )
@@ -559,7 +557,7 @@ fun PopUpDialog(
                         verticalAlignment =  Alignment.CenterVertically) {
 
                           TextButton(onClick = {onClosePreviewScreen.invoke() } ) {
-                              Text(text = "Dismiss")
+                              Text(text = stringResource( id = R.string.dismiss ))
 //                              onDialogStateChange?.invoke(false)
 //                              onDismissRequest?.invoke()
 //                              onDismiss(TestEvent.ShowDialog)
@@ -568,7 +566,7 @@ fun PopUpDialog(
 
                           TextButton(
                               onClick = { onDismiss(TestEvent.ShowDialog) } ) {
-                              Text(text = "Review Answers")
+                              Text(text = stringResource(id = R.string.review_answers))
                           }
 
                       }
@@ -578,7 +576,11 @@ fun PopUpDialog(
                     Text(text = titleText)
             },
             text = {
-                Text( text = "You have answered $correctCount questions correctly of total " + (wrongCount+correctCount) + "." )
+                Text( text =
+                        stringResource(id = R.string.you_have_answered)
+                                + correctCount +
+                        stringResource(id = R.string.questions_correctly_of_total)
+                                + (wrongCount+correctCount) + "." )
                    },
             shape = dialogShape,
         )//AlertDialog

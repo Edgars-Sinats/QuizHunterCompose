@@ -12,7 +12,10 @@ Next step read data from Firebase Firestore just like in previous project https:
 
 Getting Started - 
 ---------------
-1. On load screen choose which topic questions you want to take. You will have options to choose filter out answered questions and correctly answered.
+1.If you download or clone this repo, in order to make it work, you should follow the instructions given in the official documentation regarding on [how to add Firebase to your project](https://firebase.google.com/docs/android/setup).
+You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-sin%C4%81ts-ba5864164/) to get google-services.json file to make it work straight away.
+
+2. On load screen choose which topic questions you want to take. You will have options to choose filter out answered questions and correctly answered.
 
 
 ### App
@@ -21,12 +24,18 @@ Currently implemented quiz with questions and option to choose count of question
 ->When choosing questions you can filter out answered(correctly) questions, so you do not repeat with the same questions.
 ```_quiz_test``` folder under```feature_pickTest/presentation``` represent only feature.
 
+
 - __quiz_test__: This is responsible for taken test.
 - - __pick_test__: This is responsible for choosing test.
+- - __feature_auth__: This is responsible for Auth and User 
 
 
 
 ## Built With 🛠
+## Firebase Products:
+* [Firebase Authentication][https://firebase.google.com/docs/auth]
+* [Cloud Firestore](https://firebase.google.com/docs/firestore)
+* * [Android Jetpack Navigation](https://developer.android.com/guide/navigation)
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
 - [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html) - For asynchronous and more..
 - [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/) - A cold asynchronous data stream that sequentially emits values and completes normally or with an exception.
@@ -48,5 +57,5 @@ Currently implemented quiz with questions and option to choose count of question
 
 MVVM Architecture: 
 
-```_TODO```  Next step - impement Firebase Authentication.
 ![image](https://user-images.githubusercontent.com/24652033/227798887-b5586e16-3d4e-48d1-91a2-83b782c902e2.png)
+
