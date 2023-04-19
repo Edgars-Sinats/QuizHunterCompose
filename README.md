@@ -2,7 +2,7 @@ Question app
 =================================
 
 Question app what will help to learn new topic with answering on question and choosing/filtering already positive(mostly) answered questions. 
-    //Next step implement theory for questions in case of explanation needed. [// 1] Plan of taking text block of theory and linking to questions with help of AI text recognition tool. 
+    Next step implement theory for questions in case of explanation needed. Plan of taking text block of theory and linking to questions with help of AI text recognition tool. 
 This code demonstrates the Android Architecture pattern MVVM and component like - ViewModel and StateFlow.
 
 Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() did`t work with .db or json.
@@ -32,8 +32,7 @@ Currently implemented quiz with questions and option to choose count of question
 
 
 ## Built With 🛠
-## Firebase Products:
-* [Firebase Authentication][https://firebase.google.com/docs/auth]
+ * [Firebase Authentication](https://firebase.google.com/docs/auth)
 * [Cloud Firestore](https://firebase.google.com/docs/firestore)
 * * [Android Jetpack Navigation](https://developer.android.com/guide/navigation)
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
