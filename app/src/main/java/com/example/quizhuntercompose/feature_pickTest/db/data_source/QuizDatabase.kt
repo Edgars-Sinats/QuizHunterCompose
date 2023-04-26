@@ -5,6 +5,10 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.quizhuntercompose.domain.model.UserAnswers
+import com.example.quizhuntercompose.domain.model.UserKeys
+import com.example.quizhuntercompose.feature_auth.db.dbo.UserDao
+import com.example.quizhuntercompose.feature_auth.db.dbo.UserEntity
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
 import dagger.Provides
@@ -12,7 +16,7 @@ import javax.inject.Singleton
 
 
 
-@Database( entities = [Question::class, Topic::class], version = 1 )
+@Database( entities = [Question::class, Topic::class, UserEntity::class, UserKeys::class], version = 2 )
 abstract class QuizDatabase: RoomDatabase() {
 
     fun init(context: Context) {
@@ -21,6 +25,7 @@ abstract class QuizDatabase: RoomDatabase() {
     }
 
     abstract val questionDao: QuestionDao
+    abstract val userDao: UserDao
 
     companion   object {
         const val DATABASE_NAME = "HuntQuestion2"
@@ -40,7 +45,6 @@ abstract class QuizDatabase: RoomDatabase() {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
 
             }
-
 
 //                if (instance == null) {
 //                    instance = Room.databaseBuilder(
@@ -76,7 +80,7 @@ abstract class QuizDatabase: RoomDatabase() {
                 appContext.applicationContext,
                 QuizDatabase::class.java,
                 DATABASE_NAME)
-//                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration()
                 .addCallback(StartingQuestions(appContext))
                 .build()
     }

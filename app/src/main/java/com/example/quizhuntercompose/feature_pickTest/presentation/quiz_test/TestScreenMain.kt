@@ -597,6 +597,7 @@ val question1 = Question(
     answer4 = "Small next preview",
     correctAnswer = 2,
     topic = 1,
+    explanation = null,
     correctAnswers = 1, //make sure in initalizer it is = 0
     wrongAnswers = 1,
     nonAnswers = 0,

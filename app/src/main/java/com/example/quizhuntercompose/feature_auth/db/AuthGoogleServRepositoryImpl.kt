@@ -15,17 +15,16 @@ import com.example.quizhuntercompose.cor.util.FirebaseConstants.DISPLAY_NAME
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.EMAIL
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.PHOTO_URL
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.USERS
-import com.example.quizhuntercompose.domain.model.Response.Failure
-import com.example.quizhuntercompose.domain.model.Response.Success
-import com.example.quizhuntercompose.feature_auth.domain.AuthRepository
-import com.example.quizhuntercompose.feature_auth.domain.OneTapSignInResponse
-import com.example.quizhuntercompose.feature_auth.domain.SignInWithGoogleResponse
+import com.example.quizhuntercompose.cor.util.Response
+
+import com.example.quizhuntercompose.feature_auth.domain.AuthGoogleServRepository
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(
+class AuthGoogleServRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private var oneTapClient: SignInClient,
     @Named(SIGN_IN_REQUEST)
@@ -33,34 +32,36 @@ class AuthRepositoryImpl @Inject constructor(
     @Named(SIGN_UP_REQUEST)
     private var signUpRequest: BeginSignInRequest,
     private val db: FirebaseFirestore
-) : AuthRepository {
+) : AuthGoogleServRepository {
     override val isAuthenticated = auth.currentUser != null
 
-    override suspend fun oneTapSignInWithGoogle(): OneTapSignInResponse {
-        return try {
+    override suspend fun oneTapSignInWithGoogle() = flow {
+         try {
+             emit(Response.Loading)
+
             val signInResult = oneTapClient.beginSignIn(signInRequest).await()
-            Success(signInResult)
+            emit(Response.Success(signInResult))
         } catch (e: Exception) {
             try {
                 val signUpRequest = oneTapClient.beginSignIn(signUpRequest).await()
-                Success(signUpRequest)
+                emit(Response.Success(signUpRequest))
             } catch (e: Exception) {
-                Failure(e)
+                emit(Response.Failure(e))
             }
         }
     }
 
-    override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): SignInWithGoogleResponse {
-        return try {
-
+    override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential) = flow {
+        try {
+            emit(Response.Loading)
             val authResult = auth.signInWithCredential(googleCredential).await()
             val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
             if (isNewUser) {
                 createUserInFirestore()
             }
-            Success(true)
+            emit(Response.Success(true))
         } catch (e: java.lang.Exception) {
-            Failure(e)
+            emit(Response.Failure(e))
         }
     }
 

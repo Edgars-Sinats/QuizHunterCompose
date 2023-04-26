@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.components.ProgressBar
-import com.example.quizhuntercompose.domain.model.Response
+import com.example.quizhuntercompose.cor.util.Response
 import com.example.quizhuntercompose.feature_auth.presentation_profile.ProfileViewModel
 
 @Composable

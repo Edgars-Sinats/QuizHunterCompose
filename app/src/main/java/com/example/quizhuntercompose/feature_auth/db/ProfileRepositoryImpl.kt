@@ -1,7 +1,7 @@
 package com.example.quizhuntercompose.feature_auth.db
 
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.USERS
-import com.example.quizhuntercompose.domain.model.Response
+import com.example.quizhuntercompose.cor.util.Response
 import com.example.quizhuntercompose.feature_auth.domain.ProfileRepository
 import com.example.quizhuntercompose.feature_auth.domain.RevokeAccessResponse
 import com.example.quizhuntercompose.feature_auth.domain.SignOutResponse

@@ -40,21 +40,22 @@ class TestPickViewModel @Inject constructor(
         Log.i(TAG, "Init func")
         val listOfIds : MutableList<Int>  = mutableListOf()
 
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            async {
-                topicNames = questionRepository.getAllTopics()
-                Log.i(TAG, ".launch async 1. topic names: $topicNames.")
-            }.await()
+            viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+                Log.i(TAG, ".launch 1.")
+                async {
+                    topicNames = questionRepository.getAllTopics()
+                    Log.i(TAG, ".launch async 1. topic names: $topicNames.")
+                }.await()
 
-            async { topicNames.forEach { listOfIds.add((it.topicId) - 1) }
-                Log.i(TAG, ".launch async 2. listOfIds: $listOfIds.")
-            }.await()
+                async { topicNames.forEach { listOfIds.add((it.topicId) - 1) }
+                    Log.i(TAG, ".launch async 2. listOfIds: $listOfIds.")
+                }.await()
 
-            async { questionCount = questionRepository.getQuestionCountChecker(
-                listOfIds,
-                nonAns = false,
-                wrongAns = false )
-            }.await()
+                async { questionCount = questionRepository.getQuestionCountChecker(
+                    listOfIds,
+                    nonAns = false,
+                    wrongAns = false )
+                }.await()
 
             try {
                 withContext(Dispatchers.Main){

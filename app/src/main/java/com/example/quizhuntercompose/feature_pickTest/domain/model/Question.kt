@@ -16,6 +16,7 @@ data class Question(
     @PrimaryKey
     @ColumnInfo(name = "question_id") val questionID: Int,
     @ColumnInfo(name = "topic_id") val topic: Int, //I had naming as "topic" in my table. Should export schema from app.
+    @ColumnInfo(name = "explanation") val explanation: String?,
 
     @ColumnInfo(name = "correct_answers") val correctAnswers: Int,
     @ColumnInfo(name = "wrong_answers") val wrongAnswers: Int,

@@ -1,6 +1,7 @@
 package com.example.quizhuntercompose.navigation
 
 import android.util.Log
+import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -10,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_OPTIONS
 import com.example.quizhuntercompose.cor.util.AppConstants.TAG_NAV_GRAPH
@@ -19,6 +21,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.TestOptions
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
+import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.popUpDialogPreview
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.squareup.moshi.Moshi
@@ -44,6 +47,9 @@ fun NavGraph (
             AuthScreen (
                 navigateToHomeScreen = {
                     navController.navigate(Screen.ProfileScreen.route)
+//                    navController.currentBackStackEntry.
+
+//                    navController.backQueue.removeAll(navController.backQueue)
 //                    direction.navigateToProfileScreen
                 }
             )
@@ -51,14 +57,17 @@ fun NavGraph (
 
         composable(
             route = Screen.ProfileScreen.route
+
         ) {
             ProfileScreen(
+
                 navigateToAuthScreen = {
-                    navController.popBackStack()
                     navController.navigate(Screen.AuthScreen.route)
-//                    direction.navigateToAuthScreen
                 },
                 navigateToQuizPickScreen = {
+//                    navController.popBackStack()
+                    Log.i(TAG_NAV_GRAPH, "Pressed navigateToQuizPickScreen.")
+
                     navController.navigate(Screen.QuizPickScreen.route)
 //                    direction.navigateToQuizPickScreen
                 }
@@ -68,6 +77,8 @@ fun NavGraph (
         composable(
             route = Screen.QuizPickScreen.route
         ){
+            Log.i(TAG_NAV_GRAPH, "Navigating to TestPickScreen., Building TestPickViewModel")
+
             val viewModel: TestPickViewModel = hiltViewModel()
 
             TestPickScreen(
@@ -82,18 +93,11 @@ fun NavGraph (
                     val testOptionsObject = TestOptions (ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState)
                     val userJson = jsonAdapter.toJson(testOptionsObject)
 
-
-//                    navController.previousBackStackEntry?.arguments?.putString("testPickView", userJson)
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("testPickView", userJson)
-//                    navController.previousBackStackEntry?.savedStateHandle?.apply { ( set("testPickView", userJson) ) }
-//
-//                    navController.currentBackStackEntry?.savedStateHandle?.apply { set("testPickView", userJson) }
-//                    navController.currentBackStackEntry?.arguments?.putString("testPickView", userJson)
-
-//                    navController.navigate(NavigationKeys.Route.QUIZ_TEST_DETAILS.replace("{testCategoryName}", userJson))
-//                    Log.i("NavGraph", "TestPickScreen Nav controller, " )
-//                    direction.navigateToQuizScreen
                     navController.navigate("${Screen.QuizScreen.route}/$userJson" )
+                },
+                navigateToProfileScreen = {
+                    navController.popBackStack()
+                    navController.navigate(Screen.ProfileScreen.route)
                 }
             )
         }
@@ -109,7 +113,13 @@ fun NavGraph (
                 TestScreen(
                     navigateToFinish = {
         //                    direction.navigateToQuizPickScreen
-                        navController.navigate(Screen.QuizPickScreen.route)
+//                        navController.popBackStack()
+//                        navController.navigate(Screen.QuizPickScreen.route)
+
+
+                        navController.popBackStack()
+                        navController.navigate(Screen.QuizPickScreen.route) { popUpTo ( Screen.QuizPickScreen.route ) }
+//                        navController.popBackStack(route = Screen.QuizPickScreen.route, inclusive = false)
                     },
                     startingQuestionArg = it
                 )

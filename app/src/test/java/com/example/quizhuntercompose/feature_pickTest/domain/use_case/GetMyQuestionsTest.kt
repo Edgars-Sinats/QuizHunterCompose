@@ -38,6 +38,7 @@ class GetMyQuestionsTest {
                     correctAnswers = index,
                     questionID = index,
                     topic = index,
+                    explanation = null,
                     correctAnswer = index,
                     wrongAnswers = index+1,
                     nonAnswers = index+3,

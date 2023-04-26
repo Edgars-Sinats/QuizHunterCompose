@@ -133,7 +133,7 @@ class QuizOptionFieldTest {
         composeRule.setContent {
             QuizHunterComposeTheme() {
                 TestPickContentSliderDetails(
-                    onNavigation = { /*TODO*/ },
+//                    onNavigation = { /*TODO*/ },
                     steps = viewModel.uiState.value.totalCount,
                     currentSteps = viewModel.uiState.value.count,
                     onSlide = {  }
@@ -152,6 +152,7 @@ class QuizOptionFieldTest {
             answer4 = "Small next preview",
             correctAnswer = 2,
             topic = 1,
+            explanation = null,
             correctAnswers = 1, //make sure in initializer it is = 0
             wrongAnswers = 2,
             nonAnswers = 0,
@@ -167,6 +168,7 @@ class QuizOptionFieldTest {
             answer4 = "Small next preview",
             correctAnswer = 2,
             topic = 1,
+            explanation = null,
             correctAnswers = 1, //make sure in initializer it is = 0
             wrongAnswers = 1,
             nonAnswers = 0,
@@ -182,6 +184,7 @@ class QuizOptionFieldTest {
             answer4 = null,
             correctAnswer = 2,
             topic = 2,
+            explanation = null,
             correctAnswers = 4, //make sure in initializer it is = 0
             wrongAnswers = 0,
             nonAnswers = 0,
@@ -197,6 +200,7 @@ class QuizOptionFieldTest {
             answer4 = null,
             correctAnswer = 5,
             topic = 2,
+            explanation = null,
             correctAnswers = 1, //make sure in initializer it is = 0
             wrongAnswers = 0,
             nonAnswers = 2,
@@ -213,6 +217,7 @@ class QuizOptionFieldTest {
             answer4 = null,
             correctAnswer = 5,
             topic = 2,
+            explanation = null,
             correctAnswers = 1, //make sure in initializer it is = 0
             wrongAnswers = 0,
             nonAnswers = 2,

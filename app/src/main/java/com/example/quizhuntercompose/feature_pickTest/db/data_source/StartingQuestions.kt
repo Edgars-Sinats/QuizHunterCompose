@@ -69,6 +69,7 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
                         correctAnswers = correctAnswers1,
                         lastAnswerTime = lastTimeSec1,
                         nonAnswers = nonAnswers1,
+                        explanation = null,
                         question = question,
                         questionID = questionId,
                         topic = topicId,

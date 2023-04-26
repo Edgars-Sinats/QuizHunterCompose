@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "40a0bc87617c0638e0b8f734af064b43",
+    "identityHash": "40779e2f08973ad6afc957dd2f713566",
     "entities": [
       {
         "tableName": "question_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`question` TEXT NOT NULL, `answer_1` TEXT NOT NULL, `answer_2` TEXT NOT NULL, `answer_3` TEXT, `answer_4` TEXT, `correct_answer` INTEGER NOT NULL, `question_id` INTEGER NOT NULL, `topic_id` INTEGER NOT NULL, `correct_answers` INTEGER NOT NULL, `wrong_answers` INTEGER NOT NULL, `non_answers` INTEGER NOT NULL, `average_time_sec` INTEGER NOT NULL, `last_time_sec` INTEGER NOT NULL, PRIMARY KEY(`question_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`question` TEXT NOT NULL, `answer_1` TEXT NOT NULL, `answer_2` TEXT NOT NULL, `answer_3` TEXT, `answer_4` TEXT, `correct_answer` INTEGER NOT NULL, `question_id` INTEGER NOT NULL, `topic_id` INTEGER NOT NULL, `explanation` TEXT, `correct_answers` INTEGER NOT NULL, `wrong_answers` INTEGER NOT NULL, `non_answers` INTEGER NOT NULL, `average_time_sec` INTEGER NOT NULL, `last_time_sec` INTEGER NOT NULL, PRIMARY KEY(`question_id`))",
         "fields": [
           {
             "fieldPath": "question",
@@ -55,6 +55,12 @@
             "columnName": "topic_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "correctAnswers",
@@ -121,12 +127,94 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "user",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_uid` TEXT NOT NULL, `user_name` TEXT, `email` TEXT, `image` TEXT, `isPremium` INTEGER NOT NULL, `is_teacher` INTEGER NOT NULL, `is_admin` INTEGER NOT NULL, PRIMARY KEY(`user_uid`))",
+        "fields": [
+          {
+            "fieldPath": "userUid",
+            "columnName": "user_uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "user_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isPremium",
+            "columnName": "isPremium",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isTeacher",
+            "columnName": "is_teacher",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAdmin",
+            "columnName": "is_admin",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_uid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_keys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`test_id` INTEGER NOT NULL, `test_key` TEXT NOT NULL, PRIMARY KEY(`test_id`))",
+        "fields": [
+          {
+            "fieldPath": "testId",
+            "columnName": "test_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testKey",
+            "columnName": "test_key",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "test_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '40a0bc87617c0638e0b8f734af064b43')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '40779e2f08973ad6afc957dd2f713566')"
     ]
   }
 }

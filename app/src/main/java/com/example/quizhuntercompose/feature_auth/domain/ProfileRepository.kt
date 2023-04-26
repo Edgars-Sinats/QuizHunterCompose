@@ -1,6 +1,6 @@
 package com.example.quizhuntercompose.feature_auth.domain
 
-import com.example.quizhuntercompose.domain.model.Response
+import com.example.quizhuntercompose.cor.util.Response
 
 typealias SignOutResponse = Response<Boolean>
 typealias RevokeAccessResponse = Response<Boolean>

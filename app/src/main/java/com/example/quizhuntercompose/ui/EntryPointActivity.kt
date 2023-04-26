@@ -3,6 +3,7 @@ package com.example.quizhuntercompose.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -31,16 +32,30 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EntryPointActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
+
     private val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             navController = rememberAnimatedNavController()
+            val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current
+
+
             NavGraph(
                 navController = navController
             )
             checkAuthState()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (navController.currentBackStackEntry == null){
+            super.onBackPressed()
+            finish()
+
+        }else {
+            navController.popBackStack()
         }
     }
 
@@ -118,6 +133,9 @@ private fun TestPickDestination(navController: NavHostController) {
 
             navController.navigate(NavigationKeys.Route.QUIZ_TEST_DETAILS.replace("{testCategoryName}", userJson))
             Log.i("EntryPointAct", "picketTopicIds: ${viewModel.uiState.value.pickedTopicId} and Test1 totalCount: ${viewModel.uiState.value.totalCount}")
+        },
+        navigateToProfileScreen = {
+            navController.navigate(Screen.ProfileScreen.route)
         }
     )
 }

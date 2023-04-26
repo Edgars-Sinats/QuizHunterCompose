@@ -27,8 +27,8 @@ Currently implemented quiz with questions and option to choose count of question
 
 - __quiz_test__: This is responsible for taken test.
 - - __pick_test__: This is responsible for choosing test.
-- - __feature_auth__: This is responsible for Auth and User 
-
+- __feature_auth__: This is responsible for Auth and User 
+- - __ 
 
 
 ## Built With 🛠

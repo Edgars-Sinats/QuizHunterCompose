@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quizhuntercompose.domain.model.Response
-import com.example.quizhuntercompose.domain.model.Response.Success
+import com.example.quizhuntercompose.cor.util.Response
+import com.example.quizhuntercompose.cor.util.Response.Success
 
 import com.example.quizhuntercompose.feature_auth.domain.ProfileRepository
 import com.example.quizhuntercompose.feature_auth.domain.RevokeAccessResponse
