@@ -1,7 +1,7 @@
 package com.example.quizhuntercompose.di
 
 import android.content.Context
-import com.mathroda.datasource.datastore.DataStoreRepository
+import com.example.quizhuntercompose.datastore.DataStoreRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -228,26 +228,26 @@ fun CheckBoxRowPreview() {
     CheckBoxRow1(checkedState = false, onStateChange = {  }, checkBoxText = "Some text of desc.")
 }
 
-@Preview
-//@Preview("TestPick - QuizOptionsFieldPreview2" , uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun QuizOptionsFieldPreview2(modifier: Modifier = Modifier) {
-    val topicList : List<Topic> = listOf(Topic(0,"sa"), Topic(1,"Second topic"), Topic(2,"NewTopic"))
-    QuizSelectOptionsTopics(
-        expanded = true,
-        onTopicsSelected = { /*TODO*/ },
-        onTestOptionState = {},
-        onPickTime = {},
-        modifier = Modifier,
-        onPickUnanswered = {},
-        onPickWrongAnswered = {},
-        questionCount = 8,
-        allTopicList = topicList,
-        wronglyAnswered = TestPickEvent.PickWrongAnswered(false),
-        answerTime = TestPickEvent.PickTime(true),
-        unanswered = TestPickEvent.PickUnanswered(true),
-        checkAllTopics = TestPickEvent.CheckAllTopics(true),
-        onCheckAllTopics = {},
-        selectedTopics = listOf(1,2,3)
-    )
-}
+//@Preview
+////@Preview("TestPick - QuizOptionsFieldPreview2" , uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//fun QuizOptionsFieldPreview2(modifier: Modifier = Modifier) {
+//    val topicList : List<Topic> = listOf(Topic(0,"sa"), Topic(1,"Second topic"), Topic(2,"NewTopic"))
+//    QuizSelectOptionsTopics(
+//        expanded = true,
+//        onTopicsSelected = { /*TODO*/ },
+//        onTestOptionState = {},
+//        onPickTime = {},
+//        modifier = Modifier,
+//        onPickUnanswered = {},
+//        onPickWrongAnswered = {},
+//        questionCount = 8,
+//        allTopicList = topicList,
+//        wronglyAnswered = TestPickEvent.PickWrongAnswered(false),
+//        answerTime = TestPickEvent.PickTime(true),
+//        unanswered = TestPickEvent.PickUnanswered(true),
+//        checkAllTopics = TestPickEvent.CheckAllTopics(true),
+//        onCheckAllTopics = {},
+//        selectedTopics = listOf(1,2,3)
+//    )
+//}

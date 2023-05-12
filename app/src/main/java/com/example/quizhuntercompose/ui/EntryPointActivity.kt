@@ -61,7 +61,8 @@ class EntryPointActivity : ComponentActivity() {
 
     private fun checkAuthState() {
         if(viewModel.isAuthenticated) {
-            navigateToQuizPickScreen()
+            return
+//            navigateToQuizPickScreen()
         }
     }
 

@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class Topic(
     @PrimaryKey
     @ColumnInfo(name = "topic_id") val topicId: Int,
-    @ColumnInfo(name = "topic") val topic: String
-
+    @ColumnInfo(name = "topic") val topic: String,
+    @ColumnInfo(name = "test_id") val testId: Int,
 ) {
 }

@@ -1,4 +1,4 @@
-package com.mathroda.datasource.datastore
+package com.example.quizhuntercompose.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

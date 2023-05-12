@@ -5,18 +5,18 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.quizhuntercompose.domain.model.UserAnswers
-import com.example.quizhuntercompose.domain.model.UserKeys
-import com.example.quizhuntercompose.feature_auth.db.dbo.UserDao
-import com.example.quizhuntercompose.feature_auth.db.dbo.UserEntity
+import com.example.quizhuntercompose.core_dbo.test.TestDao
+import com.example.quizhuntercompose.core_dbo.test.TestEntity
+import com.example.quizhuntercompose.core_dbo.user.UserKeysEntity
+import com.example.quizhuntercompose.core_dbo.user.UserDao
+import com.example.quizhuntercompose.core_dbo.user.UserEntity
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Topic
-import dagger.Provides
 import javax.inject.Singleton
 
 
 
-@Database( entities = [Question::class, Topic::class, UserEntity::class, UserKeys::class], version = 2 )
+@Database( entities = [Question::class, Topic::class, TestEntity::class, UserEntity::class, UserKeysEntity::class], version = 4 )
 abstract class QuizDatabase: RoomDatabase() {
 
     fun init(context: Context) {
@@ -26,6 +26,7 @@ abstract class QuizDatabase: RoomDatabase() {
 
     abstract val questionDao: QuestionDao
     abstract val userDao: UserDao
+    abstract val testDao: TestDao
 
     companion   object {
         const val DATABASE_NAME = "HuntQuestion2"

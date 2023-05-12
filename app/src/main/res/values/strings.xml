@@ -2,7 +2,10 @@
     <string name="app_name">QuizHunterCompose</string>
 
     <!--IDs-->
-    <string name="web_client_id">your own .... .apps.googleusercontent.com</string>
+    <string name="web_client_id">502303653285-iouqttd383p31p6d02vrtd4mv64j4ku1.apps.googleusercontent.com</string>
+<!--    502303653285-iouqttd383p31p6d02vrtd4mv64j4ku1.apps.googleusercontent.com-->     Temp key?
+<!--    502303653285-hlmgc2nn6v18ae6g9uvv7vsmvtjli59e.apps.googleusercontent.com-->     Should be main
+<!--    Page -> https://console.cloud.google.com/apis/credentials?authuser=0&project=quizhunter-3e9c4-->
 
     <!--    <string name="back">  Atpakal / Apstiptinat_Iesniegt / Izlaist_Nakamais  </string>-->
 

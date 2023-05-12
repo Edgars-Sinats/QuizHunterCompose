@@ -92,7 +92,8 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
                     val topicName = item.getString("topic")
                     val topicEntity = Topic(
                         topic = topicName,
-                        topicId = topicId
+                        topicId = topicId,
+                        testId = 1 //TODO Update Topic table, create testTable
                     )
                     topicMutableList.add(topicEntity)
                 }

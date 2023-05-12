@@ -149,7 +149,7 @@ fun StepsSliderSample(steps: Int,
 @Composable
 @Preview
 fun TestPickContentPreview(){
-    val topicList : List<Topic> = listOf(Topic(0,"First or zero topic"), Topic(1,"Some random"), Topic(2,"Second topic"))
+    val topicList : List<Topic> = listOf(Topic(0,"First or zero topic", 2), Topic(1,"Some random", 2), Topic(2,"Second topic", 2))
 
     val slideLocation: Int =4
 

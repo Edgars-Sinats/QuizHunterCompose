@@ -2,9 +2,8 @@ package com.example.quizhuntercompose.feature_auth.domain
 
 import android.graphics.Bitmap
 import com.example.quizhuntercompose.cor.util.Resource
-import com.example.quizhuntercompose.domain.model.QuizHunterUser
+import com.example.quizhuntercompose.domain.model.*
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
-import com.example.quizhuntercompose.feature_pickTest.domain.model.Test
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +14,8 @@ import kotlinx.coroutines.flow.Flow
 interface AuthFirebaseRepository {
 
     fun getUserId(): String?
+
+//    fun getUserLanguage(): String?
 
     fun signUpWithEmailAndPassword(
         email: String,
@@ -58,6 +59,8 @@ interface AuthFirebaseRepository {
     fun getQuestionsFromTestId(testId: String): Flow<Resource<List<Question>>>
 
     fun getTest(testId: String): Flow<Resource<Test>>
+    fun getTests(language: String): Flow<Resource< List<Test>>>
+    fun updateTestsToCloud(testDoc: FirebaseTestDocument): Flow<Resource<Task<Void>>>
     fun updateTestToCloud(testId: String): Flow<Resource<Task<Void>>>
     fun updateUserResultsToCloud(testId: String, answers_: List<Question>?): Flow<Resource<Task<Void>>>
 }

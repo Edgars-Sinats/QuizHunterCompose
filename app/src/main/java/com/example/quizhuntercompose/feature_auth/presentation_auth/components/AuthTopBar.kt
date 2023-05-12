@@ -6,11 +6,13 @@ import androidx.compose.runtime.Composable
 import com.example.quizhuntercompose.cor.util.AppConstants.AUTH_SCREEN
 
 @Composable
-fun AuthTopBar() {
+fun AuthTopBar(
+    authState: String
+) {
     TopAppBar (
         title = {
             Text(
-                text = AUTH_SCREEN
+                text = "$AUTH_SCREEN   User is auth - $authState"
             )
         }
     )

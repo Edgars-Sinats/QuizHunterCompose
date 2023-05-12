@@ -1,42 +1,52 @@
 [
     {
         "topic": "Medību likums, medību noteikumi",
-        "topic_id": 1
+        "topic_id": 1,
+        "test_id": 1
     },
     {
         "topic": "Uzskaites, limiti",
-        "topic_id": 2
+        "topic_id": 2,
+        "test_id": 1
     },
     {
         "topic": "Medījamo dzīvnieku bioloģija (sugu atpazīšana pēc attēliem, pēdām u.c., izskats, uzturēšanās vietas, barība, riests, mazuļu skaits, ragi utt.)",
-        "topic_id": 3
+        "topic_id": 3,
+        "test_id": 1
     },
     {
         "topic": " Medījamo dzīvnieku populāciju apsaimniekošanas un medību saimniecības veidošanas pamatprincipi (uzskaites metodes, mērķa vecumi, pieaugumi,  nomedīšanas apjomu plānošana) ",
-        "topic_id": 4
+        "topic_id": 4,
+        "test_id": 1
     },
     {
         "topic": "Drošības prasības medībās (dzinējmedībās, gaides medībās, medījot tumšajā laikā, pieejot, no laivas)",
-        "topic_id": 5
+        "topic_id": 5,
+        "test_id": 1
     },
     {
         "topic": "Medību šaujamieroči un munīcija, medību ieroču aprites kārtība un atļautie medību rīki",
-        "topic_id": 6
+        "topic_id": 6,
+        "test_id": 1
     },
     {
         "topic": "Medību\r\nētika un tradīcijas\r\n(medījuma\r\npiederība)",
-        "topic_id": 7
+        "topic_id": 7,
+        "test_id": 1
     },
     {
         "topic": "Medījamo dzīvnieku bīstamākās slimības (trakumsērga, trihineloze)",
-        "topic_id": 8
+        "topic_id": 8,
+        "test_id": 1
     },
     {
         "topic": "Medību suņi un to izmantošana medībās (suņu šķirnes, ko medī, kā medī)",
-        "topic_id": 9
+        "topic_id": 9,
+        "test_id": 1
     },
     {
         "topic": "Medību trofejas (kas ir trofeja, to veidi, sagatavošana, novērtēšanas pamatprincipi?).",
-        "topic_id": 10
+        "topic_id": 10,
+        "test_id": 1
     }
 ]

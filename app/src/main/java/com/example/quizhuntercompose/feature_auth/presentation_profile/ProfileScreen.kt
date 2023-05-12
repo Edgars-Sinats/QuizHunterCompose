@@ -4,10 +4,13 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.cor.util.AppConstants.REVOKE_ACCESS_MESSAGE
 import com.example.quizhuntercompose.cor.util.AppConstants.SIGN_OUT
+import com.example.quizhuntercompose.core_state.UserState
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileContent
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileTopBar
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.RevokeAccess
@@ -24,6 +27,12 @@ fun ProfileScreen(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
+    val userCredential = viewModel.userCredential.collectAsState()
+    val isPremium by viewModel.isUserPremium().collectAsState(initial = false)
+    val isAuthedUser = viewModel.authState.value !is UserState.UnauthedUser
+    val updateProfilePictureState = viewModel.updateProfilePictureState.collectAsState()
+
+
     Scaffold (
         topBar = {
             ProfileTopBar(
@@ -38,9 +47,19 @@ fun ProfileScreen(
         content = { padding ->
             ProfileContent(
                 padding = padding,
-                photoUrl = viewModel.photoUrl,
-                displayName = viewModel.displayName,
-                navigateToQuizPickScreen = navigateToQuizPickScreen
+                photoUrl = userCredential.value.image.toString(),
+                displayName = userCredential.value.userName.toString(),
+                navigateToQuizPickScreen = navigateToQuizPickScreen,
+                navigateToAuthScreen = navigateToAuthScreen,
+                iconVisibility = isPremium,
+
+                userImage = userCredential.value.image,
+                isUserAuthed = isAuthedUser,
+                updateProfilePictureState = updateProfilePictureState.value,
+                clearUpdateProfilePictureState = { viewModel.clearUpdateProfilePictureState() },
+                updateProfilePicture = { bitmap ->
+                    viewModel.updateProfilePicture(bitmap = bitmap)
+                }
 
             )
         },

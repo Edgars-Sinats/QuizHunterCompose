@@ -1,7 +1,6 @@
 package com.example.quizhuntercompose.navigation
 
 import android.util.Log
-import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -11,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_OPTIONS
 import com.example.quizhuntercompose.cor.util.AppConstants.TAG_NAV_GRAPH
@@ -21,7 +19,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.model.TestOptions
 import com.example.quizhuntercompose.feature_pickTest.presentation.TestPickScreen
 import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickViewModel
 import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
-import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.popUpDialogPreview
+import com.example.quizhuntercompose.feature_tests.presentation.TestsScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.squareup.moshi.Moshi
@@ -37,10 +35,29 @@ fun NavGraph (
 
     AnimatedNavHost(
         navController = navController,
-        startDestination = Screen.AuthScreen.route,
+        startDestination = Screen.ProfileScreen.route,
         enterTransition = { EnterTransition.None},
         exitTransition = { ExitTransition.None}
     ) {
+        composable(
+            route = Screen.ProfileScreen.route
+
+        ) {
+            ProfileScreen(
+
+                navigateToAuthScreen = {
+                    navController.navigate(Screen.AuthScreen.route)
+                },
+                navigateToQuizPickScreen = {
+//                    navController.popBackStack()
+                    Log.i(TAG_NAV_GRAPH, "Pressed navigateToQuizPickScreens.")
+
+                    navController.navigate(Screen.TestsScreen.route)
+//                    direction.navigateToQuizPickScreen
+                }
+            )
+        }
+
         composable (
             route = Screen.AuthScreen.route
         ) {
@@ -56,22 +73,10 @@ fun NavGraph (
         }
 
         composable(
-            route = Screen.ProfileScreen.route
-
+            route = Screen.TestsScreen.route
         ) {
-            ProfileScreen(
-
-                navigateToAuthScreen = {
-                    navController.navigate(Screen.AuthScreen.route)
-                },
-                navigateToQuizPickScreen = {
-//                    navController.popBackStack()
-                    Log.i(TAG_NAV_GRAPH, "Pressed navigateToQuizPickScreen.")
-
-                    navController.navigate(Screen.QuizPickScreen.route)
-//                    direction.navigateToQuizPickScreen
-                }
-            )
+            TestsScreen(
+                navController = navController )
         }
 
         composable(

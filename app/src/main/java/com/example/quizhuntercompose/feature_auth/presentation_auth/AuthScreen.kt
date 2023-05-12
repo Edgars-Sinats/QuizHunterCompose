@@ -30,9 +30,9 @@ fun AuthScreen(
 
     Scaffold (
         topBar = {
-            AuthTopBar()
+            AuthTopBar(viewModel.isAuthenticated.toString())
         },
-        content = {padding ->
+        content = { padding ->
 
             AuthContent(
                 paddingValues = padding,
