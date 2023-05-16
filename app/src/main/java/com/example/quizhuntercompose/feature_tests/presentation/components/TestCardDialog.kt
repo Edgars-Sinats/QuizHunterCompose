@@ -1,6 +1,7 @@
 package com.example.quizhuntercompose.feature_tests.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,13 +26,14 @@ fun TestCardDialog(
     onDismiss: () -> Unit,
     onOpenTest: () -> Unit,
     onStared: () -> Unit,
-    test: TestEntity
+    test: TestEntity,
+    modifier: Modifier
 ){
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             elevation = 8.dp
@@ -78,21 +80,23 @@ fun TestCardDialog(
 
                 Spacer(modifier = Modifier.padding(16.dp))
 
-                Row(Modifier.padding(vertical = 4.dp)) {
-                    Text(text = "Test created at: " + test.testCreated )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "Test last updated: " + test.testModified)
-                }
-
-                test.testDescription?.let { Text(it) }
-
-                Row(modifier = Modifier.padding(4.dp)) {
-                    TextButton(onClick = onDismiss ) {
-                        Text(text = "Close preview")
+                Column(modifier = modifier) {
+                    Row(Modifier.padding(vertical = 4.dp)) {
+                        Text(text = "Test created at: " + test.testCreated )
+//                        Spacer(modifier = Modifier.weight(1f))
+//                        Text(text = "Test last updated: " + test.testModified.toString())
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                    TextButton(onClick = onOpenTest) {
-                        Text(text = "Open test")
+
+                    Text(text = test.testDescription?: "")
+
+                    Row(modifier = modifier.padding(4.dp)) {
+                        TextButton(onClick = onDismiss ) {
+                            Text(text = "Close preview")
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        TextButton(onClick = onOpenTest) {
+                            Text(text = "Open test")
+                        }
                     }
                 }
             }
@@ -123,5 +127,7 @@ fun TestCardDialogPreview(){
         onOpenTest = {},
         onDismiss = {},
         onStared = {},
-        test = testItem)
+        test = testItem,
+        modifier = Modifier
+    )
 }

@@ -1,6 +1,7 @@
 package com.example.quizhuntercompose.feature_auth.presentation_profile
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +48,7 @@ class ProfileViewModel @Inject constructor(
     val displayName get() = repo.displayName
     val photoUrl get() = repo.photoUrl
 
-    val aUser = quizHunterRepository.getQuizHunterUser()
+//    val aUser = quizHunterRepository.getQuizHunterUser()
 
     var signOutResponse by mutableStateOf<SignOutResponse>(Success(false))
         private set
@@ -80,6 +81,7 @@ class ProfileViewModel @Inject constructor(
             quizHunterUseCases.userStateProvider(
                 function = {}
             ).collect { userState ->
+                Log.i(Companion.TAG, "_authState: ${userState}")
                 _authState.value = userState
             }
         }
@@ -147,5 +149,9 @@ class ProfileViewModel @Inject constructor(
     fun revokeAccess() = viewModelScope.launch {
         revokeAccessResponse = Response.Loading
         revokeAccessResponse = repo.revokeAccess()
+    }
+
+    companion object {
+        private const val TAG = "ProfileViewModel"
     }
 }

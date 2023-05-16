@@ -26,6 +26,8 @@ class TestsViewModel @Inject constructor(
     private val firebaseRepository: AuthFirebaseRepository,
 ) :ViewModel() {
 
+    private val TAG = "testViewModel"
+
     private val _state = MutableStateFlow(TestsState())
     val state: StateFlow<TestsState> = _state.asStateFlow()
 
@@ -55,7 +57,6 @@ class TestsViewModel @Inject constructor(
                     is Resource.Loading -> updateTestsState(isLoading = true)
                     is Resource.Success -> {
                         it.data?.let { data ->
-//                            val state = data.map { TestsState().copy(tests = it) }
 
                             Log.i("TAG VIEWMODEL", "on Success, !?!?!?!?!?")
 //                            updateTestsState(tests = data.result.toString())
@@ -102,11 +103,22 @@ class TestsViewModel @Inject constructor(
     }
 
     fun starFavoriteTest(testId: Int, setFavorite: Boolean){
-        val testEntity = _state.value.tests[testId].copy(isFavorite = setFavorite)
+        val testEntity = _state.value.tests[testId].copy(isFavorite = !setFavorite)
+        Log.i(TAG, "testEntity-isFav: ${testEntity.isFavorite}")
         viewModelScope.launch(Dispatchers.IO) {
             quizHunterRepository.saveTest(testEntity)
         }
-        updateTestsState() //TODO Is this not too much for performance, just to update boolean in db. Maybe just update _state, and when close viewModel, we could update .db
+
+        val testsList = _state.value.tests.onEachIndexed { index, testEntity ->
+            if (index == testId){
+                testEntity.copy(isFavorite = setFavorite)
+                return
+            }
+        }
+
+        updateTestsState(tests = testsList) //TODO Is this not too much for performance, just to update boolean in db. Maybe just update _state, and when close viewModel, we could update .db
+        Log.i(TAG, "testEntity-isFav, changed: ${_state.value.tests[testId].isFavorite}")
+
     }
 
     fun deleteAllTests(){

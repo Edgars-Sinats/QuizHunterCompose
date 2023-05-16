@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 fun CustomClickableText(
     modifier: Modifier = Modifier,
     text: String,
-    color: Color = Color.White,
+    color: Color = Color.Black,
     fontSize: TextUnit = 16.sp,
     fontWeight: FontWeight = FontWeight.Normal,
     onClick: () -> Unit

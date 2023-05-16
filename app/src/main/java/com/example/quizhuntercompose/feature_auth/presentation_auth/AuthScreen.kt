@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.quizhuntercompose.domain.model.QuizHunterUser
 import com.example.quizhuntercompose.feature_auth.presentation_auth.components.*
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.common.api.ApiException
@@ -22,7 +23,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
-    navigateToHomeScreen: () -> Unit
+    navigateToProfileScreen: () -> Unit,
+    navigateToRegisterScreen: () -> Unit,
 ) {
     val screenState by viewModel.screenState.collectAsState()
     val sigInState = viewModel.signIn.collectAsState()
@@ -40,13 +42,15 @@ fun AuthScreen(
                     viewModel.oneTapSignIn()
                 },
                 navigateToHomeScreen = {
-                    navigateToHomeScreen()
+                    navigateToProfileScreen()
+                },
+                navigateToRegisterScreen = {
+                    navigateToRegisterScreen()
                 },
                 popBackStack = {
                 },
                 validateSigneIn = viewModel::validatedSignIn,
                 screenState = screenState
-
             )
         }
     )
@@ -57,8 +61,11 @@ fun AuthScreen(
             padding = PaddingValues(bottom = 24.dp)
         )
         LaunchedEffect(Unit) {
+            val quizUser = QuizHunterUser(
+//                name =
+            )
             delay(800)
-            navigateToHomeScreen()
+            navigateToProfileScreen()
         }
     }
 
@@ -89,7 +96,7 @@ fun AuthScreen(
     SignInWithGoogle (
         navigateToHomeScreen = { signedIn ->
             if (signedIn) {
-                navigateToHomeScreen()
+                navigateToProfileScreen()
             }
         }
     )

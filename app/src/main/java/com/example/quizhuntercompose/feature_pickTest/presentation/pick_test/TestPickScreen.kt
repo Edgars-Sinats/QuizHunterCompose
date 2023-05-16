@@ -15,8 +15,9 @@ import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.Tes
 @Composable
 fun TestPickScreen(
     pickViewModel: TestPickViewModel,
-    navigateToQuizScreen: () -> Unit,
-    navigateToProfileScreen: () -> Unit
+    navigateToQuizScreen: (testId1: String) -> Unit,
+    navigateToProfileScreen: () -> Unit,
+    test_id: String
 ){
     val testPickOptionsState = pickViewModel.uiState.value
 //    val topicList = pickViewModel.topicNames
@@ -43,7 +44,7 @@ fun TestPickScreen(
 
             //TODO Top app bar
 
-            TestPickContent(testPickOptionsState = testPickOptionsState,   viewModel = pickViewModel, onNavigationTest = navigateToQuizScreen) //topicList = topicList,
+            TestPickContent(testPickOptionsState = testPickOptionsState,   viewModel = pickViewModel, onNavigationTest = { navigateToQuizScreen(test_id) }) //topicList = topicList,
 
         }
     }

@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.core_usecases
 
+import android.util.Log
 import com.example.quizhuntercompose.core_state.UserState
 import com.example.quizhuntercompose.datastore.DataStoreRepository
 import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
@@ -23,6 +24,7 @@ class ProvideUserStateUseCase @Inject constructor(
 
             quizHunterRepository.isUserPremiumLocal().collect { isPremium ->
                 if (!isPremium) {
+                    Log.i(TAG, "Final - quizHunterRepository is authed (premium?-): ${!isPremium}" )
                     emit(UserState.AuthedUser)
                 }
 
@@ -39,16 +41,22 @@ class ProvideUserStateUseCase @Inject constructor(
         var doesExist = false
 
         dataStoreRepository.readIsUserExistState.firstOrNull()?.let {
+            Log.i(TAG, "dataStoreRepository-readIsUserExistState it: $it" )
             if (it) {
                 doesExist = true
             }
 
             if (!it) {
                 doesExist = firebaseRepository.isUserExist()
+                Log.i(TAG, " firebaseRepository.isUserExist: $doesExist" )
                 dataStoreRepository.saveIsUserExist(doesExist)
             }
         }
 
         return doesExist
+    }
+
+    companion object {
+        private const val TAG = "ProvideUserStateUseCase"
     }
 }

@@ -1,5 +1,6 @@
   package com.example.quizhuntercompose.feature_auth.presentation_auth.components
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,7 +23,8 @@ fun OneTapSignIn(
             }
         }
         is Response.Failure -> LaunchedEffect(Unit) {
-            print(oneTapSignInResponse.e)
+//            print(oneTapSignInResponse.e)
+            Log.e("quizHunterOneTap", oneTapSignInResponse.e.toString())
         }
     }
 }

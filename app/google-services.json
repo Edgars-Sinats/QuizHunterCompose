@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "502303653285",
+    "firebase_url": "https://quizhunter-3e9c4-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "quizhunter-3e9c4",
+    "storage_bucket": "quizhunter-3e9c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502303653285:android:de5e20a269efe66f6e3c4c",
+        "android_client_info": {
+          "package_name": "com.example.quizhuntercompose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502303653285-iouqttd383p31p6d02vrtd4mv64j4ku1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBk-Nfy_c71a0x0cSfWwIGtTYp5cjVbUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502303653285-hlmgc2nn6v18ae6g9uvv7vsmvtjli59e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

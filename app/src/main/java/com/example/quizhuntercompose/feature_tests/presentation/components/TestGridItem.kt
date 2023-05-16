@@ -35,8 +35,8 @@ fun TestGridItem(
                 } else {
                     MaterialTheme.colors.primary
                 })
-            .padding(4.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .padding(8.dp)
+            .clip(RoundedCornerShape(8.dp))
 //            .fillMaxSize()
             .clickable { onItemClick(testItem) }
 

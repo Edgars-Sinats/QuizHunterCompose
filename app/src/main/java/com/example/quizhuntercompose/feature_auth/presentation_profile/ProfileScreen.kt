@@ -1,16 +1,15 @@
 package com.example.quizhuntercompose.feature_auth.presentation_profile
 
+import android.util.Log
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.cor.util.AppConstants.REVOKE_ACCESS_MESSAGE
 import com.example.quizhuntercompose.cor.util.AppConstants.SIGN_OUT
 import com.example.quizhuntercompose.core_state.UserState
+import com.example.quizhuntercompose.core_usecases.ProvideUserStateUseCase
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileContent
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileTopBar
 import com.example.quizhuntercompose.feature_auth.presentation_profile.components.RevokeAccess
@@ -29,9 +28,19 @@ fun ProfileScreen(
 
     val userCredential = viewModel.userCredential.collectAsState()
     val isPremium by viewModel.isUserPremium().collectAsState(initial = false)
-    val isAuthedUser = viewModel.authState.value !is UserState.UnauthedUser
+    val isAuthedUser = viewModel.authState.value != (UserState.UnauthedUser)
+    val isAuthedUser1 = viewModel.authState.value !is UserState.UnauthedUser
     val updateProfilePictureState = viewModel.updateProfilePictureState.collectAsState()
 
+    Log.i("TAG", "UserState: ${viewModel.authState.value} \n Should be equal to - UserState.UnAuthedUser: ${UserState.UnauthedUser}" )
+    Log.i("TAG", "isAuthedUser: $isAuthedUser" )
+    Log.i("TAG", "isAuthedUser1: $isAuthedUser1" )
+    Log.i("TAG", "viewModel.authState: ${viewModel.authState}" )
+
+    LaunchedEffect(true) {
+        viewModel.updateUiState()
+//        viewModel.getUserCredential()
+    }
 
     Scaffold (
         topBar = {

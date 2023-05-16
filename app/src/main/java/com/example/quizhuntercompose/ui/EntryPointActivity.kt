@@ -137,7 +137,8 @@ private fun TestPickDestination(navController: NavHostController) {
         },
         navigateToProfileScreen = {
             navController.navigate(Screen.ProfileScreen.route)
-        }
+        },
+        test_id = "1"
     )
 }
 

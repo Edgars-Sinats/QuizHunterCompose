@@ -36,7 +36,7 @@ fun LoginSection(
                 text = "--- OR ---",
                 modifier = Modifier.padding(6.dp),
                 fontSize = 12.sp,
-                color = Color.White.copy(0.3f)
+                color = Color.Red.copy(0.3f)
             )
             Spacer(modifier = Modifier.height(8.dp))
 

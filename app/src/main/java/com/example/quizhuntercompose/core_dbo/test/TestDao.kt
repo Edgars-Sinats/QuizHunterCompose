@@ -12,7 +12,7 @@ interface TestDao {
     @Query("SELECT * FROM test_table")
     fun getTests(): Flow<List<TestEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTest(tests: TestEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

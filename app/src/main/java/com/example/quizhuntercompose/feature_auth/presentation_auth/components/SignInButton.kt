@@ -24,11 +24,12 @@ fun SignInButton(
     Button(
         onClick = onClick,
         modifier = Modifier.padding(bottom = 48.dp),
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colors.primaryVariant
-        )
-    ) {
+        ),
+        elevation = ButtonDefaults.elevation(1.dp, 2.dp),
+        ) {
         Image(
             painter = painterResource(
                 id = R.drawable.ic_google_logo

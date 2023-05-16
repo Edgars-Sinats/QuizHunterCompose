@@ -1,10 +1,12 @@
 package com.example.quizhuntercompose.feature_tests.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -28,8 +30,10 @@ enum class TestFilter {
 
 @Composable
 fun TestsScreen(
+    modifier: Modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.2f)),
     viewModel: TestsViewModel = hiltViewModel(),
-    navController: NavController
+//    navController: NavController,
+    navigateToQuizPickScreen: (testId: String) ->Unit
 ) {
     val state = viewModel.state.collectAsState()
     val searchTest = remember { mutableStateOf(TextFieldValue("")) }
@@ -45,11 +49,13 @@ fun TestsScreen(
                 uploadTest = { viewModel.uploadTests() }
             )
 
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
 
 
         LazyVerticalGrid(
+            modifier = modifier.padding(2.dp),
             columns = GridCells.Fixed(2),
             content = {
                 items(state.value.tests){  it ->
@@ -71,16 +77,19 @@ fun TestsScreen(
                     if (state.value.openedTest != null){
                         TestCardDialog(
                             onDismiss = { viewModel.closeTestPreview() },
-                            onOpenTest = { navController.navigate(Screen.QuizPickScreen.route + "/${it.testId}") },
-                            onStared = { viewModel.starFavoriteTest(it.testId, !it.isFavorite ) },
-                            test = it
+                            onOpenTest = {
+                                viewModel.closeTestPreview()
+                                navigateToQuizPickScreen.invoke(it.testId.toString())
+//                                navController.navigate("${Screen.QuizPickScreen.route}/{${it.testId}")
+                                         },
+                            onStared = { viewModel.starFavoriteTest(it.testId, it.isFavorite) },
+                            test = it,
+                            modifier = modifier
                         )
                     }
 
                 }
-            },
-            modifier = Modifier.padding(paddingValues)
-
+            }
 
         )
 

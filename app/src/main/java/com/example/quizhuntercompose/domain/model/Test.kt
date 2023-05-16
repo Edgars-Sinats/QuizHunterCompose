@@ -28,7 +28,7 @@ data class Test(
     val dateModified: String = "",
     /**  Note. [Favorite] - only in Room */
     // TODO remove from Test?
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean,
     val needKey: Boolean,
     val additionalInfo: String? = "",
     //In room only is language. In Firebase DocId is language name...
@@ -51,7 +51,7 @@ data class TestFirebase(
     @ServerTimestamp
     val dateModified: Timestamp? = null,
     /**  Note. [Favorite] - only in Room */
-    // TODO remove from Test?
+    // TODO update state when getUserDataFromFirebase
     val isFavorite: Boolean = false,
     val needKey: Boolean = false,
     val additionalInfo: String? = "",

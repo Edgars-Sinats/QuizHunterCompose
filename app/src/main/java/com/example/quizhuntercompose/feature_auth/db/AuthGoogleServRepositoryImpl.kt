@@ -16,6 +16,7 @@ import com.example.quizhuntercompose.cor.util.FirebaseConstants.EMAIL
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.PHOTO_URL
 import com.example.quizhuntercompose.cor.util.FirebaseConstants.USERS
 import com.example.quizhuntercompose.cor.util.Response
+import com.example.quizhuntercompose.domain.model.QuizHunterUser
 
 import com.example.quizhuntercompose.feature_auth.domain.AuthGoogleServRepository
 import kotlinx.coroutines.flow.flow
@@ -73,9 +74,16 @@ class AuthGoogleServRepositoryImpl @Inject constructor(
     }
 }
 
-fun FirebaseUser.toUser() = mapOf(
-    CREATED_AT to serverTimestamp(),
-    DISPLAY_NAME to displayName,
-    EMAIL to email,
-    PHOTO_URL to photoUrl?.toString()
+fun FirebaseUser.toUser() = QuizHunterUser(
+    name = displayName,
+    userName = displayName,
+    email = email,
+    image = photoUrl?.toString(),
+    userUid = uid,
+    //TODO add languages. Get default system language.
+
+//    CREATED_AT to serverTimestamp(),
+//    DISPLAY_NAME to displayName,
+//    EMAIL to email,
+//    PHOTO_URL to photoUrl?.toString()
 )

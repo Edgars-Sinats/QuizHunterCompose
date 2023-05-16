@@ -1,11 +1,9 @@
 package com.example.quizhuntercompose.feature_auth.presentation_auth.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,7 +11,6 @@ import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +24,7 @@ fun AuthContent(
     paddingValues: PaddingValues,
     oneTapSignIn: () -> Unit,
     navigateToHomeScreen: () -> Unit,
+    navigateToRegisterScreen: () -> Unit,
     popBackStack: () -> Unit,
     validateSigneIn: () -> Unit,
     screenState: SignInScreenState
@@ -58,9 +56,9 @@ fun AuthContent(
                 }
             ) {
                 Icon(
-                    tint = Color.Cyan,
+                    tint = Color.Black,
                     imageVector = Icons.Filled.Close,
-                    contentDescription = null
+                    contentDescription = "Close"
                 )
             }
         }
@@ -153,8 +151,6 @@ fun AuthContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-//        LoadingDots(isLoading = screenState.isLoading)
-
         LoginSection(
             customLoginButton = {
                 validateSigneIn()
@@ -174,19 +170,21 @@ fun AuthContent(
         ) {
             CustomClickableText(
                 text = "New user? ",
-                fontSize = 18.sp
-            ) {}
+                fontSize = 18.sp,
+                color = Color.Black,
+                ) {}
             Spacer(modifier = Modifier.width(4.dp))
             CustomClickableText(
                 text = "Register",
-                color = Color.Cyan,
+                color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.W500
             ) {
-//                navigateToSignUpScreen()
+                navigateToRegisterScreen.invoke()
             }
         }
     }
 
+    //        LoadingDots(isLoading = screenState.isLoading)
 
 }

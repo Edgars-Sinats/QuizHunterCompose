@@ -8,6 +8,7 @@ import com.example.quizhuntercompose.cor.util.Resource
 import com.example.quizhuntercompose.cor.util.Response
 import com.example.quizhuntercompose.cor.util.isValidEmail
 import com.example.quizhuntercompose.cor.util.isValidPassword
+import com.example.quizhuntercompose.datastore.DataStoreRepository
 import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
 import com.example.quizhuntercompose.feature_auth.domain.AuthGoogleServRepository
 import com.example.quizhuntercompose.feature_auth.domain.OneTapSignInResponse
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor (
     private val firebaseRepository: AuthFirebaseRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val googleServices: AuthGoogleServRepository,
     val oneTapClient: SignInClient
 ) : ViewModel(){
@@ -120,6 +122,10 @@ class AuthViewModel @Inject constructor (
             }
         }
     }
+
+//    fun updateUserStateDatastore() {
+//
+//    }
 
     fun updateIsVisibleIsLoadingState(
         isVisible: Boolean,

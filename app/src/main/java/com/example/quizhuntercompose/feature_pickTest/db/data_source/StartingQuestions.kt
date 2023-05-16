@@ -34,6 +34,8 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
             //creating variable that holds the loaded data
             val questionN = loadJSONArray(context)
             val topicN = loadJSONArrayTopics(context)
+            val questionLatinLatvian = loadJSONArrayGptLatinLatvian(context)
+            val questionUniverseEnglish = loadJSONArrayGptUniverseEnglish(context)
             if (questionN != null){
                 //looping through the variable as specified fields are loaded with data
                 for (i in 0 until questionN.length()){
@@ -127,6 +129,21 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
         BufferedReader(inputStream.reader()).use {
             return JSONArray(it.readText())
         }
+    }
 
+    private fun loadJSONArrayGptUniverseEnglish(context: Context): JSONArray?{
+        Log.d("StartingQuestion: ","loadJsonGptUniverse")
+        val inputStream = context.assets.open("gpt_universe_english.json")
+        BufferedReader(inputStream.reader()).use {
+            return JSONArray(it.readText())
+        }
+    }
+
+    private fun loadJSONArrayGptLatinLatvian(context: Context): JSONArray?{
+        Log.d("StartingQuestion: ","loadJsonGptUniverse")
+        val inputStream = context.assets.open("gpt_questions_latin_latvian.json")
+        BufferedReader(inputStream.reader()).use {
+            return JSONArray(it.readText())
+        }
     }
 }

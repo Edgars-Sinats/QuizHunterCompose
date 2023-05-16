@@ -266,6 +266,7 @@ class AuthFirebaseRepositoryImpl constructor(
         }
     }
 
+    //TODO clean this func
     override fun getTests(language: String): Flow<Resource<List<Test>>> {
         return callbackFlow {
             try {
@@ -282,32 +283,19 @@ class AuthFirebaseRepositoryImpl constructor(
                         this.close(it)
                     }
                     value?.let { testsFirebaseData1 ->
+                        val newDoc = testsFirebaseData1.toObject(FirebaseTestDocument::class.java)
+                        val testsRoom: Map<String, TestFirebase> = newDoc?.documentTests ?: emptyMap()
+
                         Log.i(TAG, " \n testsFirebaseData1: ${testsFirebaseData1}")
                         Log.i(TAG, " \n testsFirebaseData1 data: ${testsFirebaseData1.data}")
-                        val newDoc = testsFirebaseData1.toObject(FirebaseTestDocument::class.java)
                         Log.i(TAG, " \n newDoc values: ${newDoc?.documentTests?.values }")
-                        Log.i(TAG, " \n newDoc doc: ${newDoc?.documentTests }")
                         Log.i(TAG, " \n newDoc entries: ${newDoc?.documentTests?.entries }")
-
-                        var testsRoom: Map<String, TestFirebase>
-                        testsRoom = newDoc?.documentTests ?: emptyMap()
                         Log.i(TAG, " \n testRoom element: ${testsRoom }")
                         Log.i(TAG, " \n testRoom values: ${testsRoom.values }")
-//                        testsFirebaseData1.data?.entries?.associate {
-//                            Log.i(TAG, " \n testFirebase key: ${it.key }")
-//                            Log.i(TAG, " \n testFirebase value: $it")
-//                            it.key to testsRoom.entries.add(element = <it.key, it.value>)
-//                            it.value to testsRoom.values;
-//                        }
-
 
 //                        val testsFirebaseDataObject = testsFirebaseData1 as (FirebaseTestDocument2::class.java)
 //                        var testsRoom1: Map<String, TestFirebase>? = testsFirebaseDataObject?.doc
-////                        testsRoom1.entries = testsFirebaseDataObject.doc
-//                        Log.i(TAG, " \n testRoom values: ${testsRoom1?.values }")
 
-
-//                        value.data.ass
                         val testsFirebaseData = value.data
                         testsFirebaseData?.let {
 
@@ -316,55 +304,9 @@ class AuthFirebaseRepositoryImpl constructor(
                             Log.i(TAG, " Line 289 \n Second element: ${testsFirebaseData?.get("2") }")
                             Log.i(TAG, " Line 289 \n Size of element: ${testsFirebaseData?.size }")
 
-
-//                            testsFirebaseData?.let { firebaseDocMap ->
-
-//                            Log.i(TAG, "firebaseDocMap value: ${firebaseDocMap}")
-//
-//                            Log.i(TAG, "firebaseDocMap value: ${firebaseDocMap}")
-
                             val entityDocMap = mutableMapOf<String, Test>()
                                 var count = 0
-                            val docSize = newDoc?.documentTests?.entries?.size
-                            val myDoc = newDoc?.documentTests
-
-//                            var test: Test = Test(testID = 1, testName = "A", dateCreated = "", needKey = false, language = "", testRank = 1)
-                                testsFirebaseData.forEach { v1 ->
-
-                                    val as12 = testsFirebaseData.values.forEach { fTestObject ->
-//                                        fTestObject as TestFirebase
-//                                        Log.i(TAG, "fTestObject values: ${fTestObject}")
-//                                        test = Test(
-//
-//                                            testID = fTestObject.testID,
-//                                            testName =fTestObject.testName,
-//                                            dateCreated = fTestObject.dateCreated.toString(),
-//                                            dateModified = fTestObject.dateModified.toString() ?: "",
-//                                            testImageUrl = fTestObject.testImageUrl ?: "",
-//                                            language = fTestObject.language ?: "",
-//                                            testDescription = fTestObject.testDescription,
-//                                            needKey = fTestObject.needKey,
-//                                            additionalInfo =fTestObject.additionalInfo,
-//                                            testRank = fTestObject.testRank,
-//                                            isFavorite = fTestObject.isFavorite
-//                                        )
-                                    }
-                                    Log.i(TAG, "as12: ${as12}")
-
-//                                    val test = Test(
-//                                        testID = dat2.get(count.toString())?.testID ?: 0,
-//                                        testName = dat2.get(count.toString())?.testName?: "",
-//                                        dateCreated = dat2.get(count.toString())?.dateCreated.toString(),
-//                                        dateModified = dat2.get(count.toString())?.dateModified.toString(),
-//                                        testImageUrl = dat2.get(count.toString())?.testImageUrl,
-//                                        language = dat2.get(count.toString())?.language?: "",
-//                                        testDescription = dat2.get(count.toString())?.testDescription?: "",
-//                                        needKey = dat2.get(count.toString())?.needKey?: false,
-//                                        additionalInfo = dat2.get(count.toString())?.additionalInfo,
-//                                        testRank =  dat2.get(count.toString())?.testRank?:1,
-//                                        isFavorite = dat2.get(count.toString())?.isFavorite?:false,
-//                                    )
-
+                                testsFirebaseData.forEach {
 //                                    entityDocMap[count.toString()] = test
                                     count++
                                     println("firebaseDocMap count: $count")
@@ -372,53 +314,12 @@ class AuthFirebaseRepositoryImpl constructor(
                                 }
                         }
 
-//                        testsRoom
-
-                        Log.i(TAG, " Line 286 ")
-//                        val fTests: FirebaseTestDocument? = value.toObject(FirebaseTestDocument::class.java)
-//                        Log.i(TAG, " Line 289 \n fTests: ${fTests?.doc}")
-
-//                        val fTests2: FirebaseTestDocument2? = value.toObject(FirebaseTestDocument2::class.java) //no setter found
-//                        Log.i(TAG, " Line 291 \n fTests: ${fTests2?.doc}")
-
-//                        val m1: Map<String, TestFirebase>? = value.toObject()
-//                        Log.i(TAG, " Line 292 \n m1: ${m1?.values}")
-
-
-
-
-                        var firebaseTestList = FirebaseTestList( emptyList() )
-//                        val m2: Map<String, Test> = m1?.mapValues { it.value.copy(m1.values)
-//                            Test(
-//                                isFavorite = it.value.isFavorite,
-//                                testRank = it.value.testRank,
-//                                testDescription = a1.testDescription,
-//                                additionalInfo = a1.additionalInfo,
-//                                needKey = a1.needKey,
-//                                language = a1.language,
-//                                testName = a1.testName,
-//                                testImageUrl = a1.testImageUrl,
-//                                dateModified = a1.dateModified.toString(),
-//                                dateCreated = a1.dateCreated.toString(),
-//                                testID = a1.testID
-//                            )
-//                        } ?: emptyMap()
-
-                        Log.i(TAG, " Line 402  testRoom : $testsRoom ")
-                        Log.i(TAG, " Line 408 test Room values: ${testsRoom.values} ")
-                        Log.i(TAG, " Line 408 test Room entries: ${testsRoom.entries} ")
-
                         var testsToSend: MutableList<Test> = mutableListOf()
-                        var testsToSend1: MutableList<Test> = mutableListOf()
-
-
                         var iteratorCount = 0
-                        var iteratorCount1 = 0
-
 
                         testsRoom.values.map {
-                            testsToSend1.add(
-                                iteratorCount1, Test(
+                            testsToSend.add(
+                                iteratorCount, Test(
                                     isFavorite = it.isFavorite,
                                     testRank = it.testRank,
                                     testDescription = it.testDescription,
@@ -432,33 +333,10 @@ class AuthFirebaseRepositoryImpl constructor(
                                     testID = it.testID
                                 )
                             )
-                            iteratorCount1++
-                        }
-                        Log.i(TAG, " 434 - testsToSend1: ${testsToSend1} ")
-
-
-
-                        testsRoom.entries.map {
-                            testsToSend.add(
-                                iteratorCount, Test(
-                                    isFavorite = it.value.isFavorite,
-                                    testRank = it.value.testRank,
-                                    testDescription = it.value.testDescription,
-                                    additionalInfo = it.value.additionalInfo,
-                                    needKey = it.value.needKey,
-                                    language = it.value.language,
-                                    testName = it.value.testName,
-                                    testImageUrl = it.value.testImageUrl,
-                                    dateModified = it.value.dateModified.toString(),
-                                    dateCreated = it.value.dateCreated.toString(),
-                                    testID = it.value.testID
-                                )
-                            )
                             iteratorCount++
                         }
 
-                        Log.i(TAG, " Line 402  testsToSend: ${testsToSend} ")
-                        Log.i(TAG, " Line 402  testsToSend.toList(): ${testsToSend.toList()} ")
+                        Log.i(TAG, "   testsToSend.toList(): ${testsToSend.toList()} ")
 
                         this.trySend(Resource.Success(testsToSend.toList()))
                     }
@@ -497,16 +375,13 @@ class AuthFirebaseRepositoryImpl constructor(
     override fun updateTestsToCloud(testDoc: FirebaseTestDocument): Flow<Resource<Task<Void>>> {
         return flow {
             emit(Resource.Loading())
-            val document = "latvian"
+            val document = "latvian" //TODO
             val update = fireStore.collection(AppConstants.TEST_COLLECTION)
                 .document(document)
                 .set(testDoc)
-
-            Log.i(TAG, "updating Firebase! ")
             update.await()
-            Log.i(TAG, "Should be success! ")
-
             emit(Resource.Success(update))
+
         }.catch {
             Log.i(TAG, "Error caught: $it")
             emit(Resource.Error(it.toString()))
