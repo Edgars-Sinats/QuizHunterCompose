@@ -5,7 +5,7 @@ Question app what will help to learn new topic with answering on question and ch
     Next step implement theory for questions in case of explanation needed. Plan of taking text block of theory and linking to questions with help of AI text recognition tool.
 This code demonstrates the Android Architecture pattern MVVM and component like - ViewModel and StateFlow.
 
-Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() did`t work with .db or json.
+Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() didt work with .db or json.
 Added - read data now(Tests) from Firebase Firestore.
 
 
@@ -22,8 +22,7 @@ You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-si
 ## 📸 Screenshots
 
 ||||
-|:----------------------------------------:|:-----------------------------------------:
-|
+|:----------------------------------------:|:-----------------------------------------: |
 |![](media/1.png) | ![](media/2.png) |
 |![](media/3.png)|![](media/4.png)|
 |![](media/5.png) | ![](media/6.png)    |
