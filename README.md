@@ -21,7 +21,7 @@ You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-si
 ### Current app demo can be found  [Youtube](https://youtu.be/vQE1SkwBLQ4)
 ## 📸 Screenshots
 
-||||
+|||
 |:----------------------------------------:|:-----------------------------------------: |
 |![](media/1.png) | ![](media/2.png) |
 |![](media/3.png)|![](media/4.png)|
