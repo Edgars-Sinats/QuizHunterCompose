@@ -14,15 +14,15 @@ import java.util.*
 data class UserEntity(
     @PrimaryKey
     @ColumnInfo(name = "user_uid") val userUid: String,
-    @ColumnInfo(name = "user_name") val userName: String?,
+    @ColumnInfo(name = "user_name") val userName: String,
     @ColumnInfo(name = "name") val name: String?,
     @ColumnInfo(name = "email") val email: String?,
     @ColumnInfo(name = "image") val image: String?,
-    @ColumnInfo(name = "isPremium") val isPremium: Boolean = false,
-    @ColumnInfo(name = "is_teacher") val isTeacher: Boolean = false,
-    @ColumnInfo(name = "is_admin") val isAdmin: Boolean = false,
+    @ColumnInfo(name = "isPremium") val isPremium: Boolean? = false,
+    @ColumnInfo(name = "is_teacher") val isTeacher: Boolean? = false,
+    @ColumnInfo(name = "is_admin") val isAdmin: Boolean? = false,
     @ColumnInfo(name = "languages") val languages: String?,
-//    @ColumnInfo(name = "test_keys") val testKeys: Map<Int, String>
+//    @ColumnInfo(name = "test_keys") val testKeys: Map<String, String>
 )
 
 fun UserEntity.toQuizHunterUser(): QuizHunterUser {

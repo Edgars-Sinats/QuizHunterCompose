@@ -18,17 +18,19 @@ class ProvideUserStateUseCase @Inject constructor(
     operator fun invoke(function: () -> Unit): Flow<UserState> {
         return flow {
             if (!isUserExist()) {
+//                Log.i(TAG, "isUserExit(): ${isUserExist()}")
                 emit(UserState.UnauthedUser)
                 return@flow
             }
 
             quizHunterRepository.isUserPremiumLocal().collect { isPremium ->
                 if (!isPremium) {
-                    Log.i(TAG, "Final - quizHunterRepository is authed (premium?-): ${!isPremium}" )
+                    Log.i(TAG, "Final - quizHunterRepository is authed : ${!isPremium}" )
                     emit(UserState.AuthedUser)
                 }
 
                 if (isPremium) {
+                    Log.i(TAG, "Final - quizHunterRepository is (premium) user: ${!isPremium}" )
                     emit(UserState.PremiumUser)
                 }
             }
@@ -52,6 +54,7 @@ class ProvideUserStateUseCase @Inject constructor(
                 dataStoreRepository.saveIsUserExist(doesExist)
             }
         }
+        Log.i(TAG, "returning doesExit: $doesExist")
 
         return doesExist
     }

@@ -94,7 +94,7 @@ fun AuthScreen(
     )
 
     SignInWithGoogle (
-        navigateToHomeScreen = { signedIn ->
+        navigateToProfileScreen = { signedIn ->
             if (signedIn) {
                 navigateToProfileScreen()
             }

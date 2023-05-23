@@ -11,13 +11,14 @@ import com.example.quizhuntercompose.feature_auth.presentation_auth.AuthViewMode
 @Composable
 fun SignInWithGoogle(
     viewModel: AuthViewModel = hiltViewModel(),
-    navigateToHomeScreen: (signedIn: Boolean) -> Unit
+    navigateToProfileScreen: (signedIn: Boolean) -> Unit
 ) {
     when(val signInWithGoogleResponse = viewModel.signInWithGoogleResponse.collectAsState().value) {
         is Response.Loading -> ProgressBar()
         is Response.Success -> signInWithGoogleResponse.data?.let { signedIn ->
             LaunchedEffect(signedIn) {
-                navigateToHomeScreen(signedIn)
+
+                navigateToProfileScreen(signedIn)
             }
         }
         is Response.Failure -> LaunchedEffect(Unit) {

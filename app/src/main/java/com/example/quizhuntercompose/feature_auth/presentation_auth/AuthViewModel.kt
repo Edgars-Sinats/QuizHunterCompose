@@ -9,10 +9,7 @@ import com.example.quizhuntercompose.cor.util.Response
 import com.example.quizhuntercompose.cor.util.isValidEmail
 import com.example.quizhuntercompose.cor.util.isValidPassword
 import com.example.quizhuntercompose.datastore.DataStoreRepository
-import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
-import com.example.quizhuntercompose.feature_auth.domain.AuthGoogleServRepository
-import com.example.quizhuntercompose.feature_auth.domain.OneTapSignInResponse
-import com.example.quizhuntercompose.feature_auth.domain.SignInWithGoogleResponse
+import com.example.quizhuntercompose.feature_auth.domain.*
 import com.example.quizhuntercompose.feature_auth.presentation_auth.state.SignInState
 import com.example.quizhuntercompose.feature_auth.presentation_auth.state.SignInScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +27,7 @@ class AuthViewModel @Inject constructor (
     private val firebaseRepository: AuthFirebaseRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val googleServices: AuthGoogleServRepository,
+    private val quizHunterRepository: QuizHunterRepository,
     val oneTapClient: SignInClient
 ) : ViewModel(){
     val isAuthenticated = googleServices.isAuthenticated
@@ -90,6 +88,23 @@ class AuthViewModel @Inject constructor (
                 }
             }
         }.launchIn(viewModelScope)
+
+    private fun cacheQuizHunterUser(){
+        viewModelScope.launch(Dispatchers.IO){
+            quizHunterRepository.getQuizHunterUser().collect() { user ->
+                if (user != null) {
+                    return@collect
+                }
+
+                firebaseRepository.getUserCredentials().collect() {
+                    when(it) {
+                        is Resource.Success -> it.data?.run { quizHunterRepository.saveQuizHunterUser(this) }
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
 
     fun oneTapSignIn() = viewModelScope.launch(Dispatchers.IO) {
         googleServices.oneTapSignInWithGoogle().collect { result ->

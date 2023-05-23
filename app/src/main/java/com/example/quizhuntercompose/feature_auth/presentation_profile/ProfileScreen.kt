@@ -1,19 +1,22 @@
 package com.example.quizhuntercompose.feature_auth.presentation_profile
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.cor.util.AppConstants.REVOKE_ACCESS_MESSAGE
 import com.example.quizhuntercompose.cor.util.AppConstants.SIGN_OUT
+import com.example.quizhuntercompose.cor.util.getAllTestLanguages
 import com.example.quizhuntercompose.core_state.UserState
-import com.example.quizhuntercompose.core_usecases.ProvideUserStateUseCase
-import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileContent
-import com.example.quizhuntercompose.feature_auth.presentation_profile.components.ProfileTopBar
-import com.example.quizhuntercompose.feature_auth.presentation_profile.components.RevokeAccess
-import com.example.quizhuntercompose.feature_auth.presentation_profile.components.SignOut
+import com.example.quizhuntercompose.feature_auth.presentation_profile.components.*
 import kotlinx.coroutines.launch
 
 
@@ -21,7 +24,7 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     navigateToAuthScreen: () -> Unit,
-    navigateToQuizPickScreen: () -> Unit
+    navigateToQuizPickScreen: (language: String) -> Unit
 ){
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -32,6 +35,8 @@ fun ProfileScreen(
     val isAuthedUser1 = viewModel.authState.value !is UserState.UnauthedUser
     val updateProfilePictureState = viewModel.updateProfilePictureState.collectAsState()
 
+    val selectedLanguage = viewModel.selectedLanguage.value
+
     Log.i("TAG", "UserState: ${viewModel.authState.value} \n Should be equal to - UserState.UnAuthedUser: ${UserState.UnauthedUser}" )
     Log.i("TAG", "isAuthedUser: $isAuthedUser" )
     Log.i("TAG", "isAuthedUser1: $isAuthedUser1" )
@@ -39,6 +44,7 @@ fun ProfileScreen(
 
     LaunchedEffect(true) {
         viewModel.updateUiState()
+        viewModel.getUserCredential()
 //        viewModel.getUserCredential()
     }
 
@@ -53,12 +59,19 @@ fun ProfileScreen(
                 }
             )
         },
+        bottomBar = {},
         content = { padding ->
+            Log.i("ProfileScreen", "displayName: ${userCredential.value.userName.toString() }")
+            Log.i("ProfileScreen","dsiplay name isNotEmpty(): ${{userCredential.value.userName.toString().isNotEmpty() }}")
+            Log.i("ProfileScreen","dsiplay name .isBlank(): ${{userCredential.value.userName.toString().isBlank() }}")
             ProfileContent(
                 padding = padding,
                 photoUrl = userCredential.value.image.toString(),
                 displayName = userCredential.value.userName.toString(),
-                navigateToQuizPickScreen = navigateToQuizPickScreen,
+                navigateToQuizPickScreen = { selectedLanguage?.let {
+                    navigateToQuizPickScreen.invoke(it.value)
+                    }
+                },
                 navigateToAuthScreen = navigateToAuthScreen,
                 iconVisibility = isPremium,
 
@@ -68,9 +81,27 @@ fun ProfileScreen(
                 clearUpdateProfilePictureState = { viewModel.clearUpdateProfilePictureState() },
                 updateProfilePicture = { bitmap ->
                     viewModel.updateProfilePicture(bitmap = bitmap)
-                }
+                },
+                onSelectedLanguage  = { language-> viewModel.onSelectedLanguageChanged(language) },
+                selectedLanguage = selectedLanguage
 
             )
+//            val scrollState = rememberLazyListState()
+//            LazyRow(
+//                modifier = Modifier
+//                    .padding(start = 8.dp, bottom = 8.dp),
+//                state = scrollState,
+//            ) {
+//                items(getAllTestLanguages()){
+//                    LanguageChipList(
+//                        language = it.value,
+//                        onSelectedCategoryChanged = viewModel::onSelectedLanguageChanged,
+//                        isSelected = selectedLanguage == it,
+//                        onExecuteSearch = {}
+//                    )
+//                }
+//            }
+
         },
         scaffoldState = scaffoldState
     )

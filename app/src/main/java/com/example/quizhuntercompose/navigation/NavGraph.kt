@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_OPTIONS
 import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_TEST_ID
+import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_TEST_LANGUAGE
 import com.example.quizhuntercompose.cor.util.AppConstants.TAG_NAV_GRAPH
 import com.example.quizhuntercompose.feature_auth.presentation_auth.AuthScreen
 import com.example.quizhuntercompose.feature_auth.presentation_profile.ProfileScreen
@@ -32,6 +33,8 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 fun NavGraph (
     navController: NavHostController
 ) {
+    val TAG_G = "NavGraph"
+
 //    val direction = remember ( navController ) { Direction ( navController ) }
 
     AnimatedNavHost(
@@ -51,7 +54,7 @@ fun NavGraph (
                 },
                 navigateToQuizPickScreen = {
                     Log.i(TAG_NAV_GRAPH, "Pressed navigateToQuizPickScreens.")
-                    navController.navigate(Screen.TestsScreen.route)
+                    navController.navigate("${Screen.TestsScreen.route}/$it")
                 }
             )
         }
@@ -82,13 +85,18 @@ fun NavGraph (
         }
 
         composable(
-            route = Screen.TestsScreen.route
-        ) {
-
+            route = "${Screen.TestsScreen.route}/{$QUIZ_TEST_LANGUAGE}",
+            arguments = listOf( navArgument(QUIZ_TEST_LANGUAGE){
+                type = NavType.StringType
+            })
+        ) { navBackStack->
+            //TODO getDefoult system language & check if it is one of available
+            val chosenLanguage = navBackStack.arguments?.getString(QUIZ_TEST_LANGUAGE, "latvian")
             TestsScreen(
                 navigateToQuizPickScreen = {
                     navController.navigate("${Screen.QuizPickScreen.route}/$it")
-                }
+                },
+                language = chosenLanguage!!
             )
         }
 
@@ -97,10 +105,13 @@ fun NavGraph (
             arguments = listOf( navArgument(QUIZ_TEST_ID){
                 type = NavType.StringType
             })
-        ){
+        ){ navBackStack ->
+
             Log.i(TAG_NAV_GRAPH, "Navigating to TestPickScreen., Building TestPickViewModel")
 
             val viewModel: TestPickViewModel = hiltViewModel()
+            val myTestId = navBackStack.arguments?.getString(QUIZ_TEST_ID, "0")
+            Log.i(TAG_NAV_GRAPH, "QuizScreen myTestId is $myTestId")
 
             TestPickScreen(
                 viewModel,
@@ -111,7 +122,7 @@ fun NavGraph (
                         .build()
 
                     val jsonAdapter = moshi.adapter<TestOptions> (TestOptions::class.java)
-                    val testOptionsObject = TestOptions (ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState)
+                    val testOptionsObject = TestOptions (ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, testId = viewModel.uiState.value.pickedTestId)
                     val userJson = jsonAdapter.toJson(testOptionsObject)
 
                     navController.popBackStack()
@@ -123,7 +134,7 @@ fun NavGraph (
                     navController.popBackStack()
                     navController.navigate(Screen.ProfileScreen.route)
                 },
-                test_id = QUIZ_TEST_ID
+                test_id = myTestId!!
             )
         }
         composable(
@@ -133,16 +144,18 @@ fun NavGraph (
                 navArgument(QUIZ_TEST_ID) { type = NavType.StringType }
             )
         ){ backStackEntry->
-            Log.i(AppConstants.TAG_NAV_GRAPH, "start let...")
+            Log.i(TAG_NAV_GRAPH, "start let...")
             // arguments is TestOptions
             val testId = backStackEntry.arguments?.getString(QUIZ_TEST_ID)
+            Log.i(TAG_G, "QuizScreen This QUIZ_TEST_ID: $QUIZ_TEST_ID")
+            Log.i(TAG_G, "QuizScreen This testID: $testId")
             backStackEntry.arguments?.getString(QUIZ_OPTIONS, "empty")?.let {
-                Log.i(AppConstants.TAG_NAV_GRAPH, "let passed. arguments: ${ backStackEntry.arguments!!.getString("testPickView" ) } ")
+                Log.i(TAG_NAV_GRAPH, "let passed. arguments: ${ backStackEntry.arguments!!.getString("testPickView" ) } ")
                 TestScreen(
                     navigateToFinish = {
                         navController.popBackStack()
-                        navController.navigate("${Screen.QuizPickScreen.route}/{$testId}") {
-                            popUpTo ( "${Screen.QuizPickScreen.route}/{$testId}" )
+                        navController.navigate("${Screen.QuizPickScreen.route}/$testId") {
+                            popUpTo ( "${Screen.QuizPickScreen.route}/$testId" )
                         }
 //                        navController.popBackStack(route = Screen.QuizPickScreen.route, inclusive = false)
                     },

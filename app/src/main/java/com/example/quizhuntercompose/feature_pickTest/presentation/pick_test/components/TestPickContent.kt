@@ -167,5 +167,5 @@ fun StepsSliderSamplePreview(){
 @Composable
 @Preview
 fun TestPickContent2Preview(){
-    TestPickContent(viewModel = hiltViewModel(), testPickOptionsState = TestPickOptionsState(questions = emptyList(), topics = emptyList(), isOptionsSectionVisible = false, count = 5, totalCount = 6, unanswered = false, wrongAnswersState =  false, answerTime = true, pickedTopicId = emptyList()), onNavigationTest =  {})
+    TestPickContent(viewModel = hiltViewModel(), testPickOptionsState = TestPickOptionsState(questions = emptyList(), topics = emptyList(), isOptionsSectionVisible = false, count = 5, totalCount = 6, unanswered = false, wrongAnswersState =  false, answerTime = true, pickedTopicId = emptyList(), pickedTestId = 1), onNavigationTest =  {})
 }

@@ -43,6 +43,7 @@ class TestViewModel @Inject constructor(
     private var questionNonAns_: Boolean = false
     private var questionWrongAns_: Boolean = false
     private var questionCountForInit: Int = 0
+    private var testIdForInit: Int = 0
 
     init {
         _isLoading.value = true
@@ -62,18 +63,20 @@ class TestViewModel @Inject constructor(
     fun initializeQuestionsFromDb() {
         questionStateList = emptyList()
         answerStateList = emptyList()
-        questionCount = (screenArguments.count ?: 1)
-        questionIds_ = (screenArguments.ids ?: listOf(1) ) as List<Int>
-        questionNonAns_ = (screenArguments.nonAns ?: false) as Boolean
-        questionWrongAns_ = (screenArguments.wrongAns ?: false) as Boolean
+        questionCount = screenArguments.count
+        questionIds_ = screenArguments.ids as List<Int>
+        questionNonAns_ = screenArguments.nonAns as Boolean
+        questionWrongAns_ = screenArguments.wrongAns as Boolean
+        testIdForInit = screenArguments.testId
 
         viewModelScope.launch(Dispatchers.IO) {
 
             val listOfQuestion: List<Question> =
-                questionRepository.getMyQuestions(count = questionCount,
+                questionRepository.getMyQuestions (count = questionCount,
                     ids = questionIds_,
                     nonAns = questionNonAns_,
-                    wrongAns = questionWrongAns_)
+                    wrongAns = questionWrongAns_,
+                testId = testIdForInit)
 
             listOfQuestion.forEach { question ->
 
@@ -173,8 +176,16 @@ class TestViewModel @Inject constructor(
 
                 Log.i("TestViewModel Next: ", "answer1: " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString())
                 updateTime(currentQuestIndex, endTime)
-                _uiState.value = _uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex.inc() )
-                _currentlySelectAnswer.value = _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer
+                if (_uiState.value.answers[currentQuestIndex].isLastQuestion) {
+                    val unansweredQuestId = _uiState.value.questionStateList.first { questionState -> questionState.chosenAnswer == null }.questionStateId
+                    _uiState.value = uiState.value.copy(currentQuestionIndex = unansweredQuestId)
+                    _currentlySelectAnswer.value = unansweredQuestId //TODO check new changes
+
+                }else{
+                    _uiState.value = _uiState.value.copy( currentQuestionIndex = _uiState.value.currentQuestionIndex.inc() )
+                    _currentlySelectAnswer.value = _uiState.value.answers[_uiState.value.currentQuestionIndex].chosenAnswer
+                }
+
 
                 Log.i("TestViewModel Next: ", "Next has executed:___\n Chosen (A) answer: " + uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer.toString() + "\n currentQIndex: " + _uiState.value.currentQuestionIndex)
             }

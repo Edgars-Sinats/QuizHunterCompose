@@ -11,7 +11,7 @@ object DatabaseMapper: EntityMapper<List<Test>, List<TestEntity>> {
                 testName = data.testName,
                 testDescription = data.testDescription ?: "",
                 dateCreated = data.testCreated,
-                dateModified = data.testModified ?: "",
+                dateModified = data.testModified ?: 0,
                 isFavorite = data.isFavorite,
                 needKey = data.needKey,
                 additionalInfo = data.additionalInfo ?: "",

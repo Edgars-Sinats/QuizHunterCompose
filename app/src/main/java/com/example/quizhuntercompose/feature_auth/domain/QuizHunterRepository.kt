@@ -26,6 +26,10 @@ interface QuizHunterRepository {
 
     fun getTestsEntity(): Flow<List<TestEntity>>
 
+    fun getTestsLanguage(language: String): Flow<List<Test>>
+
+    fun getTestsLanguageEntity(language: String): Flow<List<TestEntity>>
+
     suspend fun saveTests(tests: List<Test>)
 
 

@@ -23,9 +23,9 @@ data class Test(
     val testImageUrl: String? = "",
     val testDescription: String = "",
 //    @ServerTimestamp
-    val dateCreated: String,
+    val dateCreated: Long,
 //    @ServerTimestamp
-    val dateModified: String = "",
+    val dateModified: Long,
     /**  Note. [Favorite] - only in Room */
     // TODO remove from Test?
     val isFavorite: Boolean,

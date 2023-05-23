@@ -1,6 +1,8 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test
 
 import android.content.res.Configuration
+import android.media.Image
+import android.media.ImageWriter
 import android.util.Log
 
 import androidx.compose.animation.*
@@ -11,20 +13,27 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.components.ProgressBar
@@ -312,13 +321,13 @@ fun QuestionScreen(
 ){
     Column(modifier = Modifier.padding (all = 8.dp) ) {
         Spacer(modifier = Modifier.height(32.dp))
-        //TODO Clean up extra row, extra rows are only for demo so tester know all parameters. Bad decision - I know :[
-        QuestionTitle(question.question + " "
-                + "\n\n And last answer.ChosenAnswer: " + answer.chosenAnswer
-                + "\n SelectedAnswer: " + selectedAnswer.value
-                + "\n QuestionId: " + answer.questionId
-                + "\n ShowPreview: " + showPreview
-                + "\n Correct answer: " + (question.correctAnswer-1)
+        QuestionTitle(question.question
+//                + " "
+//                + "\n\n And last answer.ChosenAnswer: " + answer.chosenAnswer
+//                + "\n SelectedAnswer: " + selectedAnswer.value
+//                + "\n QuestionId: " + answer.questionId
+//                + "\n ShowPreview: " + showPreview
+//                + "\n Correct answer: " + (question.correctAnswer-1)
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -353,7 +362,8 @@ private fun QuestionTitle( title: String) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 24.dp, horizontal = 16.dp),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontSize =  16.sp
         )
     }
 }
@@ -509,37 +519,8 @@ fun PopUpDialog(
     wrongCount: Int,
 ){
     val dialogShape = RoundedCornerShape(16.dp)
-    val dialogImageBitmap: Unit
-    val titleText:String
+    val dialogImageBitmap:Unit
 
-    if ( wrongCount == 0 && correctCount > 0 ){
-        titleText= stringResource( id = R.string.excellent )
-        dialogImageBitmap = Image(
-            painter = painterResource(id = R.drawable.ic_baseline_sentiment_very_satisfied_24),
-            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
-        )
-    }
-    else if ( correctCount > wrongCount ){
-            titleText= stringResource( id = R.string.good )
-        dialogImageBitmap = Image(
-            painter = painterResource(id = R.drawable.ic_baseline_sentiment_satisfied_alt_24),
-            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
-        )
-    }
-    else if ( wrongCount == 0 && correctCount == 0 ) {
-        titleText= stringResource( id = R.string.something_went_wrong )
-        dialogImageBitmap = Image(
-            painter = painterResource(id = R.drawable.ic_baseline_error_24),
-            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
-        )
-    }
-    else {
-            titleText= stringResource( id = R.string.not_met_expectation )
-        dialogImageBitmap = Image(
-            painter = painterResource(id = R.drawable.ic_baseline_sentiment_dissatisfied_24),
-            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_dissatisfied )
-        )
-    }
 
 
     if (dialogState){
@@ -572,24 +553,62 @@ fun PopUpDialog(
                       }
             },
             title = {
-                    dialogImageBitmap.run {  }
+                Column(Modifier
+                    .padding(16.dp, top = 64.dp).fillMaxWidth(), Arrangement.SpaceBetween, horizontalAlignment = CenterHorizontally) {
+                    val titleText:String
+
+                    if ( wrongCount == 0 && correctCount > 0 ){
+                        titleText= stringResource( id = R.string.excellent )
+                        Image(
+
+                            painter = painterResource(id = R.drawable.ic_baseline_sentiment_very_satisfied_24),
+                            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_very_satisfied_24 )
+                        )
+                    }
+                    else if ( correctCount > wrongCount ){
+                        titleText= stringResource( id = R.string.good )
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_baseline_sentiment_satisfied_alt_24),
+                            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_satisfied_alt_24 )
+                        )
+                    }
+                    else if ( wrongCount == 0 && correctCount == 0 ) {
+                        titleText= stringResource( id = R.string.something_went_wrong )
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                            contentDescription = stringResource( id = R.string.ic_baseline_error_24 )
+                        )
+                    }
+                    else {
+                        titleText= stringResource( id = R.string.not_met_expectation )
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_baseline_sentiment_dissatisfied_24),
+                            contentDescription = stringResource( id = R.string.ic_baseline_sentiment_dissatisfied )
+                        )
+                    }
+
                     Text(text = titleText)
+                }
             },
+
             text = {
                 Text( text =
                         stringResource(id = R.string.you_have_answered)
-                                + correctCount +
+                                + " " + correctCount + " " +
                         stringResource(id = R.string.questions_correctly_of_total)
-                                + (wrongCount+correctCount) + "." )
+                                + (wrongCount + correctCount) + "." )
                    },
             shape = dialogShape,
-        )//AlertDialog
+
+        )
+
     } //dialogState
 
 }
 
 val question1 = Question(
     questionID= 1,
+    testID = 1,
     question= "Lets try out in view how much we can expend this  question Question. Lets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question QuestionLets try out in view how much we can expend this  question Question",
     answer1= "Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1. Question ans nbr. 1.Question ans nbr. 1.",
     answer2= "2. Weary long text with no hidden meaning but only for test purposes. ",

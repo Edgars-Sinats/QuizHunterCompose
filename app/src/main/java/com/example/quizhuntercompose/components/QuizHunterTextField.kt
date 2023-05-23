@@ -37,7 +37,7 @@ fun QuizHunterTextField(
         label = { Text(text = placeholder, color = Color.LightGray) },
         maxLines = 1,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Green,
+            focusedBorderColor = MaterialTheme.colors.secondary,
             unfocusedBorderColor = Color.LightGray,
             cursorColor = Color.White
         ),

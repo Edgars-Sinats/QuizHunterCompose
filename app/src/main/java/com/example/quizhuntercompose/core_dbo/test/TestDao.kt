@@ -12,10 +12,13 @@ interface TestDao {
     @Query("SELECT * FROM test_table")
     fun getTests(): Flow<List<TestEntity>>
 
+    @Query("SELECT * FROM test_table WHERE language = :language")
+    fun getTestsLanguage(language: String): Flow<List<TestEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTest(tests: TestEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTests(tests: List<TestEntity>)
 
     @Query("SELECT * FROM test_table where test_id = :testId  LIMIT 1")

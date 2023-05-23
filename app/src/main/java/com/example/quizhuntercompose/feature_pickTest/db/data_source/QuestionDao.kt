@@ -14,6 +14,7 @@ interface QuestionDao {
     @Query("SELECT COUNT (*) " +
             "FROM question_table " +
             "WHERE topic_id IN (:ids) " +
+            "AND test_id in (:testId) " +
             "AND CASE " +
             "       WHEN :nonAns THEN (wrong_answers + correct_answers) = 0 " +
             "       WHEN :wrongAns THEN wrong_answers >= correct_answers " +
@@ -21,19 +22,20 @@ interface QuestionDao {
             "       ELSE correct_answers + wrong_answers >= 0" +
             "   END "
             )
-    fun getQuestionCountChecker(ids: List<Int>, nonAns: Boolean, wrongAns: Boolean) : Int
+    fun getQuestionCountChecker(ids: List<Int>, testId: Int, nonAns: Boolean, wrongAns: Boolean) : Int
 
     // count - number of questions from DB.
     @Query("SELECT * " +
             "FROM question_table " +
             "WHERE topic_id IN (:ids) " +
+            "AND test_id in (:testId) " +
             "AND CASE " +
             "       WHEN :nonAns THEN (wrong_answers + correct_answers) = 0 " +
             "       WHEN :wrongAns THEN wrong_answers >= correct_answers " +
             "       ELSE correct_answers + wrong_answers >= 0 " +
             "   END " +
             "ORDER BY random() LIMIT :count")
-    fun getMyQuestions(count: Int, nonAns: Boolean, wrongAns: Boolean, ids: List<Int>?): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
+    fun getMyQuestions(count: Int, nonAns: Boolean, wrongAns: Boolean, ids: List<Int>?, testId: Int): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
 
 
 //    //UNION all nonAnswer > 0AND  wrong_answers > correct_answers // TRUE FALSE keywords are really just alternative spellings for the integer literals 1 and 0 respectively.
@@ -53,40 +55,42 @@ interface QuestionDao {
     @Query("SELECT COUNT (*) " +
             "FROM question_table " +
             "WHERE topic_id = :id " +
+            "AND test_id in (:testId) " +
             "AND (correct_answers > wrong_answers) ")
-    fun getQuestionCount(id: Int): Int
+    fun getQuestionCount(id: Int, testId: Int): Int
 
     @Query("SELECT COUNT (*) " +
             "FROM question_table " +
             "WHERE topic_id IN (:ids) " +
+            "AND test_id in (:testId) " +
             "AND non_answers <=  :noAns " +
             "AND wrong_answers > correct_answers " +
             "ORDER BY average_time_sec DESC " )
-    fun getQuestionCountFrom(ids: List<Int>, noAns: Int): Int
+    fun getQuestionCountFrom(ids: List<Int>, noAns: Int, testId: Int): Int
 
-    @Query("SELECT * FROM question_table") //ORDER BY question_id ASC
-    fun getAllQuestions(): List<Question>
+    @Query("SELECT * FROM question_table WHERE test_id in (:testId)") //ORDER BY question_id ASC
+    fun getAllQuestions(testId: Int): List<Question>
 
     //TODO change 3 => 60 once limit implemented
-    @Query("SELECT * FROM question_table ORDER BY random() LIMIT 3")
-    fun getStartTest(): List<Question>
+    @Query("SELECT * FROM question_table WHERE test_id = :testId ORDER BY random() LIMIT 3")
+    fun getStartTest(testId: Int): List<Question>
 
     // count - number of questions from DB.
-    @Query("SELECT * FROM question_table ORDER BY random() LIMIT :count")
-    fun getQuestionsX(count: Int): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
+    @Query("SELECT * FROM question_table WHERE test_id = :testId ORDER BY random() LIMIT :count")
+    fun getQuestionsX(count: Int, testId: Int): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
 
-    // count - number of questions from DB.
-    @Query("SELECT * FROM question_table WHERE question_id =  :id ")
-    fun getQuestionX(id: Int): Question
+    // count - number of questions from DB. //TODO
+    @Query("SELECT * FROM question_table WHERE test_id = :testId AND question_id = :id ")
+    fun getQuestionX(id: Int, testId: Int): Question
 
-    @Query("SELECT * FROM question_table WHERE topic_id = :topic LIMIT :count ")
-    fun getXFromTopic(topic : Int, count: Int): List<Question>
+    @Query("SELECT * FROM question_table WHERE topic_id = :topic AND test_id = :testId LIMIT :count ")
+    fun getXFromTopic(topic : Int, count: Int, testId: Int): List<Question>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun updateQuestion(question: Question)
 
-    @Query("SELECT * FROM topic_table")
-    fun getAllTopic(): List<Topic>
+    @Query(" SELECT * FROM topic_table WHERE test_id = :testId ")
+    fun getAllTopic(testId: Int): List<Topic>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateTopics(topics: List<Topic>)

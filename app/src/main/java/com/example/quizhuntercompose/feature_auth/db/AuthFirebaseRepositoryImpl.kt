@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.cor.util.Resource
-import com.example.quizhuntercompose.core_dbo.test.TestEntity
 import com.example.quizhuntercompose.domain.model.*
 import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
@@ -328,8 +327,9 @@ class AuthFirebaseRepositoryImpl constructor(
                                     language = it.language,
                                     testName = it.testName,
                                     testImageUrl = it.testImageUrl,
-                                    dateModified = it.dateModified.toString(),
-                                    dateCreated = it.dateCreated.toString(),
+                                    dateModified = it.dateModified?.seconds ?: 0,
+                                    //TODO add nanoseconds for time modified.
+                                    dateCreated = it.dateCreated?.seconds ?: 0,
                                     testID = it.testID
                                 )
                             )

@@ -76,7 +76,7 @@ class AuthGoogleServRepositoryImpl @Inject constructor(
 
 fun FirebaseUser.toUser() = QuizHunterUser(
     name = displayName,
-    userName = displayName,
+    userName = displayName?: "",
     email = email,
     image = photoUrl?.toString(),
     userUid = uid,

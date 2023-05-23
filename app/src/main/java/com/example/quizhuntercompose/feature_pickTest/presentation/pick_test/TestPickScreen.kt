@@ -2,7 +2,9 @@ package com.example.quizhuntercompose.feature_pickTest.presentation
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -19,6 +21,10 @@ fun TestPickScreen(
     navigateToProfileScreen: () -> Unit,
     test_id: String
 ){
+    LaunchedEffect(key1 = true){
+        pickViewModel.getTestId(testId = test_id.toInt())
+        pickViewModel.loadTopicsTests()
+    }
     val testPickOptionsState = pickViewModel.uiState.value
 //    val topicList = pickViewModel.topicNames
     var startAnimation by remember { mutableStateOf(false) }
@@ -38,6 +44,7 @@ fun TestPickScreen(
         Column(
             modifier= Modifier
 //              .verticalScroll(rememberScrollState()) // => Please try to remove the source of infinite constraints in the hierarchy above the scrolling container.
+                .background(color = MaterialTheme.colors.background)
                 .padding(vertical = 16.dp)
                 .testTag(tag = TestTags.TITLE_TEXT_FIELD)
         ) {

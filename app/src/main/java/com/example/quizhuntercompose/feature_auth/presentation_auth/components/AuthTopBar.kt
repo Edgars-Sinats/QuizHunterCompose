@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_auth.presentation_auth.components
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -10,10 +11,12 @@ fun AuthTopBar(
     authState: String
 ) {
     TopAppBar (
+
         title = {
             Text(
-                text = "$AUTH_SCREEN   User is auth - $authState"
+                text = "$AUTH_SCREEN User is authed - $authState"
             )
-        }
+        },
+        backgroundColor = MaterialTheme.colors.background
     )
 }

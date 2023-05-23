@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "topic_table")
+@Entity(tableName = "topic_table",  primaryKeys = ["topic_id", "test_id"])
 data class Topic(
-    @PrimaryKey
+//    @PrimaryKey
     @ColumnInfo(name = "topic_id") val topicId: Int,
     @ColumnInfo(name = "topic") val topic: String,
     @ColumnInfo(name = "test_id") val testId: Int,

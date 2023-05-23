@@ -44,8 +44,8 @@ class TestsViewModel @Inject constructor(
     val needKeyMsg : State<NeedKeyState.Messages> = _needKeyMsg
 
     init {
-        userState()
-        getTests()
+//        userState()
+//        getTests()
     }
 
     fun uploadTests(){
@@ -68,17 +68,23 @@ class TestsViewModel @Inject constructor(
         }
     }
 
-    private fun userState() {
+    fun getLanguage(language: String){
+        updateTestsState(language = language)
+    }
+
+    fun userState() {
         viewModelScope.launch(Dispatchers.IO) {
             quizHunterUseCases.userStateProvider(
                 function = {}
-            ).collect { userState -> _authState.value = userState}
+            ).collect { userState ->
+                _authState.value = userState
+            }
         }
     }
 
-    private fun getTests() {
+    fun getTests() {
         viewModelScope.launch(Dispatchers.IO) {
-            quizHunterUseCases.getAllTestsUseCase().collect() { result ->
+            quizHunterUseCases.getAllTestsUseCase(chosenLanguage = _state.value.language ?: "english").collect() { result ->
                 when (result) {
                     is Resource.Loading -> updateTestsState(isLoading = true)
                     is Resource.Success -> {
@@ -94,37 +100,37 @@ class TestsViewModel @Inject constructor(
         }
     }
 
-    fun openTestPreview(testId: Int){
-        updateTestsState(openedTest = testId)
+    fun openTestPreview(test: TestEntity){
+        updateTestsState(openedTest = test)
     }
 
     fun closeTestPreview(){
         updateTestsState(openedTest = null)
     }
 
-    fun starFavoriteTest(testId: Int, setFavorite: Boolean){
-        val testEntity = _state.value.tests[testId].copy(isFavorite = !setFavorite)
-        Log.i(TAG, "testEntity-isFav: ${testEntity.isFavorite}")
-        viewModelScope.launch(Dispatchers.IO) {
-            quizHunterRepository.saveTest(testEntity)
-        }
+    fun starFavoriteTest(testId: TestEntity){
+        var testsList1 = _state.value.tests.toMutableList()
+        var savableTest: TestEntity
+        var count = 0
+        _state.value.tests.forEach { thisTestEntity ->
+            if (thisTestEntity.testId == testId.testId){
+                savableTest = thisTestEntity.copy(isFavorite = testId.isFavorite.not())
+                testsList1[count] = testsList1.get(count).copy(isFavorite = testId.isFavorite.not())
+                Log.i(TAG, "testEntity-isFav: ${thisTestEntity.isFavorite}")
+                Log.i(TAG, "testEntity-count: ${count}")
+                Log.i(TAG, "This new changed object: ${testsList1[count]}")
+                Log.i(TAG, "Inverse boolean of this object: ${testsList1[count].isFavorite.not()}")
 
-        val testsList = _state.value.tests.onEachIndexed { index, testEntity ->
-            if (index == testId){
-                testEntity.copy(isFavorite = setFavorite)
-                return
+                viewModelScope.launch(Dispatchers.IO) {
+                    quizHunterRepository.saveTest(savableTest)
+                }
+                updateTestsState(tests = testsList1)
             }
+            count++
         }
-
-        updateTestsState(tests = testsList) //TODO Is this not too much for performance, just to update boolean in db. Maybe just update _state, and when close viewModel, we could update .db
-        Log.i(TAG, "testEntity-isFav, changed: ${_state.value.tests[testId].isFavorite}")
-
     }
 
     fun deleteAllTests(){
-//        GlobalScope.launch(Dispatchers.IO) {
-//            quizHunterRepository.removeAllTests()
-//        }
         viewModelScope.launch(Dispatchers.IO) {
             quizHunterRepository.removeAllTests()
         }
@@ -132,11 +138,9 @@ class TestsViewModel @Inject constructor(
     }
 
     private fun getChosenTest() {
-
     }
 
     private fun backToTop(){
-
     }
 
     private fun updateTestsState(
@@ -144,7 +148,8 @@ class TestsViewModel @Inject constructor(
         tests: List<TestEntity>? = null,
         isEmpty: Boolean? = null,
         error: String? = null,
-        openedTest: Int? = null
+        openedTest: TestEntity? = null,
+        language: String? = null
     ) {
         _state.update {
             it.copy(
@@ -152,7 +157,8 @@ class TestsViewModel @Inject constructor(
                 tests = tests ?: it.tests,
                 isEmpty = isEmpty ?: it.isEmpty,
                 error = error ?: it.error,
-                openedTest = openedTest
+                openedTest = openedTest,
+                language = language ?: it.language
             )
         }
     }

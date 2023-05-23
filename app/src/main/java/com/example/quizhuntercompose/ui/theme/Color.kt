@@ -37,7 +37,7 @@ val DarkColorOnBackgroundColor = Color(0xFFFEFEFE)      // Text __White__ main b
 
 //          WHITE COLOR THEME
 val ColorPrimaryColor = Color(0xFF6949FE)         //Purple    - main secondary - complimentary main
-val ColorOnPrimaryTextColor = Color(0xFF000000)       //Should be nan
+val ColorOnPrimaryTextColor = Color(0xFFFEFEFE)       //Should be nan
 val ColorPrimaryDarkColor = Color(0xFF543ACB)
 
 val ColorSecondaryColor = Color(0xFFFEC007)    //Yelow - contras purple - complimentary second

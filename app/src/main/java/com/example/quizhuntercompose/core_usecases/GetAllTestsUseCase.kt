@@ -21,10 +21,10 @@ class GetAllTestsUseCase @Inject constructor(
         const val TAG = "GetAllTestsUseCase"
     }
 
-    operator fun invoke(): Flow<Resource<List<TestEntity>>> {
+    operator fun invoke(chosenLanguage: String): Flow<Resource<List<TestEntity>>> {
         return flow {
             emit(Resource.Loading())
-            quizHunterRepository.getTestsEntity().collect { tests ->
+            quizHunterRepository.getTestsLanguageEntity(chosenLanguage).collect { tests ->
                 if (tests.isNotEmpty()) {
                     emit(Resource.Success(tests))
                 }
@@ -32,9 +32,10 @@ class GetAllTestsUseCase @Inject constructor(
                 if (tests.isEmpty()) {
 
                     //TODO get User.language Figure out language - just String or listOfStrings()
-                    val language = "latvian"
+//                    val language = "latvian"
                     Log.i(TAG, "firebaseRepository.GetTest")
-                    firebaseRepository.getTests(language).collect() { results ->
+                    Log.i(TAG, "language: $chosenLanguage")
+                    firebaseRepository.getTests(chosenLanguage).collect() { results ->
                         when(results) {
                             is Resource.Success ->
                                 results.data?.let {

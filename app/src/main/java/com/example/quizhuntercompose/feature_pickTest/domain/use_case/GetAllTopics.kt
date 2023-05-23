@@ -7,7 +7,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.repository.Question
 class GetAllTopics(
     private val repository: QuestionRepository
 ) {
-    suspend operator fun invoke(): List<Topic?> {
-        return repository.getAllTopics()
+    suspend operator fun invoke(testId: Int): List<Topic?> {
+        return repository.getAllTopics(testId)
     }
 }

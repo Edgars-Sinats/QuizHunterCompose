@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.quizhuntercompose.cor.util.TimestampConverter
 import com.example.quizhuntercompose.core_dbo.test.TestDao
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
 import com.example.quizhuntercompose.core_dbo.user.UserKeysEntity
@@ -16,7 +18,8 @@ import javax.inject.Singleton
 
 
 
-@Database( entities = [Question::class, Topic::class, TestEntity::class, UserEntity::class, UserKeysEntity::class], version = 4 )
+@Database( entities = [Question::class, Topic::class, TestEntity::class, UserEntity::class, UserKeysEntity::class], version = 8 )
+@TypeConverters(TimestampConverter::class)
 abstract class QuizDatabase: RoomDatabase() {
 
     fun init(context: Context) {

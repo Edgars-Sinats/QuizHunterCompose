@@ -49,5 +49,30 @@
     <string name="ColorCorrectColor"> 0xFF12D08D</string>
 
 
+    <!--    Register-->
+    <string name="already_have_an_accountQ">Already have an account? </string>
+    <string name="login">Login</string>
+    <string name="LOGIN">LOGIN</string>
+    <string name="____OR____">--- OR ---</string>
+
+    <string name="account_created_successfully">Account created successfully</string>
+    <string name="username">Username</string>
+    <string name="_enter_valid_username">*Enter valid username</string>
+
+    <string name="rEGISTER">REGISTER</string>
+    <string name="_Enter_valid_password">*Enter valid password</string>
+    <string name="password">Password</string>
+    <string name="_Enter_valid_email_address">*Enter valid email address</string>
+    <string name="email">Email</string>
+
+    <string name="authenticate">Authenticate</string>
+
+
+
+
+
+
+
+
 
 </resources>

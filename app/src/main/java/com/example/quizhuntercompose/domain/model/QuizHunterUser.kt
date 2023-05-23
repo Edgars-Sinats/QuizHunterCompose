@@ -3,30 +3,30 @@ package com.example.quizhuntercompose.domain.model
 import java.security.Key
 
 data class QuizHunterUser(
-    val userUid: String? = "",
-    val userName: String? = "",
+    val userUid: String = "",
+    val userName: String = "",
     val name: String? = "",
     val email: String? = "",
     val image: String? = "",
-    val premium: Boolean = false,
-    val teacher: Boolean = false,
-    val admin: Boolean = false,
-    val testKeys: Map<Int, String> = mapOf(),
+    val premium: Boolean? = false,
+    val teacher: Boolean? = false,
+    val admin: Boolean? = false,
+    val testKeys: Map<String, String> = mapOf(),
     val languages: String? = ""
 ) {
     fun isUserPremium(): Boolean {
-        return premium
+        return premium ?: false
     }
 
     fun isUserAdmin(testId: Int): Boolean {
-        return admin
+        return admin ?: false
     }
 
     fun isUserTeacher(testId: Int): Boolean {
-        return teacher
+        return teacher ?: false
     }
 
-    fun hasTestKey(testId: Int) : Boolean {
+    fun hasTestKey(testId: String) : Boolean {
         return testKeys.containsKey(testId) ?: false
     }
 

@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_auth.presentation_register
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.cor.util.Resource
@@ -26,6 +27,7 @@ class RegisterViewModel @Inject constructor(
 
     fun signUp(quizHunterUser: QuizHunterUser, password: String) =
         viewModelScope.launch(Dispatchers.IO) {
+            Log.i("TAG", "RegisterView signUp")
             firebaseRepository.signUpWithEmailAndPassword(quizHunterUser.email!!, password).onEach { result ->
                 when (result) {
                     is Resource.Success -> {

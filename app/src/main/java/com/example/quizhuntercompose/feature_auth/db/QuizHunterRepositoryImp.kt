@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_auth.db
 
+import android.util.Log
 import com.example.quizhuntercompose.core_dbo.test.TestDao
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
 import com.example.quizhuntercompose.core_dbo.toDomain
@@ -13,6 +14,7 @@ import com.example.quizhuntercompose.feature_auth.domain.QuizHunterRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import org.intellij.lang.annotations.Language
 import javax.inject.Inject
 
 class QuizHunterRepositoryImp @Inject constructor(
@@ -35,6 +37,8 @@ class QuizHunterRepositoryImp @Inject constructor(
     override fun isUserPremiumLocal(): Flow<Boolean> {
         return flow {
             userDao.getUser().collect() { user ->
+//                Log.i("isUserPremiumLocal", "userEntity: $user")
+//                Log.i("isUserPremiumLocal", "userEntity.premium: ${user.isPremium}")
                 user?.let { emit( it.toQuizHunterUser().isUserPremium() ) }
             }
         }
@@ -62,6 +66,14 @@ class QuizHunterRepositoryImp @Inject constructor(
 
     override fun getTestsEntity(): Flow<List<TestEntity>> {
         return testDao.getTests().map { it } //.toDomain
+    }
+
+    override fun getTestsLanguage(language: String): Flow<List<Test>> {
+        return testDao.getTestsLanguage(language).map { it.toDomain() }
+    }
+
+    override fun getTestsLanguageEntity(language: String): Flow<List<TestEntity>> {
+        return testDao.getTestsLanguage(language).map { it }
     }
 
     override suspend fun saveTests(tests: List<Test>) {

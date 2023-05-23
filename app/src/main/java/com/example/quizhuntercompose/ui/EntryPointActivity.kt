@@ -23,6 +23,7 @@ import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.Tes
 import com.example.quizhuntercompose.navigation.NavGraph
 import com.example.quizhuntercompose.navigation.Screen
 import com.example.quizhuntercompose.ui.NavigationKeys.Arg.TEST_CATEGORY_ID
+import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -42,9 +43,12 @@ class EntryPointActivity : ComponentActivity() {
             val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current
 
 
-            NavGraph(
-                navController = navController
-            )
+            QuizHunterComposeTheme{
+                NavGraph(
+                    navController = navController
+                )
+            }
+
             checkAuthState()
         }
     }
@@ -125,7 +129,8 @@ private fun TestPickDestination(navController: NavHostController) {
                 .build()
 
             val jsonAdapter = moshi.adapter<TestOptions>(TestOptions::class.java)
-            val testOptionsObject = TestOptions(ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState)
+            //TODO check
+            val testOptionsObject = TestOptions(ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, viewModel.uiState.value.pickedTestId)
             val userJson = jsonAdapter.toJson(testOptionsObject)
 
             // TODO pass to testViewModel. => viewModel.questionStateList

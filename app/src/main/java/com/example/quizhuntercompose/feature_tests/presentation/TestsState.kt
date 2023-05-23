@@ -8,5 +8,6 @@ data class TestsState(
     var tests: List<TestEntity> = emptyList(),
     val isEmpty: Boolean = false,
     val error: String = "",
-    val openedTest: Int? = null
+    val openedTest: TestEntity? = null,
+    val language: String? = null
 )

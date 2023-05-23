@@ -42,8 +42,8 @@ class TestPickViewModelTest {
     @Test
     fun getSetTopicNames() = runTest {
             assertTrue(fakeRepository.getAllTopics() == listOf<Topic>() )
-            fakeRepository.updateTopics(listOf(Topic(1, "Topic1"), Topic(2,"Topic2")))
-            assertTrue(fakeRepository.getAllTopics() == listOf(Topic(1, "Topic1"), Topic(2,"Topic2") ))
+            fakeRepository.updateTopics(listOf(Topic(1, "Topic1", 1), Topic(2,"Topic2", 1)))
+            assertTrue(fakeRepository.getAllTopics() == listOf(Topic(1, "Topic1", 1), Topic(2,"Topic2", 1) ))
     }
 
     @Test

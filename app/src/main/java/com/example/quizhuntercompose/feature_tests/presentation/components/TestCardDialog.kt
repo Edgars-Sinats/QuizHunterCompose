@@ -1,7 +1,6 @@
 package com.example.quizhuntercompose.feature_tests.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,16 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
-import com.example.quizhuntercompose.domain.model.Test
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun TestCardDialog(
@@ -82,7 +80,16 @@ fun TestCardDialog(
 
                 Column(modifier = modifier) {
                     Row(Modifier.padding(vertical = 4.dp)) {
-                        Text(text = "Test created at: " + test.testCreated )
+                        Text(text = "Test created at: " + Date(test.testCreated) )
+//                        Spacer(modifier = Modifier.weight(1f))
+//                        Text(text = "Test last updated: " + test.testModified.toString())
+                    }
+                    Row(Modifier.padding(vertical = 4.dp)) {
+                        val sdf = SimpleDateFormat("dd/MM//yyyy")
+                        val netDate = Date(test.testCreated)
+                        val formattedD = sdf.format(netDate)
+
+                        Text(text = "Test modified at: $formattedD")
 //                        Spacer(modifier = Modifier.weight(1f))
 //                        Text(text = "Test last updated: " + test.testModified.toString())
                     }
@@ -112,8 +119,8 @@ fun TestCardDialogPreview(){
         testId = 1,
         isFavorite = true,
         testImageUrl = "www.someCoolImage.firebase.server.com",
-        testModified = "",
-        testCreated = "",
+        testModified = 0,
+        testCreated = 0,
         testName = "Some cool test name with extra text,Some cool test name with extra text, Some cool test name with extra text,Some cool test name with extra text,Some cool test name with extra text",
         language = "Latvian",
         needKey = false,

@@ -7,7 +7,7 @@ import com.example.quizhuntercompose.feature_pickTest.domain.repository.Question
 class GetAllQuestions(
     private val repository: QuestionRepository
 ) {
-    operator fun invoke(): List<Question?> {
-        return repository.getAllQuestions()
+    operator fun invoke(testId: Int): List<Question?> {
+        return repository.getAllQuestions(testId)
     }
 }

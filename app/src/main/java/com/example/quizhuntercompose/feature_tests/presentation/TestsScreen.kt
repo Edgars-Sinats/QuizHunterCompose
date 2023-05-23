@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_tests.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,10 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -30,15 +28,23 @@ enum class TestFilter {
 
 @Composable
 fun TestsScreen(
-    modifier: Modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.2f)),
+    modifier: Modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.8f)),
     viewModel: TestsViewModel = hiltViewModel(),
 //    navController: NavController,
-    navigateToQuizPickScreen: (testId: String) ->Unit
+    navigateToQuizPickScreen: (testId: String) ->Unit,
+    language: String
 ) {
     val state = viewModel.state.collectAsState()
     val searchTest = remember { mutableStateOf(TextFieldValue("")) }
     val lazyListState = rememberLazyListState()
 //    var isClicked by mutableStateOf(false)
+
+    LaunchedEffect(true) {
+        viewModel.userState()
+        viewModel.getLanguage(language)
+        viewModel.getTests()
+//        viewModel.getUserCredential()
+    }
 
     Scaffold(
         topBar = {
@@ -46,56 +52,68 @@ fun TestsScreen(
                 hint = "Search...",
                 state = searchTest,
                 deleteTests = { viewModel.deleteAllTests() },
-                uploadTest = { viewModel.uploadTests() }
+                uploadTest = {
+                    //TODO create edit&create test feature
+//                    viewModel.uploadTests()
+                }
             )
 
         },
         modifier = modifier
-    ) { paddingValues ->
+    ) { _ ->
 
 
         LazyVerticalGrid(
             modifier = modifier.padding(2.dp),
+            //TODO check screen width, small screen => Grid cell 1
             columns = GridCells.Fixed(2),
             content = {
+                Log.i(TAG, "All tests: ${state.value.tests}")
                 items(state.value.tests){  it ->
                     TestGridItem(
                         testItem = it,
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .background(
+                                if (it.isLocal) {
+                                    MaterialTheme.colors.secondary
+                                } else {
+                                    MaterialTheme.colors.primary.copy(0.85f)
+                                })
+//                            .background(MaterialTheme.colors.background)
+                        ,
                         onItemClick = {
                             if (viewModel.state.value.openedTest == null){
-                                viewModel.openTestPreview(it.testId)
-//                                isClicked = true
+                                viewModel.openTestPreview(it)
+                                Log.i(TAG, "opened testPreview: $it")
                             } else {
-//                                isClicked = false
                                 viewModel.closeTestPreview()
                             }
                         }
-                        //TestsState .openedTests
                     )
 
                     if (state.value.openedTest != null){
+                        Log.i(TAG, "TestDialog opened..: $it")
                         TestCardDialog(
                             onDismiss = { viewModel.closeTestPreview() },
                             onOpenTest = {
+                                Log.i(TAG, "opening test..: ${state.value.openedTest}")
                                 viewModel.closeTestPreview()
-                                navigateToQuizPickScreen.invoke(it.testId.toString())
-//                                navController.navigate("${Screen.QuizPickScreen.route}/{${it.testId}")
+                                navigateToQuizPickScreen.invoke(state.value.openedTest!!.testId.toString())
                                          },
-                            onStared = { viewModel.starFavoriteTest(it.testId, it.isFavorite) },
-                            test = it,
+                            onStared = { viewModel.starFavoriteTest(state.value.openedTest!!) },
+                            test = state.value.openedTest!!,
                             modifier = modifier
                         )
                     }
 
                 }
-            }
-
+            }//LazyGridCont
         )
 
-
         ScrollButton(lazyListState = lazyListState)
-
     }
 
 }
+
+private const val TAG = "TestScreen"
