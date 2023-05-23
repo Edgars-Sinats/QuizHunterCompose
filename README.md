@@ -24,13 +24,13 @@ You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-si
 ||||
 |:----------------------------------------:|:-----------------------------------------:
 |
-| ![](media/1.png) | ![](media/2.png) |
-| ![](media/3.png) |  ![](media/4.png)  |
-| ![](media/5.png) | ![](media/6.png)    |
-| ![](media/7.png) | ![](media/8.png)    | 
-| ![](media/9.png)      | ![](media/10.png)  |
-| ![](media/11.png)  |![](media/12.png)      |
-|![](media/13.png)  |![](media/14.png)  |
+| ![](media/1.jpg) | ![](media/2.jpg) |
+| ![](media/3.jpg) |  ![](media/4.jpg)  |
+| ![](media/5.jpg) | ![](media/6.jpg)    |
+| ![](media/7.jpg) | ![](media/8.jpg)    | 
+| ![](media/9.jpg)      | ![](media/10.jpg)  |
+| ![](media/11.jpg)  |![](media/12.jpg)      |
+|![](media/13.jpg)  |![](media/14.jpg)  |
 
 
 
