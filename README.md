@@ -30,7 +30,7 @@ You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-si
 | ![](media/9.png)      | ![](media/10.png)  |
 | ![](media/11.png)  |![](media/12.png)      |
 |![](media/13.png)  |![](media/14.png)  |
-|![](media/15.png)  |![](media/16.png)  |
+|![](media/16.png)  |![](media/17.png)  |
 
 
 
