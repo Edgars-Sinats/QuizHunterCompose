@@ -14,6 +14,8 @@ object AppConstants {
     const val TEST_COLLECTION = "tests"
     const val ANSWER_COLLECTION = "user_answers"
 
+    //Api
+    const val BASE_CSDD_TEST_URL = "https://csnt2.csdd.lv/bildes/b/"
 
     //Names
     const val SIGN_IN_REQUEST = "signInRequest"

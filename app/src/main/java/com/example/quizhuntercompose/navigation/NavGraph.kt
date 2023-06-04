@@ -122,7 +122,7 @@ fun NavGraph (
                         .build()
 
                     val jsonAdapter = moshi.adapter<TestOptions> (TestOptions::class.java)
-                    val testOptionsObject = TestOptions (ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, testId = viewModel.uiState.value.pickedTestId)
+                    val testOptionsObject = TestOptions (ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, testId = viewModel.uiState.value.pickedTestId, timeAns = viewModel.uiState.value.answerTime)
                     val userJson = jsonAdapter.toJson(testOptionsObject)
 
                     navController.popBackStack()

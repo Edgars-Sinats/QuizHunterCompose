@@ -15,14 +15,30 @@ interface QuestionDao {
             "FROM question_table " +
             "WHERE topic_id IN (:ids) " +
             "AND test_id in (:testId) " +
-            "AND CASE " +
+            "AND (CASE " +
             "       WHEN :nonAns THEN (wrong_answers + correct_answers) = 0 " +
             "       WHEN :wrongAns THEN wrong_answers >= correct_answers " +
             "       WHEN :nonAns = 0 and :wrongAns = 0 THEN correct_answers >= 0 " +
-            "       ELSE correct_answers + wrong_answers >= 0" +
-            "   END "
-            )
+            "       ELSE correct_answers + wrong_answers >= 0 " +
+            "   END) " +
+            " ORDER BY RANDOM() "
+    )
     fun getQuestionCountChecker(ids: List<Int>, testId: Int, nonAns: Boolean, wrongAns: Boolean) : Int
+
+    //ELSE SHOULD BE IMPOSSIBLE
+    @Query("SELECT COUNT (*) " +
+            "FROM question_table " +
+            "WHERE topic_id IN (:ids) " +
+            "AND test_id in (:testId) " +
+            "AND (CASE " +
+            "       WHEN :nonAns THEN (wrong_answers + correct_answers) = 0 " +
+            "       WHEN :wrongAns THEN wrong_answers >= correct_answers " +
+            "       WHEN :nonAns = 0 and :wrongAns = 0 THEN correct_answers >= 0 " +
+            "       ELSE correct_answers + wrong_answers >= 0 " +
+            "   END) " +
+            " ORDER BY CASE WHEN :time THEN average_time_sec END DESC, RANDOM() "
+    )
+    fun getQuestionCountCheckerByTime(ids: List<Int>, testId: Int, nonAns: Boolean, wrongAns: Boolean, time: Boolean) : Int
 
     // count - number of questions from DB.
     @Query("SELECT * " +
@@ -34,8 +50,8 @@ interface QuestionDao {
             "       WHEN :wrongAns THEN wrong_answers >= correct_answers " +
             "       ELSE correct_answers + wrong_answers >= 0 " +
             "   END " +
-            "ORDER BY random() LIMIT :count")
-    fun getMyQuestions(count: Int, nonAns: Boolean, wrongAns: Boolean, ids: List<Int>?, testId: Int): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
+            "ORDER BY CASE WHEN :time THEN average_time_sec END DESC, random() LIMIT :count")
+    fun getMyQuestions(count: Int, nonAns: Boolean, wrongAns: Boolean, ids: List<Int>?, testId: Int, time: Boolean): List<Question> // asynchronous one-shot queries https://developer.android.com/training/data-storage/room/async-queries#one-shot
 
 
 //    //UNION all nonAnswer > 0AND  wrong_answers > correct_answers // TRUE FALSE keywords are really just alternative spellings for the integer literals 1 and 0 respectively.

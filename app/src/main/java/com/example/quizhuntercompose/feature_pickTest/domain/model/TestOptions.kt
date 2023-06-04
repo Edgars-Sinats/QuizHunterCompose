@@ -5,5 +5,6 @@ data class TestOptions(
     val count : Int,
     val nonAns: Boolean,
     val wrongAns: Boolean,
-    val testId: Int
+    val testId: Int,
+    val timeAns: Boolean
 )

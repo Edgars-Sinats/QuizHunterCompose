@@ -1,10 +1,9 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test
 
 import android.content.res.Configuration
-import android.media.Image
-import android.media.ImageWriter
+import android.provider.MediaStore.Video
 import android.util.Log
-
+import android.widget.MediaController
 import androidx.compose.animation.*
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
@@ -13,33 +12,30 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.components.ProgressBar
 import com.example.quizhuntercompose.cor.util.AppConstants.TAG_TEST_SCREEN
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.example.quizhuntercompose.feature_pickTest.domain.util.supportWideScreen
+import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.components.VideoPlayerScreen
 import com.example.quizhuntercompose.ui.theme.QuizHunterComposeTheme
 import com.example.quizhuntercompose.ui.theme.slightlyDeemphasizedAlpha
 
@@ -55,12 +51,13 @@ fun TestScreenMain(
     onDonePressed: (TestEvent) -> Unit,
     onPreviousPressed: (TestEvent) -> Unit,
     currentlySelectedAnswer: State<Int?>,
-    navigateToFinish: () -> Unit
+    navigateToFinish: () -> Unit,
 //        testViewModel: TestViewModel,
 //        onBackPressedCallback: OnBackPressedCallback
 
 ) {
     Surface(modifier = Modifier.supportWideScreen()) {
+
         Scaffold(
 
             topBar = {}, //TODO
@@ -145,7 +142,7 @@ fun TestScreenMain(
 fun TestScreen(
     testViewModel: TestViewModel = hiltViewModel(),
     navigateToFinish: () -> Unit,
-    startingQuestionArg: String
+    startingQuestionArg: String,
 ){
     LaunchedEffect(Unit) {
         Log.i(TAG_TEST_SCREEN, "getTestArguments in progress...")
@@ -176,6 +173,9 @@ fun TestScreen(
             currentlySelectedAnswer = testViewModel.currentlySelectAnswer,
             navigateToFinish = navigateToFinish
         )
+        if (!uiState.showDialog){
+            testViewModel.onNewQuestionOpen()
+        }
 
     } else {
         ProgressBar()
@@ -189,8 +189,8 @@ private fun SurveyBottomBar(
     onNextPressed: () -> Unit,
     onDonePressed: () -> Unit,
     selectedAnswer: State<Int?>,
-    showPreview: Boolean
-    ) {
+    showPreview: Boolean,
+) {
 
 //Bottom option navigation
     Surface(
@@ -222,7 +222,8 @@ private fun SurveyBottomBar(
                         .height(48.dp),
                     onClick = onPreviousPressed
                 ) {
-                    Text(text = stringResource(id = R.string.previous),
+                    Text(
+                        text = stringResource(id = R.string.previous),
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -317,10 +318,30 @@ fun QuestionScreen(
     question: Question,
     chosenAnswerState: Boolean,
     selectedAnswer: State<Int?>,
-    showPreview: Boolean
+    showPreview: Boolean,
 ){
     Column(modifier = Modifier.padding (all = 8.dp) ) {
         Spacer(modifier = Modifier.height(32.dp))
+        Log.i(TAG_TEST_SCREEN, "Question img: ${question.imageUrl}")
+
+        if (question.imageUrl != null && question.imageUrl != ""){
+            if (question.imageUrl.endsWith(".mp4") ){
+                Box(modifier = Modifier.height(120.dp)) {
+                    VideoPlayerScreen(uriLink = question.imageUrl)
+                }
+            }
+
+            AsyncImage(
+                model = question.imageUrl,
+                contentDescription = "question image",
+                placeholder = painterResource(id = R.drawable.ic_outline_list_24),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .padding(4.dp),
+            )
+
+        }
         QuestionTitle(question.question
 //                + " "
 //                + "\n\n And last answer.ChosenAnswer: " + answer.chosenAnswer
@@ -382,7 +403,7 @@ private fun QuestionAnswers(
     onAnswerSelected: (Int) -> Unit,
 
     modifier: Modifier = Modifier,
-    showPreview: Boolean
+    showPreview: Boolean,
 ) {
 
     val allAnswers = listOf(question.answer1, question.answer2, question.answer3, question.answer4 )
@@ -554,7 +575,8 @@ fun PopUpDialog(
             },
             title = {
                 Column(Modifier
-                    .padding(16.dp, top = 64.dp).fillMaxWidth(), Arrangement.SpaceBetween, horizontalAlignment = CenterHorizontally) {
+                    .padding(16.dp, top = 64.dp)
+                    .fillMaxWidth(), Arrangement.SpaceBetween, horizontalAlignment = CenterHorizontally) {
                     val titleText:String
 
                     if ( wrongCount == 0 && correctCount > 0 ){
@@ -621,7 +643,8 @@ val question1 = Question(
     wrongAnswers = 1,
     nonAnswers = 0,
     averageAnswerTime = 21,
-    lastAnswerTime = 2
+    lastAnswerTime = 2,
+    imageUrl = ""
 )
 val selectedAnsPreview: Int = 2
 

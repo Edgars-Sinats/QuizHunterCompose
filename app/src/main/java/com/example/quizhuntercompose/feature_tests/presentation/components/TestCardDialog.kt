@@ -1,5 +1,7 @@
 package com.example.quizhuntercompose.feature_tests.presentation.components
 
+import android.content.res.Configuration
+import android.graphics.fonts.SystemFonts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
+import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.TestPickEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -25,7 +28,9 @@ fun TestCardDialog(
     onOpenTest: () -> Unit,
     onStared: () -> Unit,
     test: TestEntity,
-    modifier: Modifier
+    modifier: Modifier,
+    onDownloadTestFromFirebase: () -> Unit,
+    onUploadTestToFirebase: () -> Unit
 ){
 
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -38,7 +43,25 @@ fun TestCardDialog(
         ) {
             Column() {
                 Row() {
-                    Spacer(Modifier.weight(1f))
+                    Column(modifier
+                        .weight(1f)
+                        .padding(start = 32.dp, end = 32.dp)) {
+
+                        OutlinedButton(
+                            onClick = { onUploadTestToFirebase.invoke() }
+                        ) {
+                            modifier.weight(1f)
+                            Text(text = "Upload Test")
+                        }
+
+                        OutlinedButton(
+                            onClick = { onDownloadTestFromFirebase.invoke() }
+                        ) {
+                            modifier.weight(1f)
+                            Text(text = "Download test")
+                        }
+                    }
+//                    Spacer(Modifier.weight(1f))
                     Image(
                         painter = painterResource(
                             id = R.drawable.profile_placeholder
@@ -79,11 +102,11 @@ fun TestCardDialog(
                 Spacer(modifier = Modifier.padding(16.dp))
 
                 Column(modifier = modifier) {
-                    Row(Modifier.padding(vertical = 4.dp)) {
-                        Text(text = "Test created at: " + Date(test.testCreated) )
-//                        Spacer(modifier = Modifier.weight(1f))
-//                        Text(text = "Test last updated: " + test.testModified.toString())
-                    }
+//                    Row(Modifier.padding(vertical = 4.dp)) {
+//                        Text(text = "Test created at: " + Date(test.testCreated) )
+////                        Spacer(modifier = Modifier.weight(1f))
+////                        Text(text = "Test last updated: " + test.testModified.toString())
+//                    }
                     Row(Modifier.padding(vertical = 4.dp)) {
                         val sdf = SimpleDateFormat("dd/MM//yyyy")
                         val netDate = Date(test.testCreated)
@@ -100,6 +123,7 @@ fun TestCardDialog(
                         TextButton(onClick = onDismiss ) {
                             Text(text = "Close preview")
                         }
+                        //TODO BROWSE QUESTIONS
                         Spacer(modifier = Modifier.weight(1f))
                         TextButton(onClick = onOpenTest) {
                             Text(text = "Open test")
@@ -113,6 +137,7 @@ fun TestCardDialog(
 
 @Composable
 @Preview
+@Preview("DarkScreen" , uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun TestCardDialogPreview(){
 
     val testItem = TestEntity(
@@ -135,6 +160,8 @@ fun TestCardDialogPreview(){
         onDismiss = {},
         onStared = {},
         test = testItem,
-        modifier = Modifier
+        modifier = Modifier,
+        onUploadTestToFirebase = {},
+        onDownloadTestFromFirebase = {}
     )
 }

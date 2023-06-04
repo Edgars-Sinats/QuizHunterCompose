@@ -82,6 +82,8 @@ fun TestPickContent(
                 onTopicsSelected = viewModel::onEvent,
                 allTopicList = viewModel.topicNames,
                 selectedTopics = testPickOptionsState.pickedTopicId,
+                onDownloadTestFromFirebase = viewModel::onEvent,
+                onUploadTestToFirebase = viewModel::onEvent
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -118,7 +120,11 @@ fun StepsSliderSample(steps: Int,
                       currentSteps: Int,
                       onSlide: (TestPickEvent) -> Unit )
 {
-    var sliderPosition by remember { mutableStateOf(currentSteps) }
+    var sliderPosition by remember {
+        mutableStateOf(
+            currentSteps
+        )
+    }
 
     Column(modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.1f)), horizontalAlignment = Alignment.CenterHorizontally) {
 

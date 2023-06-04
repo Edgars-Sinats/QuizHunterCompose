@@ -1,13 +1,9 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.components
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,7 +34,9 @@ fun QuizSelectOptionsTopics(
     onPickWrongAnswered: (TestPickEvent) -> Unit,
     onPickTime: (TestPickEvent) -> Unit,
     onTestOptionState: (TestPickEvent) -> Unit,
-    expanded: Boolean ,
+    expanded: Boolean,
+    onUploadTestToFirebase: (TestPickEvent) -> Unit,
+    onDownloadTestFromFirebase: (TestPickEvent) -> Unit
 ){
     val contextForToast = LocalContext.current.applicationContext
     var expanded1 by remember {
@@ -50,6 +48,25 @@ fun QuizSelectOptionsTopics(
             .fillMaxSize()
             .padding(8.dp),
     ) {
+
+        Row(modifier
+            .fillMaxWidth()
+            .padding(start = 32.dp, end = 32.dp)) {
+
+            OutlinedButton(
+                onClick = { onUploadTestToFirebase.invoke(TestPickEvent.UploadTestQuestions) }
+            ) {
+                modifier.weight(1f)
+                Text(text = "Upload Test")
+            }
+
+            OutlinedButton(
+                onClick = { onDownloadTestFromFirebase.invoke(TestPickEvent.DownloadTestQuestions) }
+            ) {
+                modifier.weight(1f)
+                Text(text = "Download test")
+            }
+        }
 
         Button(
             modifier = Modifier
@@ -135,7 +152,8 @@ fun QuizSelectOptionsTopics(
             ) {
 
                 val listOfIds: MutableList<Int> = mutableListOf()
-                allTopicList.forEach { listOfIds.add(it.topicId -1) }
+                //Removed -1
+                allTopicList.forEach { listOfIds.add(it.topicId ) }
 
                 Text(
                     text = "Select all topics",
@@ -159,12 +177,12 @@ fun QuizSelectOptionsTopics(
                     if (allTopicList.isNotEmpty()) {
                         val checkBoxRow = allTopicList.forEachIndexed() { index, topic ->
                             val onClickHandle = {
-                                onTopicsSelected(TestPickEvent.CheckTopics(index))
+                                onTopicsSelected(TestPickEvent.CheckTopics(topic.topicId))
                             }
 
                             CheckBoxRow1(
                                 modifier = Modifier,
-                                checkedState = selectedTopics.contains(index),
+                                checkedState = selectedTopics.contains(topic.topicId),
                                 onStateChange = { onClickHandle.invoke() },
                                 checkBoxText = topic.topic
                             )

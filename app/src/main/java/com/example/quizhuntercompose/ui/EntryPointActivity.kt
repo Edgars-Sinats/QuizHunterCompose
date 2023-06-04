@@ -130,7 +130,7 @@ private fun TestPickDestination(navController: NavHostController) {
 
             val jsonAdapter = moshi.adapter<TestOptions>(TestOptions::class.java)
             //TODO check
-            val testOptionsObject = TestOptions(ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, viewModel.uiState.value.pickedTestId)
+            val testOptionsObject = TestOptions(ids = viewModel.uiState.value.pickedTopicId, count = viewModel.uiState.value.count, viewModel.uiState.value.unanswered, viewModel.uiState.value.wrongAnswersState, viewModel.uiState.value.pickedTestId, viewModel.uiState.value.answerTime)
             val userJson = jsonAdapter.toJson(testOptionsObject)
 
             // TODO pass to testViewModel. => viewModel.questionStateList

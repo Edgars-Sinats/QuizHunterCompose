@@ -5,6 +5,8 @@ sealed class TestPickEvent {
     data class ChooseCount(val value: Int) : TestPickEvent()
 
     object OpenOptions: TestPickEvent()
+    object UploadTestQuestions: TestPickEvent()
+    object DownloadTestQuestions: TestPickEvent()
     data class PickUnanswered(val value: Boolean) : TestPickEvent()
     data class PickWrongAnswered(val value: Boolean) : TestPickEvent()
     data class PickTime(val value: Boolean) : TestPickEvent()

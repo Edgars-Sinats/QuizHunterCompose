@@ -52,7 +52,11 @@ class TestPickViewModel @Inject constructor(
                 Log.i(TAG, ".launch async 1. topic names: $topicNames.")
             }.await()
 
-            async { topicNames.forEach { listOfIds.add((it.topicId) - 1) }
+            //- 1
+            async {
+                topicNames.forEach {
+                    listOfIds.add((it.topicId) )
+                }
                 Log.i(TAG, ".launch async 2. listOfIds: $listOfIds.")
             }.await()
 
@@ -104,7 +108,7 @@ class TestPickViewModel @Inject constructor(
             //IF total count > then count, & count is 0, automatically increase count to 1.
             if (_quizPickOptions.value.count == 0 ){
                 //TODO add user preferences( DataStore [https://developer.android.com/topic/libraries/architecture/datastore]) as minimal count.
-                _quizPickOptions.value = _quizPickOptions.value.copy(count = 1)
+                _quizPickOptions.value = _quizPickOptions.value.copy(count = _quizPickOptions.value.totalCount/2)
             }else {
                 _quizPickOptions.value = _quizPickOptions.value.copy(count = _quizPickOptions.value.totalCount/2)
             }
@@ -162,7 +166,8 @@ class TestPickViewModel @Inject constructor(
                     } else {
                         _quizPickOptions.value = _quizPickOptions.value.copy(
                             totalCount = questionRepository.getQuestionCountChecker(_quizPickOptions.value.pickedTopicId, testId = thisTestId, true, wrongAns = !_quizPickOptions.value.wrongAnswersState),
-                            wrongAnswersState = !_quizPickOptions.value.wrongAnswersState
+                            wrongAnswersState = !_quizPickOptions.value.wrongAnswersState,
+                            unanswered = true //TODO why didn`t implement?
                         )
                     }
 
@@ -173,6 +178,7 @@ class TestPickViewModel @Inject constructor(
             //TODO
             is TestPickEvent.PickTime -> {
                 //TODO create calculation for average and last time answers - give higher rating for last run 0.65?.
+
                 _quizPickOptions.value = _quizPickOptions.value.copy(
                     answerTime = !_quizPickOptions.value.answerTime
                 )
@@ -211,7 +217,10 @@ class TestPickViewModel @Inject constructor(
                 CoroutineScope(Dispatchers.IO).launch {
                     val listOfIds : MutableList<Int>  = mutableListOf()
 
-                    topicNames.forEach { listOfIds.add( it.topicId-1 ) }
+                    //-1 removed
+                    topicNames.forEach {
+                        listOfIds.add( it.topicId )
+                    }
 
                     if ( _quizPickOptions.value.pickedTopicId == listOfIds.toList() ) {
 //                        questionCount = questionRepository.getQuestionCount(0)
@@ -253,6 +262,12 @@ class TestPickViewModel @Inject constructor(
                     checkCountVsTotal()
                 }
                 Log.i("TestPickView", "Total questions: ${_quizPickOptions.value.totalCount} and chosen Questions: ${_quizPickOptions.value.count}" )
+            }
+
+            is TestPickEvent.UploadTestQuestions -> {
+                CoroutineScope(Dispatchers.IO).launch {
+
+                }
             }
 
         }//event

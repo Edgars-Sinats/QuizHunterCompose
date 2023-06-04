@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.cor.util.Resource
+import com.example.quizhuntercompose.core_dbo.toDomainQuestion
 import com.example.quizhuntercompose.domain.model.*
 import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
+import com.example.quizhuntercompose.feature_pickTest.domain.model.FirebaseQuestion
 import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -275,7 +277,7 @@ class AuthFirebaseRepositoryImpl constructor(
                     .document(language)
                 Log.i(TAG, "Snapshot is taken... ")
 
-                snapshot.addSnapshotListener {value, error ->
+                snapshot.addSnapshotListener { value, error ->
 
                     error?.let {
                         Log.i(TAG, "Firebase error in snapshot listener ")
@@ -388,13 +390,40 @@ class AuthFirebaseRepositoryImpl constructor(
         }
     }
 
-    override fun updateTestToCloud(testId: String): Flow<Resource<Task<Void>>> {
+    override fun updateTestToCloud(testId: String, questionList: List<FirebaseQuestion>): Flow<Resource<Task<Void>>> {
+        return flow {
+            emit(Resource.Loading())
+
+            Log.i(TAG, "setting firebaseTestQuestions object")
+
+            val firebaseTestQuestions: MutableMap<String, FirebaseQuestion> = mutableMapOf()
+            Log.i(TAG, "Setting question List...")
+
+            questionList.forEach { question ->
+                firebaseTestQuestions.put(key = question.questionID.toString(), value = question)
+            }
+
+            Log.i(TAG, "Uploading questions...")
+            val update = fireStore.collection(AppConstants.QUESTION_COLLECTION)
+                .document(testId)
+                .set(firebaseTestQuestions)
+
+            update.await()
+            Log.i(TAG, "Questions uploaded :) \n update: $update ")
+            emit(Resource.Success(update))
+        }.catch {
+            emit(Resource.Error(it.toString()))
+
+        }
+    }
+
+    override fun updateTestAnswersToCloud(testId: String, questionList: List<Question>): Flow<Resource<Task<Void>>> {
         return flow {
             emit(Resource.Loading())
             //TODO get test from Room
             val update = fireStore.collection(AppConstants.QUESTION_COLLECTION)
                 .document(testId)
-                .set("getQuestionsWhereTestIds = testId")
+                .set(questionList.toDomainQuestion().second)
 
             update.await()
             emit(Resource.Success(update))

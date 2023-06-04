@@ -3,7 +3,7 @@ package com.example.quizhuntercompose.core_dbo
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
 import com.example.quizhuntercompose.domain.model.Test
 
-object DatabaseMapper: EntityMapper<List<Test>, List<TestEntity>> {
+object DatabaseTestMapper: EntityMapper<List<Test>, List<TestEntity>> {
     override fun toDomain(entity: List<TestEntity>): List<Test> {
         return entity.map { data ->
             Test(
@@ -42,5 +42,5 @@ object DatabaseMapper: EntityMapper<List<Test>, List<TestEntity>> {
     }
 }
 
-fun List<TestEntity>.toDomain() = DatabaseMapper.toDomain(this)
-fun List<Test>.toEntity() = DatabaseMapper.toEntity(this)
+fun List<TestEntity>.toDomain() = DatabaseTestMapper.toDomain(this)
+fun List<Test>.toEntity() = DatabaseTestMapper.toEntity(this)

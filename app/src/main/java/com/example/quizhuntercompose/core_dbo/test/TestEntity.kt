@@ -21,6 +21,7 @@ data class TestEntity(
 //    @ColumnInfo(name = "testAdmin") val testAdmin: String,
 //    @ColumnInfo(name = "testAdmin") val testTeachers: String,
     @ColumnInfo(name = "language") val language: String,
+    //TODO add when test are downloaded from Firebase to True
     @ColumnInfo(name = "isLocal") val isLocal: Boolean,
     @ColumnInfo(name = "testRank") val testRank: Int
 

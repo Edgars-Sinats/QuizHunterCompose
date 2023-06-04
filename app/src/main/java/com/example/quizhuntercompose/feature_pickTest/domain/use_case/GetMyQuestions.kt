@@ -7,7 +7,7 @@ class GetMyQuestions (
         private val repository: QuestionRepository
     ) {
 //    @Throws(InvalidQuestionException::class)
-    suspend operator fun invoke(ids: List<Int>?, count: Int, nonAns: Boolean, wrongAns: Boolean, testId: Int): List<Question?> {
-        return repository.getMyQuestions(ids, nonAns, wrongAns, count, testId)
+    suspend operator fun invoke(ids: List<Int>?, count: Int, nonAns: Boolean, wrongAns: Boolean, testId: Int, time: Boolean): List<Question?> {
+        return repository.getMyQuestions(ids, nonAns, wrongAns, count, testId, time)
     }
 }

@@ -103,7 +103,9 @@ fun TestsScreen(
                                          },
                             onStared = { viewModel.starFavoriteTest(state.value.openedTest!!) },
                             test = state.value.openedTest!!,
-                            modifier = modifier
+                            modifier = modifier,
+                            onDownloadTestFromFirebase = {},
+                            onUploadTestToFirebase = { viewModel.uploadTestToFirebase(state.value.openedTest!! ) }
                         )
                     }
 

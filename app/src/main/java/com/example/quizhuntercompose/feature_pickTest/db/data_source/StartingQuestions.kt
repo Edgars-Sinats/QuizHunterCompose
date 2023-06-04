@@ -37,10 +37,12 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
             val topicN = loadJSONArrayTopics(context)
             val questionLatinLatvian = loadJSONArrayGptLatinLatvian(context)
             val questionUniverseEnglish = loadJSONArrayGptUniverseEnglish(context)
+            val questionCSDDLatvian = loadJSONArrayCSDDLatvian(context)
 
             checkIfNullOrCreate(questionN, dao)
             checkIfNullOrCreate(questionLatinLatvian, dao)
             checkIfNullOrCreate(questionUniverseEnglish, dao)
+            checkIfNullOrCreate(questionCSDDLatvian, dao)
 
 //            if (questionN != null){
 //                //looping through the variable as specified fields are loaded with data
@@ -133,6 +135,7 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
                 val averageTimeSec1 = item.getInt("average_time_sec")
                 val correctAnswer1 = item.getInt("correct_answer")
                 val correctAnswers1 = item.getInt("correct_answers")
+                val imageUrl1 = item.getString("imageUrl")
                 val lastTimeSec1 = item.getInt("last_time_sec")
                 val nonAnswers1 = item.getInt("non_answers")
                 val question = item.getString("question")
@@ -159,7 +162,8 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
                     questionID = questionId,
                     topic = topicId,
                     wrongAnswers = wrongAnswers,
-                    testID = testId
+                    testID = testId,
+                    imageUrl = imageUrl1
                 )
 
                 //using dao to insert data to the database
@@ -197,6 +201,15 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
         val inputStream = context.assets.open("gpt_universe_english.json")
         BufferedReader(inputStream.reader()).use {
             Log.i(TAG, "gpt_universe_english returning")
+            return JSONArray(it.readText())
+        }
+    }
+
+    private fun loadJSONArrayCSDDLatvian(context: Context): JSONArray?{
+        Log.d("StartingQuestion: ","loadJsonGptUniverse")
+        val inputStream = context.assets.open("questions_csdd_b_latvian.json")
+        BufferedReader(inputStream.reader()).use {
+            Log.i(TAG, "questions_csdd_b_latvian returning")
             return JSONArray(it.readText())
         }
     }

@@ -7,11 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizhuntercompose.cor.util.Resource
 import com.example.quizhuntercompose.core_dbo.test.TestEntity
+import com.example.quizhuntercompose.core_dbo.toDomainQuestion
 import com.example.quizhuntercompose.core_state.NeedKeyState
 import com.example.quizhuntercompose.core_state.UserState
 import com.example.quizhuntercompose.core_usecases.QuizHunterUseCases
 import com.example.quizhuntercompose.feature_auth.domain.AuthFirebaseRepository
 import com.example.quizhuntercompose.feature_auth.domain.QuizHunterRepository
+import com.example.quizhuntercompose.feature_pickTest.domain.model.FirebaseQuestion
+import com.example.quizhuntercompose.feature_pickTest.domain.model.Question
+import com.example.quizhuntercompose.feature_pickTest.domain.repository.QuestionRepository
 import com.example.quizhuntercompose.feature_tests.presentation.components.ExperimentalTests
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +28,7 @@ class TestsViewModel @Inject constructor(
     private val quizHunterUseCases: QuizHunterUseCases,
     private val quizHunterRepository: QuizHunterRepository,
     private val firebaseRepository: AuthFirebaseRepository,
+    private val questionRepository: QuestionRepository
 ) :ViewModel() {
 
     private val TAG = "testViewModel"
@@ -106,6 +111,38 @@ class TestsViewModel @Inject constructor(
 
     fun closeTestPreview(){
         updateTestsState(openedTest = null)
+    }
+
+    //experimental upload to Firebase
+    //
+    fun uploadTestToFirebase(forTestId: TestEntity){
+        val testID = _state.value.openedTest!!.testId
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val questionList = questionRepository.getAllQuestions(testID)
+
+            Log.i(TAG, "updateTestToCloud...")
+            firebaseRepository.updateTestToCloud(testID.toString(), questionList.toDomainQuestion().first).collect() {
+                when (it) {
+                    is Resource.Loading -> updateTestsState(isLoading = true)
+
+                    is Resource.Success -> {
+                        it.data?.let { _ ->
+    //                            val state = data.map { TestsState().copy(tests = it) }
+
+                            updateTestsState(isLoading = false)
+                        }
+                    }
+                    is Resource.Error -> updateTestsState(error = it.message)
+                }
+            }
+        }
+    }
+    //Open ONLY When Test Dialog Is Opened
+    fun getAllLocalTestQuestions(){
+        val testID = _state.value.openedTest!!.testId
+        questionRepository.getAllQuestions(testID)
     }
 
     fun starFavoriteTest(testId: TestEntity){

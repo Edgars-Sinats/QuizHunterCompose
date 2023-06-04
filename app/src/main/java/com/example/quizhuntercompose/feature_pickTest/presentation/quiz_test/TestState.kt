@@ -46,7 +46,7 @@ data class QuestionState(
 data class Answer(
     val questionId: Int,
     var chosenAnswer: Int? = null, //TODO 60. chosenAns in layout (before saving)?
-    var timeSpent: Int? = null,   //Time spend in milliseconds.
+    var timeSpent: Long? = null,   //Time spend in milliseconds.
     val isLastQuestion: Boolean,
     val isFirstQuestion: Boolean
 )

@@ -22,6 +22,7 @@ class QuizHunterRepositoryImp @Inject constructor(
     private val testDao: TestDao
 
 ) :QuizHunterRepository{
+
     override fun getQuizHunterUser(): Flow<QuizHunterUser?> {
         return userDao.getUser().map { it?.toQuizHunterUser() }
     }
@@ -91,4 +92,5 @@ class QuizHunterRepositoryImp @Inject constructor(
     override suspend fun removeAllTests() {
         testDao.removeAllTests()
     }
+
 }
