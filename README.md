@@ -1,12 +1,12 @@
 Question app
 =================================
 
-Question app what will help to learn new topic with answering on question and choosing/filtering already positive(mostly) answered questions. 
-    Next step implement theory for questions in case of explanation needed. Plan of taking text block of theory and linking to questions with help of AI text recognition tool. 
+Question app what will help to learn new topic with answering on question and choosing/filtering already positive(mostly) answered questions, based on time or popularity.
+    Next step implement theory for questions in case of explanation needed. Plan of taking text block of theory and linking to questions with help of AI text recognition tool.
 This code demonstrates the Android Architecture pattern MVVM and component like - ViewModel and StateFlow.
 
-Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() did`t work with .db or json.
-Next step read data from Firebase Firestore just like in previous project https://github.com/Edgars-Sinats/LumiBricks
+Created database from .pdf of Hunter questions and implemented them with JSON objects with.addCallback() as in database builder .readFromFile() didt work with .db or json.
+Added - read data now(Tests) from Firebase Firestore.
 
 
 
@@ -18,12 +18,26 @@ You can contact me directly via [Linkedin](https://www.linkedin.com/in/edgars-si
 2. On load screen choose which topic questions you want to take. You will have options to choose filter out answered questions and correctly answered.
 
 
-### App
-Currently implemented quiz with questions and option to choose count of questions as well topic`s and other options based on already answered previous question.
+### Current app demo can be found  [Youtube](https://youtu.be/vQE1SkwBLQ4)
+## 📸 Screenshots
+
+|||
+|:----------------------------------------:|:-----------------------------------------: |
+|![](media/1.png) | ![](media/2.png) |
+|![](media/3.png)|![](media/4.png)|
+|![](media/5.png) | ![](media/6.png)    |
+| ![](media/7.png) | ![](media/8.png)    | 
+| ![](media/9.png)      | ![](media/10.png)  |
+| ![](media/11.png)  |![](media/12.png)      |
+|![](media/13.png)  |![](media/14.png)  |
+|![](media/16.png)  |![](media/17.png)  |
+
+
+
+Currently implemented quiz with questions and option to choose count of questions as well topics and other options based on already answered previous question.
 ->After each test has been answered, answer are updated in local room db.
 ->When choosing questions you can filter out answered(correctly) questions, so you do not repeat with the same questions.
 ```_quiz_test``` folder under```feature_pickTest/presentation``` represent only feature.
-
 
 - __quiz_test__: This is responsible for taken test.
 - - __pick_test__: This is responsible for choosing test.
