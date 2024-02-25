@@ -2,6 +2,7 @@ package com.example.quizhuntercompose.di
 
 import android.app.Application
 import android.content.Context
+import com.example.quizhuntercompose.BuildConfig
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.cor.util.AppConstants
 import com.example.quizhuntercompose.feature_auth.db.AuthGoogleServRepositoryImpl

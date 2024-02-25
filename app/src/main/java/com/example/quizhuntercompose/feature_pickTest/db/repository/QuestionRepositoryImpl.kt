@@ -15,7 +15,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class QuestionRepositoryImpl @Inject constructor(
+class QuestionRepositoryImpl @Inject constructor (
     private val dao: QuestionDao,
 //    private val csddApi: DriversCApi
 //    private val database: QuizDatabase,

@@ -63,7 +63,7 @@ data class TestFirebase(
 //    val questions: List<Question>,
 )
 
-class   EntityTestMap (
+class   EntityTestMap(
     var doc: Map<String, Test>? = null
 )
 
@@ -86,4 +86,4 @@ data class FirebaseTestDocument4 (
 
 class FirebaseTestList (
     var test: List<Test>
-        )
+)

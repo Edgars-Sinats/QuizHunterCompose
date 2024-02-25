@@ -120,10 +120,15 @@ fun StepsSliderSample(steps: Int,
                       currentSteps: Int,
                       onSlide: (TestPickEvent) -> Unit )
 {
+
     var sliderPosition by remember {
         mutableStateOf(
             currentSteps
         )
+    }
+
+    LaunchedEffect(currentSteps) {
+        sliderPosition = currentSteps
     }
 
     Column(modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.1f)), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -143,7 +148,8 @@ fun StepsSliderSample(steps: Int,
             },
             steps = steps,
             colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colors.secondary,
+
+                thumbColor = MaterialTheme.colors.primary,
                 activeTrackColor = MaterialTheme.colors.primary,
 
                 ),

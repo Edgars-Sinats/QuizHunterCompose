@@ -181,7 +181,7 @@ class StartingQuestions (private val context: Context) : RoomDatabase.Callback()
         Log.d("StartingQuestion: ","loadJsonQuestions")
 
         //obtain input byte
-        val inputStream = context.assets.open("question_table.json") //.apenRawResource(R.raw.notes)
+        val inputStream = context.assets.open("question_table_small.json") //.apenRawResource(R.raw.notes) //question_table
         //using Buffered reader to read the inputstream byte
         BufferedReader(inputStream.reader()).use {
             return JSONArray(it.readText())

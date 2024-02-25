@@ -9,64 +9,127 @@ class FakeQuestionRepository : QuestionRepository {
     private val questions = mutableListOf <Question>()
     private val topics = mutableListOf<Topic>()
 
-    override suspend fun getQuestionCountChecker(
-        ids: List<Int>,
-        nonAns: Boolean,
-        wrongAns: Boolean
-    ): Int {
-        return questions.count { question -> question.nonAnswers.equals(null) == nonAns }
-    }
+
+//    override suspend fun getQuestionCountChecker(
+//        ids: List<Int>,
+//        nonAns: Boolean,
+//        wrongAns: Boolean
+//    ): Int {
+//        return questions.count { question -> question.nonAnswers.equals(null) == nonAns }
+//    }
 
     //Return list of questions where wrong answer has been declared and count of questions is X.
     // If failed return 3 questions.
+//    override suspend fun getMyQuestions(
+//        ids: List<Int>?,
+//        nonAns: Boolean,
+//        wrongAns: Boolean,
+//        count: Int
+//    ): List<Question> {
+//        return listOf(questions
+//                .filter { question ->
+////                    question.wrongAnswers.equals(null) == wrongAns and
+////                    question.questionID.equals(ids) and
+//                    question.nonAnswers.equals(null)
+//                }
+//            .random() )
+////                .random())
+////                .subList(1, count-1)
+////        } catch (e: Exception) {
+////            Log.i("FakeQuestionRep", "getMyQuestions failed with: $e")
+////            questions.subList(0,2)
+////        }
+//
+//    }
+
+    override suspend fun getQuestionCount(topic_id: Int, testId: Int): Int {
+        return questions.count { question -> question.topic == topic_id }
+    }
+
+//    override suspend fun getQuestionCountFrom(topic_ids: List<Int>, noAns: Int): Int {
+//        return questions.count { question -> question.topic.equals(topic_ids.listIterator()) and (question.nonAnswers <= noAns) }
+//    }
+//
+//    override fun getAllQuestions(): List<Question> {
+//        return questions
+//    }
+
+    //Return random 10 questions
+//    override suspend fun getStartTest(): List<Question> {
+//        return listOf(questions.random()).subList(0,9)
+//    }
+
+    suspend fun getXQuestions(count: Int): List<Question> {
+        TODO("Not yet implemented")
+    }
+
+//    override suspend fun getQuestionById(id: Int): Question? {
+//        return questions.find { it.questionID == id }
+//    }
+//
+//    override suspend fun getXQuestionFromTopic(topic: Int, count: Int): List<Question> {
+//        TODO("Not yet implemented")
+//    }
+
+    override suspend fun getQuestionCountChecker(
+        ids: List<Int>,
+        testId: Int,
+        nonAns: Boolean,
+        wrongAns: Boolean,
+    ): Int {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getQuestionCountCheckerByTime(
+        ids: List<Int>,
+        testId: Int,
+        nonAns: Boolean,
+        wrongAns: Boolean,
+        time: Boolean,
+    ): Int {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getMyQuestions(
         ids: List<Int>?,
         nonAns: Boolean,
         wrongAns: Boolean,
-        count: Int
+        count: Int,
+        testId: Int,
+        time: Boolean,
     ): List<Question> {
-        return listOf(questions
-                .filter { question ->
-//                    question.wrongAnswers.equals(null) == wrongAns and
-//                    question.questionID.equals(ids) and
-                    question.nonAnswers.equals(null)
-                }
-            .random() )
-//                .random())
-//                .subList(1, count-1)
-//        } catch (e: Exception) {
-//            Log.i("FakeQuestionRep", "getMyQuestions failed with: $e")
-//            questions.subList(0,2)
-//        }
-
-    }
-
-    override suspend fun getQuestionCount(topic_id: Int): Int {
-        return questions.count { question -> question.topic == topic_id }
-    }
-
-    override suspend fun getQuestionCountFrom(topic_ids: List<Int>, noAns: Int): Int {
-        return questions.count { question -> question.topic.equals(topic_ids.listIterator()) and (question.nonAnswers <= noAns) }
-    }
-
-    override fun getAllQuestions(): List<Question> {
-        return questions
-    }
-
-    //Return random 10 questions
-    override suspend fun getStartTest(): List<Question> {
-        return listOf(questions.random()).subList(0,9)
-    }
-
-    override suspend fun getXQuestions(count: Int): List<Question> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getQuestionById(id: Int): Question? {
-        return questions.find { it.questionID == id }
+//    override suspend fun getQuestionCount(topic_id: Int, testId: Int): Int {
+//        TODO("Not yet implemented")
+//    }
+
+    override suspend fun getQuestionCountFrom(topic_ids: List<Int>, noAns: Int, testId: Int): Int {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getXQuestionFromTopic(topic: Int, count: Int): List<Question> {
+    override fun getAllQuestions(testId: Int): List<Question> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getStartTest(testId: Int): List<Question> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getXQuestions(count: Int, testId: Int): List<Question> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getQuestionById(id: Int, testId: Int): Question? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getXQuestionFromTopic(
+        topic: Int,
+        count: Int,
+        testId: Int,
+    ): List<Question> {
         TODO("Not yet implemented")
     }
 
@@ -78,7 +141,7 @@ class FakeQuestionRepository : QuestionRepository {
         this.topics.addAll(topics)
     }
 
-    override suspend fun getAllTopics(): List<Topic> {
-        return topics
+    override suspend fun getAllTopics(testId: Int): List<Topic> {
+        TODO("Not yet implemented")
     }
 }
