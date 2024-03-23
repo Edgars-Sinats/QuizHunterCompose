@@ -1,5 +1,6 @@
 package com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.components
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
+@OptIn(ExperimentalAnimationApi::class)
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
 @UninstallModules(ApiModule::class)
@@ -34,6 +36,7 @@ class QuizOptionFieldTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
+    @OptIn(ExperimentalAnimationApi::class)
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<EntryPointActivity>()
     private val activity get() = composeRule.activity
@@ -94,7 +97,7 @@ class QuizOptionFieldTest {
 
 
     private fun setContentPickOptions() {
-        val topicList : List<Topic> = listOf(Topic(0,"Zero topic"), Topic(1,"Second topic"), Topic(2,"New Topic"))
+        val topicList : List<Topic> = listOf(Topic(0,"Zero topic", 1), Topic(1,"Second topic",1), Topic(2,"New Topic",1))
         val viewModle: TestPickViewModel = TestPickViewModel(repository)
         composeRule.setContent {
             QuizHunterComposeTheme {
@@ -112,7 +115,9 @@ class QuizOptionFieldTest {
                         onPickWrongAnswered = {},
                         onPickTime = {},
                         onTestOptionState = {},
-                        expanded = true
+                        expanded = true,
+                        onUploadTestToFirebase = {},
+                        onDownloadTestFromFirebase = {}
                     )
             }
         }
@@ -157,7 +162,9 @@ class QuizOptionFieldTest {
             wrongAnswers = 2,
             nonAnswers = 0,
             averageAnswerTime = 21,
-            lastAnswerTime = 2
+            lastAnswerTime = 2,
+            imageUrl = "",
+            testID = 1
         ),
         Question(
             questionID= 1,
@@ -173,7 +180,9 @@ class QuizOptionFieldTest {
             wrongAnswers = 1,
             nonAnswers = 0,
             averageAnswerTime = 21,
-            lastAnswerTime = 2
+            lastAnswerTime = 2,
+            imageUrl = "",
+            testID = 1
         ),
         Question(
             questionID= 2,
@@ -189,7 +198,9 @@ class QuizOptionFieldTest {
             wrongAnswers = 0,
             nonAnswers = 0,
             averageAnswerTime = 30,
-            lastAnswerTime = 10
+            lastAnswerTime = 10,
+            imageUrl = "",
+            testID = 1
         ),
         Question(
             questionID= 3,
@@ -205,7 +216,9 @@ class QuizOptionFieldTest {
             wrongAnswers = 0,
             nonAnswers = 2,
             averageAnswerTime = 30,
-            lastAnswerTime = 10
+            lastAnswerTime = 10,
+            imageUrl = "",
+            testID = 1
         ),
 
         Question(
@@ -222,7 +235,9 @@ class QuizOptionFieldTest {
             wrongAnswers = 0,
             nonAnswers = 2,
             averageAnswerTime = 30,
-            lastAnswerTime = 10
+            lastAnswerTime = 10,
+            imageUrl = "",
+            testID = 1
         )
     )
 }

@@ -1,8 +1,12 @@
 package com.example.quizhuntercompose.core_dbo.user
 
 import androidx.room.*
+import dagger.Component
+import dagger.hilt.android.internal.modules.ApplicationContextModule
 import kotlinx.coroutines.flow.Flow
 
+
+@Component(dependencies = [ApplicationContextModule::class])
 @Dao
 interface UserDao {
 

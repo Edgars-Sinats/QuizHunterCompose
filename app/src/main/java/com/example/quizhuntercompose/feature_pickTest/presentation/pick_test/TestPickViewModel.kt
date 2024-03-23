@@ -270,6 +270,7 @@ class TestPickViewModel @Inject constructor(
                 }
             }
 
+            else -> {}
         }//event
     }//onEvent
 

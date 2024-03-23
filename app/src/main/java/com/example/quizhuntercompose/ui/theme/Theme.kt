@@ -93,7 +93,7 @@ fun QuizHunterComposeTheme(
     if (!view.isInEditMode) {
         SideEffect {
             (view.context as Activity).window.statusBarColor = colors.primary.toArgb()
-            WindowCompat.getInsetsController((view.context as Activity).window, view)?.isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController((view.context as Activity).window, view).isAppearanceLightStatusBars = darkTheme
 //            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
         }
     }

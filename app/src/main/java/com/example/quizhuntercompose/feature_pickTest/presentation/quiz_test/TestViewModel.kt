@@ -217,6 +217,8 @@ class TestViewModel @Inject constructor(
                 println("PRINTING ViewModel: ${_uiState.value.answers[uiState.value.currentQuestionIndex].chosenAnswer} \n AND _isLoading: ${_isLoading.value}")
 
             }
+
+            else -> {}
         }
     }
 

@@ -73,30 +73,33 @@ fun TestScreenMain(
                         if (targetState.value > initialState.value ) {
                             slideIntoContainer(
                                 animationSpec = animationSpec,
-                                towards = AnimatedContentScope.SlideDirection.Left
-                            ) with
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left
+                            ) togetherWith
                                     fadeOut ( animationSpec = tween(600) )
                         } else if(targetState.value == initialState.value){
                             slideIntoContainer(
-                                AnimatedContentScope.SlideDirection.Up, animationSpec
+                                AnimatedContentTransitionScope.SlideDirection.Up, animationSpec
                             ) with fadeOut( animationSpec = tween(600) )
                         } else {
                             fadeIn(
                                 animationSpec = tween(1200)
                             ) with slideOutOfContainer (
-                                towards = AnimatedContentScope.SlideDirection.Right,
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
                                 animationSpec = animationSpec
                             )
                         }.apply {
                             targetContentZIndex = targetState.value.toFloat()
                         }
-                    }
+                    }, label = ""
                 )
-                {    //targetState ->
+                { animationTargetState ->      //targetState ->
+                    if (animationTargetState.value == 0) {
+                        println("PRINTING ANSWER: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer}")
+                    }
                     QuestionScreen( //Question (+ answers)
 //                            selectedAnswer = selectedAnswer1,
                         answer = uiState.answers[uiState.currentQuestionIndex], // TODO create unit test // Answer list declared in TestState itself already.
-                        onAnswer = {
+                        onAnswer = {it->
                             println("PRINTING AnswerSelected_screen1: ${uiState.answers[uiState.currentQuestionIndex].chosenAnswer} \n AND index of question: ${uiState.currentQuestionIndex}")
                             onSelectAnswer(TestEvent.AnswerSelected(it))
 //                                testViewModel.onEvent(TestEvent.AnswerSelected(it))
@@ -111,8 +114,11 @@ fun TestScreenMain(
                 }//TargetState
             },
             bottomBar = {
-                AnimatedContent(targetState = uiState) {
+                AnimatedContent(targetState = uiState, label = "") {
                         targetState1->
+                    if (targetState1.showPreview){
+                        //todo
+                    }
                     SurveyBottomBar(
                         selectedAnswer = currentlySelectedAnswer,
                         answerState = uiState.answers[uiState.currentQuestionIndex],

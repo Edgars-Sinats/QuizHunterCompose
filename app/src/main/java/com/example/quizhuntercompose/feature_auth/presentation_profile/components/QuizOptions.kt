@@ -10,13 +10,13 @@ import androidx.compose.material.*
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIconDefaults.Text
+//import androidx.compose.ui.input.pointer.PointerIconDefaults.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quizhuntercompose.R
 import com.example.quizhuntercompose.cor.util.AppConstants.QUIZ_PICK_SCREEN
-import com.example.quizhuntercompose.cor.util.AppConstants.SIGN_IN_WITH_GOOGLE
+//import com.example.quizhuntercompose.cor.util.AppConstants.SIGN_IN_WITH_GOOGLE
 
 
 @Composable
