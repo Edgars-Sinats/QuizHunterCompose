@@ -115,7 +115,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun updateProfilePicture(bitmap: Bitmap) {
-        val imageName = userCredential.value.userUid ?: UUID.randomUUID().toString()
+        val imageName = userCredential.value.userUid
 
         uploadProfilePicture(
             imageName = imageName,

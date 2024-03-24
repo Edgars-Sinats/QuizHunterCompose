@@ -51,6 +51,7 @@ fun RegisterScreen(
             .fillMaxSize(),
         content = { paddingValues ->
 
+            paddingValues.calculateBottomPadding()
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 32.dp)

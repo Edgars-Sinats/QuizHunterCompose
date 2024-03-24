@@ -23,7 +23,8 @@ import com.example.quizhuntercompose.feature_pickTest.presentation.pick_test.Tes
 import com.example.quizhuntercompose.feature_pickTest.presentation.quiz_test.TestScreen
 import com.example.quizhuntercompose.feature_tests.presentation.TestsScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
+
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 

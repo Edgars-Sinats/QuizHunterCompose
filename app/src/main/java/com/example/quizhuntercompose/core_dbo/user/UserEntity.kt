@@ -5,9 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.quizhuntercompose.domain.model.QuizHunterUser
 
-
-import java.util.*
-
 @Entity(
     tableName = "user_table"
 )
@@ -42,7 +39,7 @@ fun UserEntity.toQuizHunterUser(): QuizHunterUser {
 
 fun QuizHunterUser.toUserEntity(): UserEntity {
     return UserEntity(
-        userUid = userUid ?: UUID.randomUUID().toString(),
+        userUid = userUid,
         userName = userName,
         name = name,
         email = email,

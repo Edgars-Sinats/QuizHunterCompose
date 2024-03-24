@@ -61,10 +61,7 @@ fun AuthScreen(
             padding = PaddingValues(bottom = 24.dp)
         )
         LaunchedEffect(Unit) {
-            val quizUser = QuizHunterUser(
-//                name =
-            )
-            delay(800)
+            delay(800) //TODO
             navigateToProfileScreen()
         }
     }

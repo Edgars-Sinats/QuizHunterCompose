@@ -4,7 +4,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +23,7 @@ fun BackStackButton(
                 scaleX = 1.3f
                 scaleY = 1.3f
             },
-            imageVector = Icons.Outlined.KeyboardArrowLeft,
+            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
             contentDescription = null
         )
     }

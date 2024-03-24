@@ -76,14 +76,14 @@ fun TestScreenMain(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Left
                             ) togetherWith
                                     fadeOut ( animationSpec = tween(600) )
-                        } else if(targetState.value == initialState.value){
+                        } else if (targetState.value == initialState.value) {
                             slideIntoContainer(
                                 AnimatedContentTransitionScope.SlideDirection.Up, animationSpec
-                            ) with fadeOut( animationSpec = tween(600) )
+                            ) togetherWith fadeOut(animationSpec = tween(600))
                         } else {
                             fadeIn(
                                 animationSpec = tween(1200)
-                            ) with slideOutOfContainer (
+                            ) togetherWith slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
                                 animationSpec = animationSpec
                             )
